@@ -15,7 +15,7 @@ export default function AdminOrderDetail() {
   const fetchOrder = useCallback(async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:5000/api/admin/orders/${id}`, {
+      const response = await fetch(`https://kala-agalya-herbals.onrender.com/api/admin/orders/${id}`, {
         headers: { 
           "Authorization": `Bearer ${token}` 
         },
@@ -47,7 +47,7 @@ export default function AdminOrderDetail() {
     setUpdating(true);
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:5000/api/admin/orders/${id}/status`, {
+      const response = await fetch(`https://kala-agalya-herbals.onrender.com/api/admin/orders/${id}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

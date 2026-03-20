@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://kala-agalya-herbals.onrender.com/api";
 
 export const createOrder = async (orderData) => {
   const res = await fetch(`${API_URL}/orders`, {

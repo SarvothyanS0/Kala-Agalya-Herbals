@@ -12,7 +12,7 @@ export default function AdminReviews() {
   const fetchReviews = useCallback(async () => {
     const token = localStorage.getItem("adminToken");
     try {
-      const response = await fetch("http://localhost:5000/api/reviews", {
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/reviews", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -43,7 +43,7 @@ export default function AdminReviews() {
 
     const token = localStorage.getItem("adminToken");
     try {
-      const response = await fetch(`http://localhost:5000/api/reviews/${id}`, {
+      const response = await fetch(`https://kala-agalya-herbals.onrender.com/api/reviews/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -136,7 +136,7 @@ export default function AdminReviews() {
                   {review.image && (
                     <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl border border-yellow-500/10 overflow-hidden bg-black shadow-2xl flex-shrink-0 group/img cursor-zoom-in">
                        <img 
-                        src={`http://localhost:5000${review.image}`} 
+                        src={`https://kala-agalya-herbals.onrender.com${review.image}`} 
                         alt="Review Attachment" 
                         className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-700" 
                       />

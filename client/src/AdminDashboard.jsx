@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   const fetchDashboardData = useCallback(async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch("http://localhost:5000/api/admin/orders/dashboard/stats", {
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/admin/orders/dashboard/stats", {
         headers: { 
           "Authorization": `Bearer ${token}` 
         },
@@ -37,7 +37,7 @@ export default function AdminDashboard() {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(
-        `http://localhost:5000/api/admin/orders/dashboard/sales-chart?period=${period}`,
+        `https://kala-agalya-herbals.onrender.com/api/admin/orders/dashboard/sales-chart?period=${period}`,
         { 
           headers: { 
             "Authorization": `Bearer ${token}` 

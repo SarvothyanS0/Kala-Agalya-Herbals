@@ -15,7 +15,7 @@ export default function UserLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/login", {
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -152,7 +152,7 @@ export default function UserLogin() {
                   onSuccess={async (credentialResponse) => {
                     setLoading(true);
                     try {
-                      const res = await fetch("http://localhost:5000/api/users/google", {
+                      const res = await fetch("https://kala-agalya-herbals.onrender.com/api/users/google", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ token: credentialResponse.credential }),

@@ -15,7 +15,7 @@ export default function AdminUsers() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch("http://localhost:5000/api/users/admin/all", {
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/users/admin/all", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();

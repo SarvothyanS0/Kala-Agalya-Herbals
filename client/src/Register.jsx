@@ -62,7 +62,7 @@ export default function Register() {  const [name, setName] = useState("");
         formData.append("avatar", profilePic); 
       }
 
-      const response = await fetch("http://localhost:5000/api/users/register", {
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/users/register", {
         method: "POST",
         body: formData,
       });

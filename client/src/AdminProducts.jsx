@@ -25,7 +25,7 @@ export default function AdminProducts() {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/products");
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/products");
       const data = await response.json();
       if (data.success) {
         setProducts(data.products);
@@ -65,8 +65,8 @@ export default function AdminProducts() {
 
     try {
       const url = editingProduct
-        ? `http://localhost:5000/api/products/${editingProduct._id}`
-        : "http://localhost:5000/api/products";
+        ? `https://kala-agalya-herbals.onrender.com/api/products/${editingProduct._id}`
+        : "https://kala-agalya-herbals.onrender.com/api/products";
 
       const response = await fetch(url, {
         method: editingProduct ? "PUT" : "POST",
@@ -96,7 +96,7 @@ export default function AdminProducts() {
 
     const token = localStorage.getItem("adminToken");
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+      const response = await fetch(`https://kala-agalya-herbals.onrender.com/api/products/${id}`, {
         method: "DELETE",
         headers: { 
           "Authorization": `Bearer ${token}` 
@@ -201,7 +201,7 @@ export default function AdminProducts() {
               <div className="absolute inset-0 bg-black/20 z-10 transition-opacity group-hover:opacity-0"></div>
               {product.images && product.images.length > 0 ? (
                 <img 
-                  src={product.images[0].startsWith("http") ? product.images[0] : `http://localhost:5000${product.images[0]}`} 
+                  src={product.images[0].startsWith("http") ? product.images[0] : `https://kala-agalya-herbals.onrender.com${product.images[0]}`} 
                   alt={product.name} 
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" 
                 />
@@ -345,7 +345,7 @@ export default function AdminProducts() {
                       {formData.imageUrls.map((url, idx) => (
                         <div key={idx} className="relative w-20 h-20 rounded-xl border border-yellow-500/20 overflow-hidden bg-black flex-shrink-0 group">
                           <img 
-                            src={url.startsWith("blob") || url.startsWith("http") ? url : `http://localhost:5000${url}`} 
+                            src={url.startsWith("blob") || url.startsWith("http") ? url : `https://kala-agalya-herbals.onrender.com${url}`} 
                             alt={`Preview ${idx}`} 
                             className="w-full h-full object-cover" 
                           />

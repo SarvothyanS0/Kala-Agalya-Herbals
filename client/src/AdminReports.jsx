@@ -37,7 +37,7 @@ export default function AdminReports() {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(
-        `http://localhost:5000/api/admin/orders/reports/data?startDate=${startDate}&endDate=${endDate}`,
+        `https://kala-agalya-herbals.onrender.com/api/admin/orders/reports/data?startDate=${startDate}&endDate=${endDate}`,
         { 
           headers: { 
             "Authorization": `Bearer ${token}` 

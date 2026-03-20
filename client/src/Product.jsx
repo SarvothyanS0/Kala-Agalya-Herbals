@@ -22,7 +22,7 @@ export default function Product() {
     const img = images[sizeIdx] || images[0]; 
     if (img.startsWith("http")) return img;
     if (img.startsWith("/images/")) return img;
-    return `http://localhost:5000${img}`;
+    return `https://kala-agalya-herbals.onrender.com${img}`;
   };
 
   const products = dbProducts.filter(p => p.isActive).flatMap(prod => 
@@ -42,7 +42,7 @@ export default function Product() {
 
   // Fetch product from DB to attach data to
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("https://kala-agalya-herbals.onrender.com/api/products")
       .then(res => res.json())
       .then(data => {
         if (data.success && data.products.length > 0) {
@@ -56,7 +56,7 @@ export default function Product() {
   }, []);
 
   const fetchReviews = (productId) => {
-    fetch(`http://localhost:5000/api/reviews/${productId}`)
+    fetch(`https://kala-agalya-herbals.onrender.com/api/reviews/${productId}`)
       .then(res => res.json())
       .then(data => setReviews(data))
       .catch(err => console.error("Error fetching reviews:", err));
@@ -115,7 +115,7 @@ export default function Product() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/reviews", {
+      const res = await fetch("https://kala-agalya-herbals.onrender.com/api/reviews", {
         method: "POST",
         body: formData
       });
@@ -484,7 +484,7 @@ export default function Product() {
                       {review.image && (
                         <div className="mt-4">
                           <img 
-                            src={`http://localhost:5000${review.image}`} 
+                            src={`https://kala-agalya-herbals.onrender.com${review.image}`} 
                             alt={`Customer review photo for Kala Agalya Herbal Hair Oil by ${review.name}`} 
                             className="w-32 h-32 object-cover rounded-xl border border-yellow-500/20"
                           />

@@ -18,7 +18,7 @@ export default function Payment() {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/orders/initiate-phonepe", {
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/orders/initiate-phonepe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

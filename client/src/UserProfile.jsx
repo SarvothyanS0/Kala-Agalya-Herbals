@@ -36,7 +36,7 @@ export default function UserProfile() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/users/profile", {
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/users/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,7 +99,7 @@ export default function UserProfile() {
         formDataToSend.append("avatar", newProfilePic);
       }
 
-      const response = await fetch("http://localhost:5000/api/users/profile", {
+      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/users/profile", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
