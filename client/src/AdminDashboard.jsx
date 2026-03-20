@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AdminLayout from "./AdminLayout";
+import { API_URL } from "./services/api";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -17,7 +18,7 @@ export default function AdminDashboard() {
   const fetchDashboardData = useCallback(async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/admin/orders/dashboard/stats", {
+      const response = await fetch(`${API_URL}/admin/orders/dashboard/stats`, {
         headers: { 
           "Authorization": `Bearer ${token}` 
         },
@@ -37,7 +38,7 @@ export default function AdminDashboard() {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(
-        `https://kala-agalya-herbals.onrender.com/api/admin/orders/dashboard/sales-chart?period=${period}`,
+        `${API_URL}/admin/orders/dashboard/sales-chart?period=${period}`,
         { 
           headers: { 
             "Authorization": `Bearer ${token}` 

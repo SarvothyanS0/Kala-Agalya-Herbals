@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "./Alert";
 import { GoogleLogin } from "@react-oauth/google";
+import { API_URL } from "./services/api";
 
 export default function UserLogin() {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ export default function UserLogin() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/users/login", {
+      const response = await fetch(`${API_URL}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -152,7 +153,7 @@ export default function UserLogin() {
                   onSuccess={async (credentialResponse) => {
                     setLoading(true);
                     try {
-                      const res = await fetch("https://kala-agalya-herbals.onrender.com/api/users/google", {
+                      const res = await fetch(`${API_URL}/users/google`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ token: credentialResponse.credential }),

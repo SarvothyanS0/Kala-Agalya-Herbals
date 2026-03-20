@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useToast } from "./Alert";
 import { useState } from "react";
+import { API_URL } from "./services/api";
 
 export default function Payment() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -18,7 +19,7 @@ export default function Payment() {
 
     setLoading(true);
     try {
-      const response = await fetch("https://kala-agalya-herbals.onrender.com/api/orders/initiate-phonepe", {
+      const response = await fetch(`${API_URL}/orders/initiate-phonepe`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

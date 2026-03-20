@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useToast } from "./Alert";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { API_URL, BASE_URL } from "./services/api";
 
 export default function Product() {
   const [dbProduct, setDbProduct] = useState(null);
@@ -22,7 +23,7 @@ export default function Product() {
     const img = images[sizeIdx] || images[0]; 
     if (img.startsWith("http")) return img;
     if (img.startsWith("/images/")) return img;
-    return `https://kala-agalya-herbals.onrender.com${img}`;
+    return `${BASE_URL}${img}`;
   };
 
   const products = dbProducts.filter(p => p.isActive).flatMap(prod => 
@@ -42,7 +43,7 @@ export default function Product() {
 
   // Fetch product from DB to attach data to
   useEffect(() => {
-    fetch("https://kala-agalya-herbals.onrender.com/api/products")
+    fetch(`${API_URL}/products`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.products.length > 0) {
@@ -56,7 +57,7 @@ export default function Product() {
   }, []);
 
   const fetchReviews = (productId) => {
-    fetch(`https://kala-agalya-herbals.onrender.com/api/reviews/${productId}`)
+    fetch(`${API_URL}/reviews/${productId}`)
       .then(res => res.json())
       .then(data => setReviews(data))
       .catch(err => console.error("Error fetching reviews:", err));
@@ -115,7 +116,7 @@ export default function Product() {
     }
 
     try {
-      const res = await fetch("https://kala-agalya-herbals.onrender.com/api/reviews", {
+      const res = await fetch(`${API_URL}/reviews`, {
         method: "POST",
         body: formData
       });
@@ -484,7 +485,7 @@ export default function Product() {
                       {review.image && (
                         <div className="mt-4">
                           <img 
-                            src={`https://kala-agalya-herbals.onrender.com${review.image}`} 
+                            src={`${BASE_URL}${review.image}`} 
                             alt={`Customer review photo for Kala Agalya Herbal Hair Oil by ${review.name}`} 
                             className="w-32 h-32 object-cover rounded-xl border border-yellow-500/20"
                           />
