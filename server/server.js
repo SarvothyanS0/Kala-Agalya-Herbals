@@ -26,19 +26,9 @@ const path = require("path");
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Serve Static Assets in Production
-if (process.env.NODE_ENV === "production") {
-  // Set build folder (Vite uses 'dist')
-  app.use(express.static(path.join(__dirname, "../client/dist")));
-
-  app.use((req, res) => {
-    res.sendFile(path.resolve(__dirname, "../client", "dist", "index.html"));
-  });
-} else {
-  app.get("/", (req, res) => {
-    res.send("Server is running...");
-  });
-}
+app.get("/", (req, res) => {
+  res.send("Server is running...");
+});
 
 // Global error handler
 app.use((err, req, res, next) => {
