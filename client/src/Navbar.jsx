@@ -43,8 +43,9 @@ export default function Navbar() {
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-[#0a0802]/80 backdrop-blur-md text-white shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-yellow-500/20 transition-all duration-300 animate-[slideDown_0.5s_ease-out]">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+    <>
+      <nav className="sticky top-0 z-50 w-full bg-[#0a0802]/80 backdrop-blur-md text-white shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-yellow-500/20 transition-all duration-300 animate-[slideDown_0.5s_ease-out]">
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
 
         <Link to="/" onClick={closeMenu} className="flex items-center gap-3 group transition-all duration-300">
           <img 
@@ -87,7 +88,7 @@ export default function Navbar() {
         </div>
         
         {/* Mobile controls */}
-        <div className="flex items-center gap-4 md:hidden">
+        <div className="flex items-center gap-4 shrink-0 md:hidden">
           <Link to="/profile" onClick={closeMenu} className="relative hover:scale-110 transition-transform">
              <Avatar src={avatar} name={userName} size="sm" />
           </Link>
@@ -117,8 +118,16 @@ export default function Navbar() {
 
       </div>
 
-      {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 z-40 md:hidden transition-all duration-500 ease-in-out ${isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
+      <style>{`
+        @keyframes slideDown {
+          from { transform: translateY(-100%); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+      `}</style>
+    </nav>
+
+    {/* Mobile Menu Overlay */}
+    <div className={`fixed inset-0 z-40 md:hidden transition-all duration-500 ease-in-out ${isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
         {/* Backdrop */}
         <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={closeMenu}></div>
         
@@ -136,13 +145,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes slideDown {
-          from { transform: translateY(-100%); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-      `}</style>
-    </nav>
+    </>
   );
 }
