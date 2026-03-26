@@ -1,0 +1,19 @@
+{
+  "name": "hairoil-app-root",
+  "version": "1.0.0",
+  "description": "Root package to run both client and server",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "npm run server",
+    "server": "node server/server.js",
+    "client": "npm run dev --prefix client",
+    "build": "npm install && npm install --prefix client && npm install --prefix server && npm run build --prefix client",
+    "install-all": "npm install && npm install --prefix client && npm install --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "react-icons": "^5.5.0"
+  }
+}
