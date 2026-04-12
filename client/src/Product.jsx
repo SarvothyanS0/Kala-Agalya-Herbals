@@ -22,8 +22,9 @@ export default function Product() {
     // 1st image -> 100ml, 2nd -> 200ml, 3rd -> 500ml
     const img = images[sizeIdx] || images[0]; 
     if (img.startsWith("http")) return img;
+    if (img.startsWith("data:image")) return img;
     if (img.startsWith("/images/")) return img;
-    return `${BASE_URL}${img}`;
+    return `${BASE_URL.replace(/\/api$/, "")}${img.startsWith("/") ? img : `/${img}`}`;
   };
 
   const products = dbProducts.filter(p => p.isActive).flatMap(prod => 
@@ -485,7 +486,7 @@ export default function Product() {
                       {review.image && (
                         <div className="mt-4">
                           <img 
-                            src={`${BASE_URL}${review.image}`} 
+                            src={review.image.startsWith("data:image") ? review.image : `${BASE_URL.replace(/\/api$/, "")}${review.image.startsWith("/") ? review.image : `/${review.image}`}`} 
                             alt={`Customer review photo for Kala Agalya Herbal Hair Oil by ${review.name}`} 
                             className="w-32 h-32 object-cover rounded-xl border border-yellow-500/20"
                           />

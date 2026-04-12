@@ -101,7 +101,11 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    const avatar = req.file ? `/uploads/users/${req.file.filename}` : undefined;
+    let avatar = undefined;
+    if (req.file) {
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      avatar = `data:${req.file.mimetype};base64,${b64}`;
+    }
 
     const user = await User.create({
       name,
@@ -216,8 +220,10 @@ exports.updateUserProfile = async (req, res) => {
       }
       
       if (req.file) {
-        console.log("Replacing avatar with:", req.file.filename);
-        user.avatar = `/uploads/users/${req.file.filename}`;
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        const b64Avatar = `data:${req.file.mimetype};base64,${b64}`;
+        console.log("Replacing avatar with base64 string");
+        user.avatar = b64Avatar;
       } else {
         console.log("No file received in request");
       }

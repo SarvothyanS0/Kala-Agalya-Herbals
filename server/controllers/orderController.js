@@ -36,7 +36,7 @@ exports.initiatePhonePe = async (req, res) => {
       merchantTransactionId: merchantTransactionId,
       merchantUserId: merchantUserId,
       amount: order.totalAmount * 100, // in paise
-      redirectUrl: `${process.env.CLIENT_URL}/success`, // Redirect here after payment
+      redirectUrl: `${process.env.CLIENT_URL || "https://kalaagalyaherbals.in"}/success?transactionId=${merchantTransactionId}`, // Redirect here after payment
       redirectMode: "REDIRECT",
       callbackUrl: process.env.PHONEPE_CALLBACK_URL,
       paymentInstrument: {
@@ -134,4 +134,53 @@ exports.checkStatus = async (req, res) => {
         console.error("Status Check Error:", error);
         res.status(500).json({ success: false, message: error.message });
     }
+};
+
+/**
+ * Get order by ID (public — for invoice on success page)
+ */
+exports.getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    res.json({ success: true, order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/**
+ * Get logged-in user's orders
+ */
+exports.getUserOrders = async (req, res) => {
+  try {
+    const email = req.user.email;
+    const orders = await Order.find({ "customer.email": email }).sort({ createdAt: -1 });
+    res.json({ success: true, orders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+/**
+ * Customer update order status (Only used for Confirm Delivery)
+ */
+exports.updateOrderStatusCustomer = async (req, res) => {
+  try {
+    const { status } = req.body;
+    if (status !== "Delivered") {
+      return res.status(400).json({ success: false, message: "Customers can only mark orders as Delivered" });
+    }
+
+    const order = await Order.findOne({ _id: req.params.id, "customer.email": req.user.email });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found or unauthorized" });
+
+    order.orderStatus = "Delivered";
+    order.updatedAt = Date.now();
+    await order.save();
+
+    res.json({ success: true, order });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };
