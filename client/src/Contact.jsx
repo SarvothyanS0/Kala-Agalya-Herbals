@@ -14,7 +14,7 @@ export default function Contact() {
       "name": "Kala Agalya Herbals",
       "image": "https://kalaagalyaherbals.com/images/icons/logo.png",
       "telephone": "+91-7338758727",
-      "email": "client-email@example.com",
+      "email": "kalaagalyaherbals@gmail.com",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Ayyapakkam",
@@ -95,8 +95,8 @@ export default function Contact() {
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">Email Us</h3>
             <p className="text-gray-400 mb-6">We'll get back to you within 24h.</p>
-            <a href="mailto:client-email@example.com" className="inline-block text-lg font-bold text-yellow-400 hover:text-green-300 break-all group-hover:scale-105 transition-transform">
-              client-email@example.com
+            <a href="mailto:kalaagalyaherbals@gmail.com" className="inline-block text-lg font-bold text-yellow-400 hover:text-green-300 break-all group-hover:scale-105 transition-transform">
+             kalaagalyaherbals@gmail.com
             </a>
           </div>
 
