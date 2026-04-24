@@ -143,17 +143,6 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
-        {/* Bottom Bar */}
-        <div className="pt-8 mt-8 border-t border-yellow-900/30 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-          <p>{footerContent.copyright}</p>
-          <div className="flex gap-6">
-            {/* Optional: Add extra bottom links here if needed */}
-            <span className="hover:text-yellow-400 cursor-pointer transition-colors">Terms</span>
-            <span className="hover:text-yellow-400 cursor-pointer transition-colors">Privacy</span>
-            <span className="hover:text-yellow-400 cursor-pointer transition-colors">Cookies</span>
-          </div>
-        </div>
       </div>
 
       {/* Floating WhatsApp Button */}
