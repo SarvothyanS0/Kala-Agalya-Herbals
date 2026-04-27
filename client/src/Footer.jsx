@@ -6,7 +6,7 @@ import { FaYoutube, FaInstagram } from "react-icons/fa6";
 const footerContent = {
   about: {
     title: "Kala Agalya Herbals",
-    description: "Experience the ancient power of 18+ rare herbs blended in pure coconut oil. 100% Ayurvedic & Organic care for your hair.",
+    description: "Experience the ancient power of 18+ rare herbs blended in pure coconut oil. 100% Naturopathy & Organic care for your hair.",
   },
   quickLinks: [
     { name: "Contact Information", path: "/contact" },
@@ -59,7 +59,7 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
-              <img src="/images/icons/logo.png" alt="Kala Agalya Herbals - Authentic Ayurvedic Oil Logo" className="h-10 w-auto drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
+              <img src="/images/icons/logo.png" alt="Kala Agalya Herbals - Authentic Naturopathy Oil Logo" className="h-10 w-auto drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
               <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-200 bg-clip-text text-transparent">
                 Kala Agalya Herbals
               </h2>
