@@ -50,7 +50,7 @@ export default function Navbar() {
         <Link to="/" onClick={closeMenu} className="flex items-center gap-3 group transition-all duration-300">
           <img 
             src="/images/icons/logo.png"
-            alt="Kala Agalya Herbals - Premium Ayurvedic Herbal Hair Oil"
+            alt="Kala Agalya Herbals - Premium Naturopathy Herbal Hair Oil"
             className="h-10 w-auto group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]"
           />
           <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-200 tracking-wide group-hover:to-white transition-colors">

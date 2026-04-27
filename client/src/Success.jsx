@@ -87,7 +87,7 @@ function generateInvoiceHTML(order) {
     <div class="header">
       <div class="logo-section">
         <div class="logo-name">🌿 Kala Agalya Herbals</div>
-        <div class="logo-tagline">Pure • Natural • Ayurvedic</div>
+        <div class="logo-tagline">Pure • Natural • Naturopathy</div>
       </div>
       <div class="invoice-badge">
         <div class="invoice-title">INVOICE</div>
@@ -279,7 +279,7 @@ export default function Success() {
             </h1>
             <p className="text-gray-400 mb-3 leading-relaxed">{message}</p>
             <p className="text-gray-500 text-sm mb-8">
-              Your <span className="text-yellow-400 font-medium">Kala Agalya Herbals</span> Ayurvedic Oil is on its way!
+              Your <span className="text-yellow-400 font-medium">Kala Agalya Herbals</span> Naturopathy Oil is on its way!
             </p>
 
             {/* Invoice Button */}

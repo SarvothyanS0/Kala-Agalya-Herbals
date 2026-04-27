@@ -158,7 +158,7 @@ export default function Product() {
     "@type": "Product",
     "name": "Kala Agalya Herbals Herbal Organic Hair Oil",
     "image": "https://kalaagalyaherbals.com/images/bottle-200.png",
-    "description": "Authentic Ayurvedic Herbal Hair Oil with 18+ rare herbs. No chemicals, pure organic care.",
+    "description": "Authentic Naturopathy Herbal Hair Oil with 18+ rare herbs. No chemicals, pure organic care.",
     "brand": {
       "@type": "Brand",
       "name": "Kala Agalya Herbals"
@@ -179,9 +179,9 @@ export default function Product() {
   return (
     <div className="min-h-screen bg-[#0a0802] relative overflow-hidden text-gray-200">
       <Helmet>
-        <title>Shop Kala Agalya Ayurvedic Hair Oil | Natural Growth & Hair Fall Care</title>
-        <meta name="description" content="Choose your perfect size of Kala Agalya Herbals organic hair oil. 100ml, 200ml, and 500ml bottles available. Infused with 18+ Ayurvedic herbs for hair growth." />
-        <meta name="keywords" content="buy herbal hair oil, natural hair growth oil, ayurvedic hair treatment, organic hair oil price, Kala Agalya Herbals shop" />
+        <title>Shop Kala Agalya Naturopathy Hair Oil | Natural Growth & Hair Fall Care</title>
+        <meta name="description" content="Choose your perfect size of Kala Agalya Herbals organic hair oil. 100ml, 200ml, and 500ml bottles available. Infused with 18+ Naturopathy herbs for hair growth." />
+        <meta name="keywords" content="buy herbal hair oil, natural hair growth oil, Naturopathy hair treatment, organic hair oil price, Kala Agalya Herbals shop" />
         <link rel="canonical" href="https://kalaagalyaherbals.com/product" />
         <script type="application/ld+json">
           {JSON.stringify(productSchema)}
@@ -204,7 +204,7 @@ export default function Product() {
             <div className="flex flex-col items-center gap-4 mb-6">
                <img src="/images/icons/logo.png" alt="Kala Agalya Herbals Logo" className="h-20 w-auto drop-shadow-[0_0_20px_rgba(234,179,8,0.5)] mb-2" />
                <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-400 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]">
-                 Kala Agalya Herbals <br/> Ayurvedic Herbal Hair Oil
+                 Kala Agalya Herbals <br/> Naturopathy Herbal Hair Oil
                </h1>
             </div>
             <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto font-light">
@@ -229,7 +229,7 @@ export default function Product() {
       <section className="max-w-7xl mx-auto px-4 py-16 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-5xl font-bold text-white mb-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
-            Choose Your Ayurvedic Hair Growth Bottle
+            Choose Your Naturopathy Hair Growth Bottle
           </h2>
           <p className="text-lg text-gray-400">
             Select the bottle size that suits your herbal hair care needs

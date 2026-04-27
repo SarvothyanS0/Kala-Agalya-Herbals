@@ -7,9 +7,9 @@ const heroSlides = [
     title: "Revitalize Your",
     highlight: "Natural Shine",
     subtitle: "Experience the ancient power of 18+ rare herbs blended in pure coconut oil.",
-    badge: "🌿 100% Ayurvedic & Organic",
+    badge: "🌿 100% Naturopathy & Organic",
     image: "/images/home.png",
-    alt: "Ayurvedic herbal hair oil bottle showcase - Kala Agalya Herbals"
+    alt: "Naturopathy herbal hair oil bottle showcase - Kala Agalya Herbals"
   },
   {
     title: "Strengthen Your",
@@ -69,7 +69,7 @@ export default function Landing() {
     "name": "Kala Agalya Herbals",
     "url": "https://kalaagalyaherbals.com",
     "logo": "https://kalaagalyaherbals.com/images/icons/logo.png",
-    "description": "Premium Ayurvedic Herbal Hair Oil made with 18+ rare herbs for hair growth and hair fall control.",
+    "description": "Premium Naturopathy Herbal Hair Oil made with 18+ rare herbs for hair growth and hair fall control.",
     "contactPoint": {
       "@type": "ContactPoint",
       "telephone": "+91-7338758727",
@@ -80,9 +80,9 @@ export default function Landing() {
   return (
     <div className="overflow-x-hidden relative">
       <Helmet>
-        <title>Kala Agalya Herbals | Best Ayurvedic Herbal Hair Oil for Growth & Hair Fall</title>
-        <meta name="description" content="Experience the ancient power of 18+ rare herbs with Kala Agalya Herbals. Our 100% organic Ayurvedic hair oil strengthens roots, prevents hair fall, and promotes natural shine." />
-        <meta name="keywords" content="herbal hair oil, ayurvedic hair growth oil, natural hair care, stop hair fall, organic hair oil India, Kala Agalya Herbals" />
+        <title>Kala Agalya Herbals | Best Naturopathy Herbal Hair Oil for Growth & Hair Fall</title>
+        <meta name="description" content="Experience the ancient power of 18+ rare herbs with Kala Agalya Herbals. Our 100% organic Naturopathy hair oil strengthens roots, prevents hair fall, and promotes natural shine." />
+        <meta name="keywords" content="herbal hair oil, Naturopathy hair growth oil, natural hair care, stop hair fall, organic hair oil India, Kala Agalya Herbals" />
         <link rel="canonical" href="https://kalaagalyaherbals.com" />
         <script type="application/ld+json">
           {JSON.stringify(schemaData)}
@@ -248,7 +248,7 @@ export default function Landing() {
       {/* Ingredients Scroll */}
       <section id="ingredients" className="py-20 bg-transparent overflow-hidden relative">
         <div className="max-w-7xl mx-auto px-4 mb-12 relative z-10">
-          <h2 className="text-3xl font-bold text-white text-center drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]">Powered by 18+ Rare Ayurvedic Herbs</h2>
+          <h2 className="text-3xl font-bold text-white text-center drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]">Powered by 18+ Rare Naturopathy Herbs</h2>
           <p className="text-center text-gray-400 mt-4 max-w-2xl mx-auto">
              Each bottle is infused with a potent blend of 18+ herbs, carefully selected for their unique hair-nourishing properties.
           </p>
