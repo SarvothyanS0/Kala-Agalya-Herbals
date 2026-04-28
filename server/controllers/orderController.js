@@ -106,7 +106,7 @@ exports.checkStatus = async (req, res) => {
         const sha256 = crypto.createHash("sha256").update(stringToHash).digest("hex");
         const xVerifyHeader = sha256 + "###" + saltIndex;
     
-        const checkUrl = `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`;
+        const checkUrl = `https://kala-agalya-herbals.onrender.com/api/status/${merchantId}/${merchantTransactionId}`;
     
         const response = await fetch(checkUrl, {
           method: "GET",
