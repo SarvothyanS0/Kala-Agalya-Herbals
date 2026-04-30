@@ -35,7 +35,12 @@ export default function Checkout() {
           pincode: form.pincode
         }
       },
-      items: cart,
+      items: cart.map(item => ({
+        name: item.name,
+        size: item.size,
+        price: item.price,
+        quantity: item.quantity
+      })),
       totalAmount: total
     };
 
@@ -65,8 +70,8 @@ export default function Checkout() {
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         {/* Back Button */}
         <div className="mb-8">
-          <Link 
-            to="/cart" 
+          <Link
+            to="/cart"
             className="inline-flex items-center gap-2 text-gray-400 hover:text-yellow-500 transition-colors group px-4 py-2 rounded-lg hover:bg-white/5"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,7 +90,7 @@ export default function Checkout() {
           <div className="lg:col-span-2">
             <div className="bg-[#15120a]/80 backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-yellow-500/10 shadow-2xl">
               <h3 className="text-2xl font-bold text-white mb-8">Shipping Address</h3>
-              
+
               <form id="checkout-form" onSubmit={onSubmit} className="space-y-6">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-gray-500 uppercase ml-1">Full Name</label>
@@ -186,7 +191,7 @@ export default function Checkout() {
           <div className="lg:col-span-1">
             <div className="bg-[#15120a] p-8 rounded-3xl border border-yellow-500/10 shadow-2xl sticky top-24">
               <h3 className="text-2xl font-bold text-white mb-8 border-b border-yellow-500/10 pb-4">Order Summary</h3>
-              
+
               <div className="space-y-4 mb-8 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                 {cart.map((item, idx) => (
                   <div key={idx} className="flex justify-between items-start text-sm">
@@ -198,12 +203,12 @@ export default function Checkout() {
                   </div>
                 ))}
               </div>
-              
+
               <div className="flex justify-between items-center mb-10 pt-4 border-t border-yellow-500/10">
                 <span className="text-xl font-bold text-white">Total</span>
                 <span className="text-3xl font-bold text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]">₹ {total}</span>
               </div>
-              
+
               <button
                 type="submit"
                 form="checkout-form"
