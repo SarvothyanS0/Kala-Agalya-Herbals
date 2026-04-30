@@ -35,7 +35,7 @@ exports.initiatePhonePe = async (req, res) => {
       merchantId: process.env.PHONEPE_MERCHANT_ID,
       merchantTransactionId: merchantTransactionId,
       merchantUserId: merchantUserId,
-      amount: order.totalAmount * 100, // in paise
+      amount: Math.round(order.totalAmount * 100), // in paise
       redirectUrl: `${process.env.CLIENT_URL || "https://kalaagalyaherbals.in"}/success?transactionId=${merchantTransactionId}`, // Redirect here after payment
       redirectMode: "REDIRECT",
       callbackUrl: process.env.PHONEPE_CALLBACK_URL,
@@ -49,7 +49,12 @@ exports.initiatePhonePe = async (req, res) => {
     const sha256 = crypto.createHash("sha256").update(stringToHash).digest("hex");
     const xVerifyHeader = sha256 + "###" + process.env.PHONEPE_SALT_INDEX;
 
-    const response = await fetch(process.env.PHONEPE_API_URL, {
+    let phonePeUrl = process.env.PHONEPE_API_URL;
+    if (!phonePeUrl.endsWith("/pg/v1/pay")) {
+      phonePeUrl = phonePeUrl.replace(/\/$/, "") + "/pg/v1/pay";
+    }
+
+    const response = await fetch(phonePeUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -106,7 +111,13 @@ exports.checkStatus = async (req, res) => {
         const sha256 = crypto.createHash("sha256").update(stringToHash).digest("hex");
         const xVerifyHeader = sha256 + "###" + saltIndex;
     
-        const checkUrl = `https://kala-agalya-herbals.onrender.com/api/status/${merchantId}/${merchantTransactionId}`;
+        let baseUrl = process.env.PHONEPE_API_URL;
+        if (baseUrl.endsWith("/pg/v1/pay")) {
+            baseUrl = baseUrl.replace("/pg/v1/pay", "");
+        } else {
+            baseUrl = baseUrl.replace(/\/$/, "");
+        }
+        const checkUrl = `${baseUrl}/pg/v1/status/${merchantId}/${merchantTransactionId}`;
     
         const response = await fetch(checkUrl, {
           method: "GET",
