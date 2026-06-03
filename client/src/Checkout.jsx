@@ -48,7 +48,7 @@ const TAMIL_NADU = "Tamil Nadu";
 
 function getShippingInfo(state) {
   if (!state) return { amount: 0, label: "Select a state to see shipping", free: false, pending: true };
-  if (state === TAMIL_NADU) return { amount: 0, mrp: 55, label: "FREE Shipping", free: true, pending: false };
+  if (state === TAMIL_NADU) return { amount: 30, label: "₹30", free: false, pending: false };
   if (SOUTH_INDIA_75.includes(state)) return { amount: 75, label: "₹75", free: false, pending: false };
   return { amount: 165, label: "₹165", free: false, pending: false };
 }
@@ -237,11 +237,11 @@ export default function Checkout() {
                     </div>
                     {/* Shipping preview badge under state */}
                     {form.state && (
-                      <div className={`mt-1.5 ml-1 flex items-center gap-1.5 text-[10px] font-bold uppercase ${shipping.free ? 'text-green-400' : 'text-amber-400'}`}>
+                      <div className="mt-1.5 ml-1 flex items-center gap-1.5 text-[10px] font-bold uppercase text-amber-400">
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 11a2 2 0 002 2h8a2 2 0 002-2L19 8" />
                         </svg>
-                        {shipping.free ? "Free Delivery!" : `Shipping: ${shipping.label}`}
+                        {`Shipping: ${shipping.label}`}
                       </div>
                     )}
                   </div>
@@ -297,11 +297,6 @@ export default function Checkout() {
                 </div>
                 {shipping.pending ? (
                   <span className="text-xs text-gray-600 italic">Select state</span>
-                ) : shipping.free ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500 line-through">₹{shipping.mrp}</span>
-                    <span className="text-xs font-extrabold bg-green-500/20 text-green-400 border border-green-500/40 px-2 py-0.5 rounded-full tracking-wide">FREE</span>
-                  </div>
                 ) : (
                   <span className="text-sm font-bold text-amber-400">{shipping.label}</span>
                 )}
@@ -315,14 +310,10 @@ export default function Checkout() {
 
               {/* Shipping note */}
               {form.state && (
-                <div className={`mb-6 px-4 py-3 rounded-xl text-xs font-medium ${
-                  shipping.free
-                    ? "bg-green-500/10 border border-green-500/20 text-green-400"
-                    : "bg-amber-500/10 border border-amber-500/20 text-amber-400"
-                }`}>
-                  {shipping.free
-                    ? `🎉 Lucky! Free delivery to Tamil Nadu (saves ₹${shipping.mrp})`
-                    : form.state && SOUTH_INDIA_75.includes(form.state)
+                <div className="mb-6 px-4 py-3 rounded-xl text-xs font-medium bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                  {form.state === TAMIL_NADU
+                    ? `📦 Delivery to Tamil Nadu: ₹30`
+                    : SOUTH_INDIA_75.includes(form.state)
                       ? `📦 Standard delivery to ${form.state}: ₹75`
                       : `📦 Delivery to ${form.state}: ₹165`
                   }

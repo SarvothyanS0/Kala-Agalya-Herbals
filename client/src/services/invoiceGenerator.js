@@ -5,8 +5,10 @@ export function generateInvoiceHTML(order) {
     day: "2-digit", month: "long", year: "numeric"
   });
   const subtotal = order.items.reduce((s, i) => s + i.price * i.quantity, 0);
-  const gst = Math.round(subtotal * 0.05);
-  const shipping = 0;
+  const gstAmount = Math.round(subtotal * 0.18);
+  const shipping = order.shippingAmount || 0;
+  const crossedTotal = subtotal + gstAmount + shipping;
+  const finalAmount = subtotal + shipping;
   const itemsRows = order.items.map(item => `
     <tr>
       <td style="padding:14px 16px;border-bottom:1px solid #2a2000;font-size:14px;color:#e5e7eb;">${item.name}</td>
@@ -52,9 +54,13 @@ export function generateInvoiceHTML(order) {
     th:last-child, th:nth-child(3), th:nth-child(4) { text-align: right; }
     th:nth-child(2), th:nth-child(3) { text-align: center; }
     .totals { display: flex; justify-content: flex-end; margin-bottom: 40px; }
-    .totals-box { background: #15120a; border: 1px solid #2a1a00; border-radius: 14px; padding: 24px 32px; min-width: 280px; }
-    .total-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; font-size: 13px; color: #9ca3af; }
-    .total-row.grand { padding-top: 14px; margin-top: 8px; border-top: 1px solid #2a1a00; font-size: 18px; font-weight: 900; color: #fbbf24; }
+    .totals-box { background: #15120a; border: 1px solid #2a1a00; border-radius: 14px; padding: 24px 32px; min-width: 300px; }
+    .total-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; color: #9ca3af; border-bottom: 1px solid #1e1500; }
+    .total-row:last-child { border-bottom: none; }
+    .total-row .label { font-weight: 600; }
+    .total-row.crossed-total { color: #6b7280; }
+    .total-row.crossed-total .val { text-decoration: line-through; color: #6b7280; }
+    .total-row.final { padding-top: 14px; margin-top: 6px; border-top: 2px solid #b45309 !important; font-size: 17px; font-weight: 900; color: #fbbf24; border-bottom: none !important; }
     .status-badge { display: inline-block; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; padding: 4px 12px; border-radius: 99px; }
     .payment-id { font-size: 11px; color: #6b7280; margin-top: 8px; word-break: break-all; }
     .footer { text-align: center; padding-top: 32px; border-top: 1px solid #1a1000; }
@@ -129,10 +135,11 @@ export function generateInvoiceHTML(order) {
 
     <div class="totals">
       <div class="totals-box">
-        <div class="total-row"><span>Subtotal</span><span>₹${subtotal.toFixed(2)}</span></div>
-        <div class="total-row"><span>GST (5%)</span><span>₹${gst.toFixed(2)}</span></div>
-        <div class="total-row"><span>Shipping</span><span style="color:#4ade80;">FREE</span></div>
-        <div class="total-row grand"><span>Total</span><span>₹${order.totalAmount.toFixed(2)}</span></div>
+        <div class="total-row"><span class="label">Original Price</span><span class="val">₹${subtotal.toFixed(2)}</span></div>
+        <div class="total-row"><span class="label">GST</span><span class="val" style="color:#f59e0b;">18%</span></div>
+        <div class="total-row"><span class="label">Shipping</span><span class="val" style="color:${shipping === 0 ? '#4ade80' : '#fbbf24'}">${shipping === 0 ? 'FREE' : '₹' + shipping.toFixed(2)}</span></div>
+        <div class="total-row crossed-total"><span class="label">Total Amount</span><span class="val">₹${crossedTotal.toFixed(2)}</span></div>
+        <div class="total-row final"><span class="label">Final Amount</span><span class="val">₹${finalAmount.toFixed(2)}</span></div>
       </div>
     </div>
 
