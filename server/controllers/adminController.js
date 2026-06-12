@@ -202,3 +202,29 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+// One-time Admin Reset (protected by secret key in URL)
+// Usage: GET /api/admin/reset-now/KAH-RESET-2024
+exports.resetAdminNow = async (req, res) => {
+  const SECRET = "KAH-RESET-2024";
+  if (req.params.secretKey !== SECRET) {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
+  try {
+    await Admin.deleteMany({});
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash("Agalya@1996", salt);
+    const admin = new Admin({
+      email: "kalaagalyaherbals@gmail.com",
+      password: hashedPassword,
+      name: "Kala Agalya Herbals",
+      role: "owner"
+    });
+    await admin.save();
+    res.json({
+      success: true,
+      message: "✅ Admin reset successfully! Email: kalaagalyaherbals@gmail.com | Password: Agalya@1996"
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

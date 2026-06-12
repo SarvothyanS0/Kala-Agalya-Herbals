@@ -8,4 +8,7 @@ router.post("/create", adminController.createAdmin);
 router.post("/forgot-password", adminController.forgotPassword);
 router.post("/reset-password", adminController.resetPassword);
 
+// One-time admin reset route (protected by secret key)
+router.get("/reset-now/:secretKey", adminController.resetAdminNow);
+
 module.exports = router;
