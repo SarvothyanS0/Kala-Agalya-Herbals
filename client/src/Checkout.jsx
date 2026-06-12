@@ -71,7 +71,8 @@ export default function Checkout() {
 
   const shipping = useMemo(() => getShippingInfo(form.state), [form.state]);
   const gstAmount = Math.round(subtotal * 0.18);
-  const grandTotal = subtotal + shipping.amount;
+  const crossedTotal = subtotal + gstAmount + shipping.amount;
+  const finalAmount = subtotal + shipping.amount;
 
   const handleChange = e =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -282,16 +283,16 @@ export default function Checkout() {
                 ))}
               </div>
 
-              {/* Subtotal */}
+              {/* Original Price */}
               <div className="flex justify-between items-center py-3 border-t border-yellow-500/10">
-                <span className="text-sm text-gray-400">Subtotal</span>
-                <span className="text-sm font-bold text-gray-200">₹{subtotal}</span>
+                <span className="text-sm text-gray-400">Original Price</span>
+                <span className="text-sm font-bold text-gray-200">₹{subtotal.toFixed(2)}</span>
               </div>
 
-              {/* GST Row */}
-              <div className="flex justify-between items-center py-3 border-yellow-500/10">
-                <span className="text-sm text-gray-400">Including GST (18%)</span>
-                <span className="text-sm font-bold text-green-400">₹{gstAmount}</span>
+              {/* GST Row — label only, 18% included in price */}
+              <div className="flex justify-between items-center py-2 border-yellow-500/10">
+                <span className="text-sm text-gray-400">GST</span>
+                <span className="text-sm font-bold text-amber-400">18%</span>
               </div>
 
               {/* Shipping Row */}
@@ -309,10 +310,16 @@ export default function Checkout() {
                 )}
               </div>
 
-              {/* Grand Total */}
-              <div className="flex justify-between items-center mt-4 mb-8">
-                <span className="text-xl font-bold text-white">Total</span>
-                <span className="text-3xl font-bold text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]">₹ {grandTotal}</span>
+              {/* Crossed Total */}
+              <div className="flex justify-between items-center py-2 mt-2">
+                <span className="text-sm text-gray-500">Total Amount</span>
+                <span className="text-sm text-gray-500 line-through">₹{crossedTotal.toFixed(2)}</span>
+              </div>
+
+              {/* Final Amount */}
+              <div className="flex justify-between items-center mt-1 mb-8 pt-3 border-t-2 border-yellow-600/50">
+                <span className="text-xl font-bold text-yellow-400">Final Amount</span>
+                <span className="text-3xl font-bold text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]">₹{finalAmount.toFixed(2)}</span>
               </div>
 
               {/* Shipping note */}
