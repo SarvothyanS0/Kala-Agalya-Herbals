@@ -70,6 +70,7 @@ export default function Checkout() {
   });
 
   const shipping = useMemo(() => getShippingInfo(form.state), [form.state]);
+  const gstAmount = Math.round(subtotal * 0.18);
   const grandTotal = subtotal + shipping.amount;
 
   const handleChange = e =>
@@ -285,6 +286,12 @@ export default function Checkout() {
               <div className="flex justify-between items-center py-3 border-t border-yellow-500/10">
                 <span className="text-sm text-gray-400">Subtotal</span>
                 <span className="text-sm font-bold text-gray-200">₹{subtotal}</span>
+              </div>
+
+              {/* GST Row */}
+              <div className="flex justify-between items-center py-3 border-yellow-500/10">
+                <span className="text-sm text-gray-400">Including GST (18%)</span>
+                <span className="text-sm font-bold text-green-400">₹{gstAmount}</span>
               </div>
 
               {/* Shipping Row */}

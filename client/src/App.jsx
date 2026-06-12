@@ -19,6 +19,7 @@ import UserProfile from "./UserProfile";
 import MyOrders from "./MyOrders";
 import ResetPassword from "./ResetPassword";
 import AuthRoute from "./AuthRoute";
+import AdminRoute from "./AdminRoute";
 import AdminReports from "./AdminReports";
 import AdminUsers from "./AdminUsers";
 import AdminReviews from "./AdminReviews";
@@ -109,13 +110,13 @@ function Layout() {
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-          <Route path="/admin/orders/:id" element={<AdminOrderDetail />} />
-          <Route path="/admin/products" element={<AdminProducts />} />
-          <Route path="/admin/reports" element={<AdminReports />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/reviews" element={<AdminReviews />} />
+          <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+          <Route path="/admin/orders/:id" element={<AdminRoute><AdminOrderDetail /></AdminRoute>} />
+          <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+          <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+          <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
         </Routes>
       </main>
       {(!isAdminRoute && !isAuthRoute) && <Footer />}
