@@ -15,21 +15,21 @@ const resetAdmin = async () => {
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash("12345", salt);
+    const hashedPassword = await bcrypt.hash("Agalya@1996", salt);
 
     // Create new admin
     const admin = new Admin({
-      email: "admin@kalaagalya.com",
+      email: "kalaagalyaherbals@gmail.com",
       password: hashedPassword,
-      name: "Kala Agalya",
+      name: "Kala Agalya Herbals",
       role: "owner"
     });
 
     await admin.save();
     console.log("✅ Admin created successfully!");
-    console.log("Name: Kala Agalya");
-    console.log("Email: admin@kalaagalya.com");
-    console.log("Password: 12345");
+    console.log("Name: Kala Agalya Herbals");
+    console.log("Email: kalaagalyaherbals@gmail.com");
+    console.log("Password: Agalya@1996");
     console.log("\nPlease use these credentials to login.");
 
     mongoose.connection.close();
