@@ -70,7 +70,9 @@ export default function MyOrders() {
   }).filter(o => {
     if (!search.trim()) return true;
     const q = search.toLowerCase();
-    return o._id.toLowerCase().includes(q) || o.items.some(i => i.name.toLowerCase().includes(q));
+    const orderIdMatch = o.orderId && o.orderId.toLowerCase().includes(q);
+    const idMatch = o._id.toLowerCase().includes(q);
+    return orderIdMatch || idMatch || o.items.some(i => i.name.toLowerCase().includes(q));
   });
 
   const totalSpent = orders.filter(o => o.paymentStatus === "PAID").reduce((s, o) => s + o.totalAmount, 0);
@@ -169,7 +171,7 @@ export default function MyOrders() {
               const st = STATUS_MAP[order.orderStatus] || STATUS_MAP["Pending"];
               const currentLvl = st.level;
               const isExpanded = expandedId === order._id;
-              const invoiceNo = `KAH-${order._id.slice(-8).toUpperCase()}`;
+              const invoiceNo = `KAH-${order.orderId || order._id.slice(-8).toUpperCase()}`;
               const orderDate = new Date(order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
               const totalQty = order.items.reduce((s, i) => s + i.quantity, 0);
 
@@ -304,7 +306,7 @@ export default function MyOrders() {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-4 border-t border-yellow-900/10">
                           <div>
                             <div className="text-[9px] font-bold text-gray-600 uppercase tracking-widest mb-1">Order ID</div>
-                            <div className="text-xs text-gray-400 font-mono break-all">{order._id}</div>
+                            <div className="text-xs text-gray-400 font-mono break-all">{order.orderId || order._id}</div>
                           </div>
                           <div>
                             <div className="text-[9px] font-bold text-gray-600 uppercase tracking-widest mb-1">Payment</div>

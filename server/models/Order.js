@@ -33,7 +33,28 @@ const orderSchema = new mongoose.Schema({
     default: "Pending" 
   },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
+  orderId: { type: String, unique: true }
+});
+
+async function generateUniqueOrderId() {
+  const Order = mongoose.model("Order");
+  let unique = false;
+  let orderId = "";
+  while (!unique) {
+    orderId = Math.floor(10000000 + Math.random() * 90000000).toString();
+    const existing = await Order.findOne({ orderId });
+    if (!existing) {
+      unique = true;
+    }
+  }
+  return orderId;
+}
+
+orderSchema.pre("save", async function () {
+  if (!this.orderId) {
+    this.orderId = await generateUniqueOrderId();
+  }
 });
 
 module.exports = mongoose.model("Order", orderSchema);

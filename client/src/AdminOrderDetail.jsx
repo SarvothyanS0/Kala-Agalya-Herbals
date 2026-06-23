@@ -107,9 +107,9 @@ export default function AdminOrderDetail() {
             <span className="relative z-10">Back to Orders</span>
           </Link>
           <div>
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Order Transaction ID</p>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Order ID</p>
             <p className="font-mono text-sm text-yellow-400 bg-yellow-900/20 px-3 py-1 rounded-lg border border-yellow-500/10 inline-block font-bold">
-              {order._id.slice(-8).toUpperCase()}
+              {order.orderId || order._id.slice(-8).toUpperCase()}
             </p>
           </div>
         </div>

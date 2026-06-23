@@ -89,7 +89,7 @@ export default function AdminReports() {
       const address = `${order.customer.address.door}, ${order.customer.address.street}, ${order.customer.address.landmark || ""}`;
 
       return [
-        order._id,
+        order.orderId || order._id,
         order.customer.name,
         order.customer.phone,
         address,
@@ -385,7 +385,7 @@ export default function AdminReports() {
                   {report.orders.map((order) => (
                     <tr key={order._id} className="hover:bg-yellow-500/[0.02] transition-colors group">
                       <td className="px-6 sm:px-8 py-5 text-xs font-mono text-gray-500 group-hover:text-yellow-400 transition-colors whitespace-nowrap">
-                        {order._id.slice(-8).toUpperCase()}
+                        {order.orderId || order._id.slice(-8).toUpperCase()}
                       </td>
                       <td className="px-6 sm:px-8 py-5 text-sm text-gray-300 font-bold whitespace-nowrap">{order.customer.name}</td>
                       <td className="px-6 sm:px-8 py-5 text-sm font-bold text-white font-mono whitespace-nowrap">

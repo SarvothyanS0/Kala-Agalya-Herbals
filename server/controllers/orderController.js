@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const crypto = require("crypto");
+const mongoose = require("mongoose");
 
 /**
  * Standard Order Creation (from Checkout)
@@ -208,7 +209,12 @@ exports.getOrderById = async (req, res) => {
   try {
     const rawId = req.params.id;
     const orderId = rawId.startsWith("T") ? rawId.slice(1) : rawId;
-    const order = await Order.findById(orderId);
+    let order;
+    if (mongoose.Types.ObjectId.isValid(orderId)) {
+      order = await Order.findById(orderId);
+    } else {
+      order = await Order.findOne({ orderId: orderId });
+    }
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
     res.json({ success: true, order });
   } catch (err) {

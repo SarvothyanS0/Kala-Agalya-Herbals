@@ -128,7 +128,7 @@ export default function AdminOrders() {
                   filteredOrders.map((order) => (
                     <tr key={order._id} className="hover:bg-yellow-500/[0.02] transition-colors group">
                       <td className="px-6 py-4 text-xs font-mono text-gray-500 group-hover:text-yellow-400 transition-colors whitespace-nowrap">
-                        {order._id.slice(-8).toUpperCase()}
+                        {order.orderId || order._id.slice(-8).toUpperCase()}
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-white whitespace-nowrap">
                         {order.customer.name}

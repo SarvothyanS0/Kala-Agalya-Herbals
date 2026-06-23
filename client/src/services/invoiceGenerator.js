@@ -1,6 +1,6 @@
 // ─── Invoice PDF Generator (Shared Utility) ──────────────────────────────────
 export function generateInvoiceHTML(order) {
-  const invoiceNo = `KAH-${order._id.toString().slice(-8).toUpperCase()}`;
+  const invoiceNo = `KAH-${order.orderId || order._id.toString().slice(-8).toUpperCase()}`;
   const date = new Date(order.createdAt).toLocaleDateString("en-IN", {
     day: "2-digit", month: "long", year: "numeric"
   });
@@ -94,7 +94,7 @@ export function generateInvoiceHTML(order) {
         <div class="invoice-title">INVOICE</div>
         <div class="invoice-no">#${invoiceNo}</div>
         <div class="invoice-date">Date: ${date}</div>
-        <div class="invoice-date" style="margin-top:3px;font-size:10px;color:#6b7280;">Order ID: ${order._id}</div>
+        <div class="invoice-date" style="margin-top:3px;font-size:10px;color:#6b7280;">Order ID: ${order.orderId || order._id}</div>
         <div style="margin-top:10px;">
           <span class="status-badge">✓ PAID</span>
         </div>
