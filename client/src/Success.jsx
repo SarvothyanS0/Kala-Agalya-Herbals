@@ -39,6 +39,7 @@ export default function Success() {
           setStatus("success");
           setMessage("Your payment was successful! We are preparing your order.");
           localStorage.removeItem("lastOrderId");
+          localStorage.removeItem("lastOrderTotal");
         } else {
           setStatus("failed");
           setMessage(data.message || "Payment was not completed. Please try again.");

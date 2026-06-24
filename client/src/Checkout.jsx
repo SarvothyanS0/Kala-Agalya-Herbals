@@ -105,6 +105,7 @@ export default function Checkout() {
       const data = await createOrder(orderData);
       if (data.success && data.order && data.order._id) {
         localStorage.setItem("lastOrderId", data.order._id);
+        localStorage.setItem("lastOrderTotal", finalAmount);
         navigate("/payment");
       } else {
         console.error("Order creation returned no ID:", data);

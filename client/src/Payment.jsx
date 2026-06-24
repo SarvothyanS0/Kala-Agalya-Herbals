@@ -5,7 +5,8 @@ import { API_URL } from "./services/api";
 
 export default function Payment() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = Number(localStorage.getItem("lastOrderTotal")) || subtotal;
   const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
 
