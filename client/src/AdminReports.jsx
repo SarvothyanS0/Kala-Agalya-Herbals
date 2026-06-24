@@ -83,24 +83,30 @@ export default function AdminReports() {
 
     const rows = report.orders.map((order) => {
       const products = order.items
-        .map((item) => `${item.name} (${item.size}) x${item.quantity}`)
-        .join("; ");
+        ? order.items
+            .map((item) => `${item.name || "Unknown Product"} (${item.size || "N/A"}) x${item.quantity || 0}`)
+            .join("; ")
+        : "";
 
-      const address = `${order.customer.address.door}, ${order.customer.address.street}, ${order.customer.address.landmark || ""}`;
+      const door = order.customer?.address?.door || "";
+      const street = order.customer?.address?.street || "";
+      const landmark = order.customer?.address?.landmark || "";
+      const addressParts = [door, street, landmark].filter(Boolean);
+      const address = addressParts.join(", ") || "N/A";
 
       return [
         order.orderId || order._id,
-        order.customer.name,
-        order.customer.phone,
+        order.customer?.name || "N/A",
+        order.customer?.phone || "N/A",
         address,
-        order.customer.address.district,
-        order.customer.address.state,
-        order.customer.address.pincode,
+        order.customer?.address?.district || "N/A",
+        order.customer?.address?.state || "N/A",
+        order.customer?.address?.pincode || "N/A",
         products,
-        order.totalAmount,
-        order.paymentStatus,
-        order.orderStatus,
-        new Date(order.createdAt).toLocaleDateString(),
+        order.totalAmount || 0,
+        order.paymentStatus || "N/A",
+        order.orderStatus || "N/A",
+        order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A",
       ];
     });
 
@@ -159,11 +165,11 @@ export default function AdminReports() {
               className="w-full px-4 py-3 bg-[#0d0b03] border border-yellow-900/40 rounded-xl focus:ring-1 focus:ring-yellow-500/50 outline-none text-white transition-all shadow-inner text-sm"
             />
           </div>
-          <div className="flex items-end">
+          <div className="flex items-end gap-3">
             <button
               onClick={fetchReport}
               disabled={loading}
-              className="w-full py-3.5 bg-yellow-600 text-black rounded-xl font-bold hover:bg-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] transition-all uppercase tracking-wider relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed text-xs"
+              className="flex-1 py-3.5 bg-yellow-600 text-black rounded-xl font-bold hover:bg-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] transition-all uppercase tracking-wider relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed text-xs"
             >
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               <span className="relative z-10 flex items-center justify-center gap-2">
@@ -183,6 +189,15 @@ export default function AdminReports() {
                 )}
               </span>
             </button>
+            {report && (
+              <button
+                onClick={downloadExcel}
+                className="flex-1 py-3.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all uppercase tracking-wider text-xs flex items-center justify-center gap-2 group"
+              >
+                <svg className="w-4 h-4 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                Download CSV
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -232,11 +247,13 @@ export default function AdminReports() {
               {report.bestSelling && report.bestSelling.length > 0 ? (
                 report.bestSelling.map((product, index) => {
                   // Extract size from name like "HERBAL OIL - 100ML"
-                  const nameParts = product.name.split(" - ");
-                  const productName = nameParts[0] || product.name;
+                  const nameParts = (product.name || "").split(" - ");
+                  const productName = nameParts[0] || product.name || "Unknown Product";
                   const bottleSize = nameParts[1] || "";
                   const maxQty = report.bestSelling[0]?.quantity || 1;
-                  const barWidth = Math.max((product.quantity / maxQty) * 100, 8);
+                  const quantity = product.quantity || 0;
+                  const revenue = product.revenue || 0;
+                  const barWidth = Math.max((quantity / maxQty) * 100, 8);
 
                   return (
                     <div
@@ -265,12 +282,12 @@ export default function AdminReports() {
                           {/* Pieces Sold */}
                           <div className="bg-[#0d0b03] border border-yellow-900/30 rounded-xl px-5 py-3 text-center min-w-[100px]">
                             <p className="text-[9px] text-gray-500 uppercase tracking-widest font-bold mb-1">Pieces Sold</p>
-                            <p className="text-2xl font-black text-yellow-400 font-mono leading-none">{product.quantity}</p>
+                            <p className="text-2xl font-black text-yellow-400 font-mono leading-none">{quantity}</p>
                           </div>
                           {/* Revenue */}
                           <div className="bg-[#0d0b03] border border-emerald-900/30 rounded-xl px-5 py-3 text-center min-w-[120px]">
                             <p className="text-[9px] text-gray-500 uppercase tracking-widest font-bold mb-1">Revenue</p>
-                            <p className="text-2xl font-black text-emerald-400 font-mono leading-none">₹{product.revenue.toFixed(0)}</p>
+                            <p className="text-2xl font-black text-emerald-400 font-mono leading-none">₹{revenue.toFixed(0)}</p>
                           </div>
                         </div>
                       </div>
@@ -310,9 +327,11 @@ export default function AdminReports() {
                 <tbody className="divide-y divide-yellow-900/10">
                   {report.bestSelling && report.bestSelling.length > 0 ? (
                     report.bestSelling.map((product, index) => {
-                      const nameParts = product.name.split(" - ");
-                      const productName = nameParts[0] || product.name;
+                      const nameParts = (product.name || "").split(" - ");
+                      const productName = nameParts[0] || product.name || "Unknown Product";
                       const bottleSize = nameParts[1] || "-";
+                      const quantity = product.quantity || 0;
+                      const revenue = product.revenue || 0;
                       
                       return (
                         <tr key={index} className="hover:bg-yellow-500/[0.02] transition-colors group">
@@ -324,12 +343,12 @@ export default function AdminReports() {
                           </td>
                           <td className="px-6 py-4 text-center">
                             <span className="bg-[#0d0b03] border border-yellow-900/30 rounded-lg px-4 py-1.5 text-yellow-400 font-mono text-sm font-bold inline-block min-w-[60px]">
-                              {product.quantity}
+                              {quantity}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-right">
                             <span className="text-emerald-400 font-mono font-bold text-sm bg-emerald-900/10 border border-emerald-900/30 rounded-lg px-4 py-1.5 inline-block min-w-[100px] text-right">
-                              ₹{product.revenue.toFixed(0)}
+                              ₹{revenue.toFixed(0)}
                             </span>
                           </td>
                         </tr>
@@ -385,11 +404,11 @@ export default function AdminReports() {
                   {report.orders.map((order) => (
                     <tr key={order._id} className="hover:bg-yellow-500/[0.02] transition-colors group">
                       <td className="px-6 sm:px-8 py-5 text-xs font-mono text-gray-500 group-hover:text-yellow-400 transition-colors whitespace-nowrap">
-                        {order.orderId || order._id.slice(-8).toUpperCase()}
+                        {order.orderId || (order._id && order._id.slice(-8).toUpperCase()) || "N/A"}
                       </td>
-                      <td className="px-6 sm:px-8 py-5 text-sm text-gray-300 font-bold whitespace-nowrap">{order.customer.name}</td>
+                      <td className="px-6 sm:px-8 py-5 text-sm text-gray-300 font-bold whitespace-nowrap">{order.customer?.name || "N/A"}</td>
                       <td className="px-6 sm:px-8 py-5 text-sm font-bold text-white font-mono whitespace-nowrap">
-                        ₹{order.totalAmount.toFixed(0)}
+                        ₹{(order.totalAmount || 0).toFixed(0)}
                       </td>
                       <td className="px-6 sm:px-8 py-5 whitespace-nowrap">
                         <span

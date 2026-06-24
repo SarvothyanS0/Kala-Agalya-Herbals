@@ -130,7 +130,7 @@ exports.getReports = async (req, res) => {
     
     const orders = await Order.find(query).sort({ createdAt: -1 });
     
-    const totalSales = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const totalSales = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
     
     // Get all active products to ensure even 0-sale products are listed
     const allProducts = await Product.find({ isActive: true });
@@ -142,21 +142,27 @@ exports.getReports = async (req, res) => {
     allProducts.forEach(prod => {
       if (prod.sizes && prod.sizes.length > 0) {
         prod.sizes.forEach(size => {
-          const key = `${prod.name} - ${size.size}`;
+          const key = `${prod.name || "Unknown Product"} - ${size.size || "N/A"}`;
           productSales[key] = { name: key, quantity: 0, revenue: 0 };
         });
       }
     });
 
     orders.forEach(order => {
-      order.items.forEach(item => {
-        const key = `${item.name} - ${item.size}`;
-        if (!productSales[key]) {
-          productSales[key] = { name: key, quantity: 0, revenue: 0 };
-        }
-        productSales[key].quantity += item.quantity;
-        productSales[key].revenue += item.price * item.quantity;
-      });
+      if (order.items && Array.isArray(order.items)) {
+        order.items.forEach(item => {
+          const name = item.name || "Unknown Product";
+          const size = item.size || "N/A";
+          const key = `${name} - ${size}`;
+          if (!productSales[key]) {
+            productSales[key] = { name: key, quantity: 0, revenue: 0 };
+          }
+          const qty = Number(item.quantity) || 0;
+          const price = Number(item.price) || 0;
+          productSales[key].quantity += qty;
+          productSales[key].revenue += price * qty;
+        });
+      }
     });
     
     const bestSelling = Object.values(productSales)
