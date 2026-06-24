@@ -98,7 +98,7 @@ export default function Checkout() {
         quantity: item.quantity
       })),
       shippingAmount: shipping.amount,
-      totalAmount: grandTotal
+      totalAmount: finalAmount
     };
 
     try {
