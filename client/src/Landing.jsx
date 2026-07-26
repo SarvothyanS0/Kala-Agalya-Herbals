@@ -118,7 +118,7 @@ function IngredientCard({ item }) {
 }
 
 /* ── AutoManualScroll (Horizontal Auto + Manual Touch/Mouse Scroll) ── */
-function AutoManualScroll({ children, speed = 1.5, className = "" }) {
+function AutoManualScroll({ children, speed = 2.0, className = "" }) {
   const containerRef = useRef(null);
   const isInteractingRef = useRef(false);
   const animFrameRef = useRef(null);
@@ -129,11 +129,11 @@ function AutoManualScroll({ children, speed = 1.5, className = "" }) {
 
     let lastTime = performance.now();
     const scrollStep = (now) => {
-      const delta = Math.min(now - lastTime, 32); // cap frame delta
+      const delta = Math.min((now - lastTime) / 16.67, 2); // Normalized frame multiplier (~1.0 at 60fps)
       lastTime = now;
 
       if (!isInteractingRef.current && el) {
-        el.scrollLeft += (delta * 0.14 * speed); // Fast & smooth continuous auto-scroll
+        el.scrollLeft += (1.8 * speed * delta); // High-speed 60fps continuous auto-scroll
         if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 2) {
           el.scrollLeft = 0;
         }
@@ -186,10 +186,10 @@ function AutoManualScroll({ children, speed = 1.5, className = "" }) {
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
       </button>
 
-      {/* Scrollable Row (Hidden Scrollbar + Touch Swipe + Trackpad + Fast Auto-Scroll) */}
+      {/* Scrollable Row (Hidden Scrollbar + Instant 60fps Auto-Scroll) */}
       <div
         ref={containerRef}
-        className={`flex gap-5 overflow-x-auto scrollbar-none no-scrollbar py-4 px-2 scroll-smooth ${className}`}
+        className={`flex gap-5 overflow-x-auto scrollbar-none no-scrollbar py-4 px-2 ${className}`}
         style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x" }}
       >
         {children}
