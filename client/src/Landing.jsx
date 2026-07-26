@@ -725,7 +725,7 @@ export default function Landing() {
           </div>
 
           {loadingProducts ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {skeletonSizes.map((ml) => (
                 <div key={ml} className="bg-white rounded-3xl p-6 border border-yellow-500/10 shadow-card">
                   <div className="h-64 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] rounded-2xl mb-5 skeleton-shimmer" />
@@ -736,7 +736,7 @@ export default function Landing() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {products.map((product, idx) => (
                 <ProductCard
                   key={product.id}
@@ -890,11 +890,11 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {whyCards.map((item, i) => (
               <div
                 key={i}
-                className={`scroll-animate scroll-delay-${(i % 3) + 1} group relative h-[380px] rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover border border-yellow-500/10 bg-white`}
+                className={`scroll-animate scroll-delay-${(i % 2) + 1} group relative h-[380px] rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover border border-yellow-500/10 bg-white`}
               >
                 <div className="absolute inset-0 h-3/4 overflow-hidden flex items-center justify-center bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB]">
                   <img
