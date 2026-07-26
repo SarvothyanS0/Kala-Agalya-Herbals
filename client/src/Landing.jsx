@@ -95,6 +95,9 @@ export default function Landing() {
   const [reviewImage, setReviewImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Static placeholder cards shown immediately while API wakes up
+  const skeletonSizes = ["100 ml", "200 ml", "500 ml"];
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -395,9 +398,39 @@ export default function Landing() {
             </p>
           </div>
 
+          {/* Show skeleton cards immediately while API wakes up, then replace with real cards */}
           {loadingProducts ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="w-16 h-16 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+              {skeletonSizes.map((size, index) => (
+                <div
+                  key={size}
+                  className="group relative bg-white rounded-3xl overflow-hidden border border-yellow-500/10 shadow-md"
+                  style={{ animation: `fadeInUp 0.4s ease-out ${index * 0.1}s both` }}
+                >
+                  {/* Image placeholder */}
+                  <div className="h-72 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-32 h-44 bg-yellow-500/10 rounded-2xl animate-pulse flex items-center justify-center">
+                        <img src="/images/icons/logo.webp" alt="loading" className="h-28 w-auto opacity-20" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Info placeholder */}
+                  <div className="p-7">
+                    <div className="text-center mb-5">
+                      <h3 className="text-3xl font-black text-[#2C2921] mb-1 font-soria">{size}</h3>
+                      <div className="h-3 bg-yellow-500/10 rounded-full animate-pulse w-3/4 mx-auto mt-2"></div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 mb-6">
+                      <div className="h-12 w-28 bg-yellow-500/10 rounded-xl animate-pulse"></div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="h-12 bg-[#F5F2EB] rounded-xl animate-pulse"></div>
+                      <div className="h-12 bg-yellow-500/20 rounded-xl animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-20 text-[#6C685F] bg-white rounded-3xl border border-yellow-500/10 shadow-sm font-playfair">
