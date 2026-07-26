@@ -444,7 +444,7 @@ export default function Landing() {
     image: "https://kalaagalyaherbals.com/images/Home%201.webp",
     description: "100% Naturopathy herbal hair oil with 18+ rare herbs for hair growth and hair fall control.",
     brand: { "@type": "Brand", name: "Kala Agalya Herbals" },
-    aggregateRating: { "@type": "AggregateRating", ratingValue: "4.9", reviewCount: "5000" },
+    aggregateRating: { "@type": "AggregateRating", ratingValue: "4.9", reviewCount: "20000" },
     offers: { "@type": "AggregateOffer", offerCount: "3", priceCurrency: "INR", lowPrice: "199", highPrice: "899" }
   };
 
@@ -579,7 +579,7 @@ export default function Landing() {
       >
         <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-yellow-500/10">
           <StatCounter value="100%"  label="Natural Ingredients" />
-          <StatCounter value="5000+" label="Happy Customers" />
+          <StatCounter value="20000+" label="Happy Customers" />
           <StatCounter value="18+"   label="Rare Herbs" />
           <StatCounter value="4.9"   label="Star Rating" />
         </div>

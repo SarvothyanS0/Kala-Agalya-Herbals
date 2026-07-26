@@ -4,11 +4,10 @@ import { Helmet } from "react-helmet-async";
 import { FaWhatsapp, FaInstagram, FaYoutube } from "react-icons/fa6";
 
 const timeline = [
-  { year: "2018", event: "Founded in Chennai by herbalist Kala Agalya with a traditional family recipe." },
-  { year: "2020", event: "Expanded to 18+ rare herbs, sourced directly from Tamil Nadu farms." },
-  { year: "2022", event: "Reached 1,000+ happy customers with zero harmful chemicals." },
-  { year: "2024", event: "Launched pan-India delivery and crossed 5,000+ happy customers." },
-  { year: "2025", event: "Recognised as a leading Naturopathy hair oil brand across South India." },
+  { year: "2024", event: "Founded in Chennai by herbalist Kala Agalya with a traditional 18+ rare herb recipe." },
+  { year: "2024", event: "Expanded organic farming partnerships across Tamil Nadu." },
+  { year: "2025", event: "Reached 10,000+ happy customers with zero harmful chemicals." },
+  { year: "2026", event: "Crossed 20,000+ happy customers with pan-India delivery." },
 ];
 
 const values = [
@@ -21,7 +20,7 @@ const values = [
 ];
 
 const stats = [
-  { value: "5000+", label: "Happy Customers" },
+  { value: "20000+", label: "Happy Customers" },
   { value: "18+",   label: "Rare Herbs" },
   { value: "100%",  label: "Organic Formula" },
   { value: "4.9★",  label: "Average Rating" },
@@ -188,7 +187,7 @@ export default function About() {
             </div>
             {/* Floating badge */}
             <div className="absolute -bottom-4 -right-4 bg-yellow-500 text-black font-bold py-3 px-5 rounded-2xl shadow-gold text-sm font-grotesk">
-              Since 2018 🌿
+              Since 2024 🌿
             </div>
           </div>
 
@@ -199,7 +198,7 @@ export default function About() {
             </span>
             <h2 id="story-heading" className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1C1A16] mb-5 font-soria leading-tight">
               From a Kitchen <br className="hidden sm:block"/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">to 5,000+ Homes</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">to 20,000+ Homes</span>
             </h2>
             <div className="space-y-4 text-[#4A473E] font-inter leading-relaxed">
               <p>
