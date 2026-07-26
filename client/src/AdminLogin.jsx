@@ -104,7 +104,7 @@ export default function AdminLogin() {
   };
 
   // Shared input style
-  const inputClass = "w-full pl-12 pr-4 py-4 bg-[#0d0b03] text-yellow-100 border border-yellow-900/50 rounded-xl focus:ring-0 focus:border-yellow-500 transition-all placeholder-gray-700 shadow-inner";
+  const inputClass = "w-full px-4 py-3.5 bg-[#0d0b03] text-yellow-100 border border-yellow-900/50 rounded-xl focus:ring-0 focus:border-yellow-500 transition-all placeholder-gray-700 shadow-inner";
   const labelClass = "block text-xs font-semibold text-yellow-500/80 uppercase tracking-wider mb-2 ml-1";
 
   return (
@@ -115,11 +115,14 @@ export default function AdminLogin() {
 
       <div className="relative bg-[#15120a] border border-yellow-900/40 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] w-full max-w-md p-8 backdrop-blur-xl">
         <div className="text-center mb-10">
-          <div className="relative inline-block mb-6">
-             <div className="absolute inset-0 bg-yellow-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
-             <div className="relative bg-gradient-to-br from-yellow-900 to-[#0d0b03] w-24 h-24 rounded-2xl flex items-center justify-center shadow-2xl border border-yellow-500/30 transform rotate-3 hover:rotate-6 transition-transform duration-500 p-4">
-                <img src="/images/icons/logo.webp" alt="Kala Agalya Herbals" className="w-full h-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-             </div>
+          <div className="relative inline-block mb-4">
+             <img
+               src="/images/icons/logo.png"
+               alt="Kala Agalya Herbals"
+               className="h-16 w-auto mx-auto hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_15px_rgba(234,179,8,0.35)]"
+               width="64"
+               height="64"
+             />
           </div>
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 tracking-wide mb-2">
             {forgotMode ? "Reset Password" : "Admin Access"}
@@ -140,28 +143,14 @@ export default function AdminLogin() {
               <div className="space-y-4">
                 <div className="group">
                   <label className={labelClass}>Email Address</label>
-                  <div className="relative">
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                      className={inputClass} placeholder="admin@kalaagalya.com" required />
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                      </svg>
-                    </div>
-                  </div>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                    className={inputClass} placeholder="admin@kalaagalya.com" required />
                 </div>
 
                 <div className="group">
                   <label className={labelClass}>Password</label>
-                  <div className="relative">
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                      className={inputClass} placeholder="••••••••" required />
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                    </div>
-                  </div>
+                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                    className={inputClass} placeholder="••••••••" required />
                 </div>
               </div>
 
