@@ -411,3 +411,18 @@
   box-shadow: 0 4px 30px rgba(0,0,0,0.08) !important;
   border-bottom-color: rgba(217,119,6,0.15) !important;
 }
+
+/* Inside horizontal scrollbar styling for tables */
+.custom-admin-table-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.custom-admin-table-scroll::-webkit-scrollbar-track {
+  background: #FDFBF7;
+}
+.custom-admin-table-scroll::-webkit-scrollbar-thumb {
+  background: rgba(217, 119, 6, 0.35);
+  border-radius: 4px;
+}
+.custom-admin-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 119, 6, 0.7);
+}

@@ -112,8 +112,8 @@ export default function AdminOrders() {
             <p className="text-[#6C685F] font-inter text-sm">Retrieving order history...</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto custom-admin-table-scroll w-full">
+            <table className="w-full min-w-[1050px]">
               <thead className="bg-[#FDFBF7] border-b border-yellow-500/12">
                 <tr>
                   {["Order ID", "Customer Name", "Contact", "Amount", "Payment", "Status", "Fast Action", "Date", "Details"].map((head) => (

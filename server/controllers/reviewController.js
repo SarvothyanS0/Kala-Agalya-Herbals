@@ -42,7 +42,8 @@ exports.getAllReviews = async (req, res) => {
   try {
     const reviews = await Review.find()
       .populate("product", "name")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
     res.json({ success: true, reviews });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server Error", error: error.message });

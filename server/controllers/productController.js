@@ -4,7 +4,7 @@ const sharp = require("sharp");
 // Get all products
 exports.getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const products = await Product.find().sort({ createdAt: -1 }).lean();
     res.json({ success: true, products });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
