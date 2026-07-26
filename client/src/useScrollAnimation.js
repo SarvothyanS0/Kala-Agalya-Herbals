@@ -1,12 +1,16 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { inView, animate } from "framer-motion";
 import gsap from "gsap";
 
 export default function useScrollAnimation() {
+  const location = useLocation();
+
   useEffect(() => {
+    const cleanups = [];
+
     // 1. Maintain existing .scroll-animate functionality but FIX THE CRASH
-    inView(".scroll-animate", (element) => {
-      // FIX: The callback receives the DOM element directly! Not an 'info' object.
+    const destroyInView1 = inView(".scroll-animate", (element) => {
       element.classList.add("visible");
       
       // Cinematic Apple/Tesla style easing
@@ -15,6 +19,8 @@ export default function useScrollAnimation() {
         { duration: 1.4, ease: [0.16, 1, 0.3, 1] }
       );
     }, { margin: "0px 0px -50px 0px" });
+
+    cleanups.push(destroyInView1);
 
     // 2. Add GLOBAL cinematic scroll animations for all major sections and cards
     const selectorsToAnimate = [
@@ -53,7 +59,7 @@ export default function useScrollAnimation() {
     });
 
     // Premium Anti-Gravity Floating Feel using GSAP for luxury easing
-    inView(selectorsToAnimate, (element) => {
+    const destroyInView2 = inView(selectorsToAnimate, (element) => {
       if (element.classList.contains("scroll-animate") || element.closest('.scroll-animate')) return;
       if (element.dataset.animated === "true") return;
       
@@ -75,5 +81,18 @@ export default function useScrollAnimation() {
       );
     }, { margin: "0px 0px -150px 0px" });
 
-  }, []); // Run once on mount
+    cleanups.push(destroyInView2);
+
+    return () => {
+      cleanups.forEach(destroy => {
+        if (typeof destroy === "function") destroy();
+      });
+      // Reset animated state on navigation cleanup so elements re-animate correctly next visit
+      const animatedEls = document.querySelectorAll("[data-animated='true']");
+      animatedEls.forEach(el => {
+        el.dataset.animated = "false";
+        el.classList.remove('framer-anti-gravity-init');
+      });
+    };
+  }, [location.pathname]); // Re-run scroll animations whenever route changes
 }
