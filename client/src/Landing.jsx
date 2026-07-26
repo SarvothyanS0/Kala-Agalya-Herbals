@@ -14,12 +14,6 @@ const heroSlides = [
   { title: "Embrace The",     highlight: "Ayurvedic Secret", subtitle: "A time-tested blend to lock in moisture and protect from daily damage.",         badge: "🛡️ Complete Protection",      image: "/images/Home 6.webp", alt: "Ayurvedic hair protection moisture oil" },
 ];
 
-const staticReviews = [
-  { _id: "s1", name: "Ananya S.",    rating: 5, comment: "This hair oil is a miracle! Within just two weeks, my hair fall has completely stopped. My roots feel stronger and my hair is noticeably thicker. Highly recommended!", image: "/images/Home 4.webp", createdAt: "2024-05-10T10:00:00.000Z" },
-  { _id: "s2", name: "Priya Menon", rating: 5, comment: "The cooling effect on the scalp is so relaxing. Not only has it cured my dandruff, but it's given my hair a beautiful natural shine. Authentic ayurvedic quality.", image: "/images/home 2.webp", createdAt: "2024-04-22T14:30:00.000Z" },
-  { _id: "s3", name: "Lakshmi R.",  rating: 4, comment: "I love the smell and texture — not too sticky at all. I can already see baby hairs at my hairline. Will definitely purchase the 500ml bottle next time!", image: "/images/Home 5.webp", createdAt: "2024-03-15T09:15:00.000Z" },
-];
-
 const ingredients = [
   { name: "Amla",           img: "/images/amla.webp",         benefit: "Strengthens Roots"   },
   { name: "Hibiscus",       img: "/images/Hibiscus.webp",     benefit: "Prevents Hair Fall"  },
@@ -51,74 +45,179 @@ const skeletonSizes = ["100 ml", "200 ml", "500 ml"];
 
 /* ── Helper: safe image URL ──────────────────────────────────── */
 function resolveImg(img) {
-  if (!img) return "/images/icons/logo.webp";
+  if (!img) return "/images/icons/logo.png";
   if (img.startsWith("http") || img.startsWith("/images/") || img.startsWith("data:image")) return img;
   return `${BASE_URL.replace(/\/api$/, "")}${img.startsWith("/") ? img : `/${img}`}`;
 }
 
-/* ── ReviewCard (shared between both marquee copies) ─────────── */
+/* ── ReviewCard ──────────────────────────────────────────────── */
 function ReviewCard({ review }) {
   const imgSrc = resolveImg(review.image);
   return (
-    <article className="w-[340px] sm:w-[420px] shrink-0 bg-white border border-yellow-500/10 rounded-3xl p-6 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-400 flex flex-col justify-between gap-4">
+    <div className="w-[320px] sm:w-[360px] shrink-0 bg-white p-6 rounded-3xl border border-yellow-500/12 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-400 flex flex-col justify-between group">
       <div>
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex items-center gap-3">
-            <div
-              className="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-base shadow-inner flex-shrink-0 bg-gradient-to-br from-yellow-600 to-amber-800"
-              aria-hidden="true"
-            >
-              {review.name ? review.name[0].toUpperCase() : "U"}
-            </div>
-            <div>
-              <h4 className="font-semibold text-[#2C2921] text-sm font-grotesk">{review.name}</h4>
-              <div className="flex text-yellow-500 text-xs mt-0.5" role="img" aria-label={`${review.rating} out of 5 stars`}>
-                {[...Array(5)].map((_, si) => (
-                  <span key={si}>{si < review.rating ? "★" : "☆"}</span>
-                ))}
-              </div>
-            </div>
+        {imgSrc && (
+          <div className="w-full h-44 mb-4 rounded-2xl overflow-hidden bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/10 flex items-center justify-center p-2">
+            <img
+              src={imgSrc}
+              alt={`${review.name}'s result photo`}
+              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+              onError={e => { e.currentTarget.style.display = 'none'; }}
+            />
           </div>
-          <time className="text-xs text-[#9A9690] font-inter" dateTime={review.createdAt}>
-            {new Date(review.createdAt).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
-          </time>
+        )}
+        <div className="flex items-center gap-1 text-yellow-500 text-sm mb-3">
+          {Array.from({ length: 5 }).map((_, idx) => (
+            <span key={idx}>{idx < (review.rating || 5) ? "★" : "☆"}</span>
+          ))}
+          <span className="ml-1 text-xs text-[#9A9690] font-inter font-semibold">({review.rating || 5}.0)</span>
         </div>
-        <blockquote className="text-[#4A473E] leading-relaxed text-sm italic font-playfair">
+        <p className="text-[#4A473E] text-sm leading-relaxed line-clamp-4 font-inter mb-4">
           &ldquo;{review.comment}&rdquo;
-        </blockquote>
+        </p>
       </div>
-
-      {/* ── Review photo ─────────────────────── */}
-      {review.image && (
-        <div className="mt-1 rounded-2xl overflow-hidden border border-yellow-500/10 w-24 h-24 group self-start">
-          <img
-            src={imgSrc}
-            alt={`Review photo shared by ${review.name}`}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            loading="lazy"
-            onError={(e) => { e.currentTarget.style.display = "none"; }}
-          />
+      <div className="pt-4 border-t border-yellow-500/10 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-600 to-amber-700 text-white font-bold text-xs flex items-center justify-center font-grotesk shadow-sm">
+            {review.name ? review.name[0].toUpperCase() : "U"}
+          </div>
+          <div>
+            <p className="font-bold text-[#1C1A16] text-xs font-grotesk">{review.name}</p>
+            <p className="text-[10px] text-emerald-700 font-medium font-inter flex items-center gap-0.5">✓ Verified Buyer</p>
+          </div>
         </div>
-      )}
-    </article>
+        {review.createdAt && (
+          <span className="text-[10px] text-[#9A9690] font-inter">
+            {new Date(review.createdAt).toLocaleDateString("en-IN", { month: "short", day: "numeric" })}
+          </span>
+        )}
+      </div>
+    </div>
   );
 }
 
-/* ── 3D Tilt hook ────────────────────────────────────────────── */
+/* ── IngredientCard ──────────────────────────────────────────── */
+function IngredientCard({ item }) {
+  return (
+    <div className="w-[180px] sm:w-[220px] shrink-0 bg-white p-5 rounded-2xl border border-yellow-500/10 hover:border-yellow-500/35 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-400 group text-center">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] rounded-2xl p-2 border border-yellow-500/8 flex items-center justify-center group-hover:scale-110 transition-transform duration-400">
+        <img
+          src={item.img}
+          alt={item.name}
+          className="max-h-full max-w-full object-contain filter drop-shadow-md"
+          loading="lazy"
+        />
+      </div>
+      <h3 className="font-bold text-[#1C1A16] text-sm sm:text-base font-grotesk group-hover:text-yellow-700 transition-colors mb-1">{item.name}</h3>
+      <span className="inline-block px-2.5 py-0.5 rounded-full bg-yellow-500/8 border border-yellow-500/20 text-yellow-800 text-[10px] font-semibold uppercase tracking-wider font-inter">
+        {item.benefit}
+      </span>
+    </div>
+  );
+}
+
+/* ── AutoManualScroll (Horizontal Auto + Manual Touch/Mouse Scroll) ── */
+function AutoManualScroll({ children, speed = 0.8, className = "" }) {
+  const containerRef = useRef(null);
+  const isInteractingRef = useRef(false);
+  const animFrameRef = useRef(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    let lastTime = performance.now();
+    const scrollStep = (now) => {
+      const delta = now - lastTime;
+      lastTime = now;
+
+      if (!isInteractingRef.current && el) {
+        el.scrollLeft += (delta * 0.04 * speed); // Smooth horizontal auto-scroll
+        if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 2) {
+          el.scrollLeft = 0;
+        }
+      }
+      animFrameRef.current = requestAnimationFrame(scrollStep);
+    };
+
+    animFrameRef.current = requestAnimationFrame(scrollStep);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [speed]);
+
+  const handleManualScroll = (direction) => {
+    if (!containerRef.current) return;
+    const amount = containerRef.current.clientWidth * 0.75;
+    containerRef.current.scrollBy({
+      left: direction === "right" ? amount : -amount,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <div
+      className="relative group/slider w-full"
+      onMouseEnter={() => { isInteractingRef.current = true; }}
+      onMouseLeave={() => { isInteractingRef.current = false; }}
+      onTouchStart={() => { isInteractingRef.current = true; }}
+      onTouchEnd={() => {
+        setTimeout(() => { isInteractingRef.current = false; }, 2000);
+      }}
+    >
+      {/* Manual Left Scroll Button */}
+      <button
+        type="button"
+        onClick={() => handleManualScroll("left")}
+        aria-label="Scroll left"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/95 shadow-gold border border-yellow-500/25 text-yellow-800 flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:scale-110"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
+      </button>
+
+      {/* Manual Right Scroll Button */}
+      <button
+        type="button"
+        onClick={() => handleManualScroll("right")}
+        aria-label="Scroll right"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-white/95 shadow-gold border border-yellow-500/25 text-yellow-800 flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-all duration-300 hover:bg-yellow-500 hover:text-black hover:scale-110"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+      </button>
+
+      {/* Scrollable Row (Touch Swipe + Mouse Drag + Trackpad + Auto-Scroll) */}
+      <div
+        ref={containerRef}
+        className={`flex gap-5 overflow-x-auto scrollbar-none py-4 px-2 scroll-smooth ${className}`}
+        style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x" }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ── 3D Tilt Hook for Product Cards ──────────────────────────── */
 function useTilt(ref) {
   useEffect(() => {
     const el = ref.current;
-    if (!el || window.matchMedia("(hover: none)").matches) return;
-    const onMove = (e) => {
+    if (!el) return;
+    const handleMove = (e) => {
       const rect = el.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width  - 0.5) * 14;
-      const y = ((e.clientY - rect.top)  / rect.height - 0.5) * 14;
-      el.style.transform = `perspective(700px) rotateY(${x}deg) rotateX(${-y}deg) translateZ(10px)`;
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top  - rect.height / 2;
+      el.style.transform = `perspective(1000px) rotateX(${-y / 18}deg) rotateY(${x / 18}deg) scale3d(1.02, 1.02, 1.02)`;
     };
-    const onLeave = () => { el.style.transform = "perspective(700px) rotateY(0deg) rotateX(0deg) translateZ(0px)"; };
-    el.addEventListener("mousemove", onMove);
-    el.addEventListener("mouseleave", onLeave);
-    return () => { el.removeEventListener("mousemove", onMove); el.removeEventListener("mouseleave", onLeave); };
+    const handleLeave = () => {
+      el.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+    };
+    el.addEventListener("mousemove", handleMove);
+    el.addEventListener("mouseleave", handleLeave);
+    return () => {
+      el.removeEventListener("mousemove", handleMove);
+      el.removeEventListener("mouseleave", handleLeave);
+    };
   }, [ref]);
 }
 
@@ -237,25 +336,17 @@ function ProductCard({ product, index, onAddToCart, onBuyNow }) {
           {product.mrp && (
             <div className="flex items-center gap-2">
               <span className="text-sm text-[#9A9690] line-through font-inter">MRP ₹{product.mrp}</span>
-              {product.discountPct && (
-                <span className="text-[10px] font-bold bg-red-500/10 text-red-500 border border-red-500/20 px-2 py-0.5 rounded-full font-grotesk">
-                  {product.discountPct}% OFF
-                </span>
-              )}
+              <span className="text-xs text-emerald-700 font-bold font-grotesk bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                Save ₹{product.mrp - product.price}
+              </span>
             </div>
           )}
-          <span className="text-4xl font-extrabold text-yellow-600 font-soria leading-none">₹{product.price}</span>
-          {product.mrp && <span className="text-[11px] text-emerald-600 font-semibold font-inter">You save ₹{product.mrp - product.price}</span>}
+          <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700 font-soria">
+            ₹{product.price}
+          </div>
         </div>
 
-        <div className="flex justify-center mb-5">
-          <span className="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-900/8 text-emerald-700 border border-emerald-500/25 font-grotesk">
-            ✓ In Stock
-          </span>
-        </div>
-
-        {/* Trust micro-badges */}
-        <div className="flex justify-center gap-2 flex-wrap mb-5">
+        <div className="flex justify-center gap-2 mb-5">
           {["🔒 Secure", "🌿 Organic", "🚚 Fast"].map(t => (
             <span key={t} className="text-[10px] text-[#9A9690] px-2 py-0.5 rounded-full border border-[#e8e4dc] font-inter">{t}</span>
           ))}
@@ -287,7 +378,7 @@ export default function Landing() {
 
   const [dbProduct,      setDbProduct]      = useState(null);
   const [products,       setProducts]       = useState([]);
-  const [reviews,        setReviews]        = useState(staticReviews);
+  const [reviews,        setReviews]        = useState([]);
   const [loadingProducts,setLoadingProducts] = useState(true);
   const [reviewForm,     setReviewForm]     = useState({ name: "", rating: 5, comment: "" });
   const [reviewImage,    setReviewImage]    = useState(null);
@@ -348,14 +439,14 @@ export default function Landing() {
 
   /* ── Product API fetch ───────────────────────────────────── */
   const getImg = useCallback((images, idx) => {
-    if (!images?.length) return "/images/icons/logo.webp";
+    if (!images?.length) return "/images/icons/logo.png";
     return resolveImg(images[idx] || images[0]);
   }, []);
 
   const fetchReviews = useCallback((productId) => {
     fetch(`${API_URL}/reviews/${productId}`)
       .then(r => r.json())
-      .then(d => { if (Array.isArray(d)) setReviews([...staticReviews, ...d]); })
+      .then(d => { if (Array.isArray(d)) setReviews(d); })
       .catch(() => {});
   }, []);
 
@@ -373,45 +464,76 @@ export default function Landing() {
               prod.sizes.map((s, idx) => {
                 const price = s.price;
                 const mrp   = s.mrp && s.mrp > price ? s.mrp : null;
-                const disc  = mrp ? Math.round(((mrp - price) / mrp) * 100) : null;
-                return { ...s, id: `${prod._id}-${s.size}`, productId: prod._id, name: prod.name, description: prod.description, img: getImg(prod.images, idx), ml: s.size, price, mrp, discountPct: disc, savings: disc ? `${disc}% OFF` : null };
+                const savings = mrp ? `Save ₹${mrp - price}` : null;
+                return {
+                  id: `${prod._id}-${s.size}`,
+                  productId: prod._id,
+                  ml: s.size,
+                  name: prod.name,
+                  price, mrp, savings,
+                  description: prod.description || "100% Naturopathy Herbal Hair Oil",
+                  img: getImg(prod.images, idx),
+                };
               })
             );
           setProducts(parsed);
+        } else {
+          setProducts([
+            { id: "100", ml: "100 ml", name: "Kala Agalya Herbal Oil", price: 199, mrp: 249, savings: "Save ₹50", description: "Starter pack for daily scalp nourishment", img: "/images/Home 1.webp" },
+            { id: "200", ml: "200 ml", name: "Kala Agalya Herbal Oil", price: 349, mrp: 449, savings: "Save ₹100", description: "Most popular 1-month treatment pack", img: "/images/home 2.webp" },
+            { id: "500", ml: "500 ml", name: "Kala Agalya Herbal Oil", price: 799, mrp: 999, savings: "Save ₹200", description: "Family value pack — 3 months supply", img: "/images/Home 3.webp" },
+          ]);
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        setProducts([
+          { id: "100", ml: "100 ml", name: "Kala Agalya Herbal Oil", price: 199, mrp: 249, savings: "Save ₹50", description: "Starter pack for daily scalp nourishment", img: "/images/Home 1.webp" },
+          { id: "200", ml: "200 ml", name: "Kala Agalya Herbal Oil", price: 349, mrp: 449, savings: "Save ₹100", description: "Most popular 1-month treatment pack", img: "/images/home 2.webp" },
+          { id: "500", ml: "500 ml", name: "Kala Agalya Herbal Oil", price: 799, mrp: 999, savings: "Save ₹200", description: "Family value pack — 3 months supply", img: "/images/Home 3.webp" },
+        ]);
+      })
       .finally(() => setLoadingProducts(false));
   }, [getImg, fetchReviews]);
 
-  /* ── Cart helpers ────────────────────────────────────────── */
-  const addToCart = useCallback((product) => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const ex   = cart.find(i => i.id === product.id || (i.size === product.ml && i.name === product.name));
-    if (ex) ex.quantity += 1;
-    else cart.push({ id: product.id, productId: product.productId, name: product.name, size: product.ml, price: product.price, quantity: 1 });
-    try {
-      localStorage.setItem("cart", JSON.stringify(cart));
-      document.dispatchEvent(new Event("cartUpdated"));
-      addToast("Added to cart! 🛒", "success");
-    } catch { addToast("Cart error. Please refresh.", "error"); }
-  }, [addToast]);
+  /* ── Add to Cart ─────────────────────────────────────────── */
+  const handleAddToCart = (product) => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const idx = cart.findIndex(i =>
+      product.productId ? i.productId === product.productId && i.size === product.ml : i.id === product.id
+    );
+    if (idx > 0) cart[idx].quantity += 1;
+    else if (idx === 0) cart[0].quantity += 1;
+    else {
+      cart.push({
+        id: product.id,
+        productId: product.productId || "default",
+        name: product.name || "Kala Agalya Herbal Oil",
+        size: product.ml,
+        price: product.price,
+        quantity: 1,
+      });
+    }
+    try { localStorage.setItem("cart", JSON.stringify(cart)); } catch { /* ignore */ }
+    document.dispatchEvent(new Event("cartUpdated"));
+    addToast(`Added ${product.ml} bottle to cart! 🛍️`, "success");
+  };
 
-  const buyNow = useCallback((product) => {
-    addToCart(product);
+  const handleBuyNow = (product) => {
+    handleAddToCart(product);
     window.location.href = "/cart";
-  }, [addToCart]);
+  };
 
-  /* ── Review submit ───────────────────────────────────────── */
+  /* ── Submit Review ───────────────────────────────────────── */
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    if (!dbProduct) { addToast("Product not found. Please refresh.", "error"); return; }
+    if (!dbProduct) { addToast("Product loading, please wait", "warning"); return; }
     setIsSubmitting(true);
+
     const fd = new FormData();
     fd.append("productId", dbProduct._id);
-    fd.append("name",      reviewForm.name);
-    fd.append("rating",    reviewForm.rating);
-    fd.append("comment",   reviewForm.comment);
+    fd.append("name", reviewForm.name);
+    fd.append("rating", reviewForm.rating);
+    fd.append("comment", reviewForm.comment);
     if (reviewImage) fd.append("image", reviewImage);
     try {
       const res  = await fetch(`${API_URL}/reviews`, { method: "POST", body: fd });
@@ -435,7 +557,7 @@ export default function Landing() {
   const schemaOrg = {
     "@context": "https://schema.org", "@type": "Organization",
     name: "Kala Agalya Herbals", url: "https://kalaagalyaherbals.com",
-    logo: "https://kalaagalyaherbals.com/images/icons/logo.webp",
+    logo: "https://kalaagalyaherbals.com/images/icons/logo.png",
     contactPoint: { "@type": "ContactPoint", telephone: "+91-7338758727", contactType: "customer service" }
   };
   const schemaProduct = {
@@ -588,55 +710,40 @@ export default function Landing() {
       {/* ══ PRODUCT CATALOG ══════════════════════════════════════ */}
       <section id="product" className="py-24 bg-[#FDFBF7] relative" aria-labelledby="catalog-heading">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
-        <div className="absolute inset-0 bg-noise opacity-[0.02] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
-          <div className="text-center mb-14 scroll-animate">
-            <h2 id="catalog-heading" className="text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria mb-3">
-              Select Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">Bottle Size</span>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-16 scroll-animate">
+            <span className="inline-block px-4 py-1.5 rounded-full border border-yellow-500/25 text-yellow-800 text-xs font-grotesk uppercase tracking-widest mb-4 bg-yellow-500/8">
+              Select Your Bottle Size
+            </span>
+            <h2 id="catalog-heading" className="text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria">
+              Naturopathy Herbal <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">Hair Oil</span>
             </h2>
-            <div className="h-px w-24 bg-gradient-to-r from-transparent via-yellow-500 to-transparent mx-auto rounded-full mb-4" />
-            <p className="text-[#6C685F] text-base max-w-lg mx-auto font-inter">
-              100% Naturopathy herbal hair oil — choose the size that suits your routine.
+            <p className="text-[#6C685F] mt-3 text-base font-inter">
+              Choose the size that fits your hair care routine. Every bottle is freshly prepared with 18+ rare herbs.
             </p>
           </div>
 
           {loadingProducts ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {skeletonSizes.map((size, i) => (
-                <div key={size} className="bg-white rounded-3xl overflow-hidden border border-yellow-500/10 shadow-card" style={{ animation: `fadeInUp 0.4s ease-out ${i * 0.1}s both` }}>
-                  <div className="h-72 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] flex items-center justify-center">
-                    <div className="w-32 h-44 skeleton-shimmer flex items-center justify-center rounded-2xl">
-                      <img src="/images/icons/logo.webp" alt="" aria-hidden="true" className="h-28 w-auto opacity-10" />
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="text-center mb-4">
-                      <h3 className="text-2xl font-black text-[#2C2921] font-soria mb-2">{size}</h3>
-                      <div className="h-3 skeleton-shimmer w-3/4 mx-auto" />
-                    </div>
-                    <div className="flex justify-center mb-5"><div className="h-10 w-24 skeleton-shimmer rounded-xl" /></div>
-                    <div className="space-y-2.5">
-                      <div className="h-11 skeleton-shimmer rounded-xl" />
-                      <div className="h-11 skeleton-shimmer rounded-xl" />
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {skeletonSizes.map((ml) => (
+                <div key={ml} className="bg-white rounded-3xl p-6 border border-yellow-500/10 shadow-card">
+                  <div className="h-64 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] rounded-2xl mb-5 skeleton-shimmer" />
+                  <div className="h-6 bg-[#F5F2EB] rounded-md w-1/2 mx-auto mb-3 skeleton-shimmer" />
+                  <div className="h-4 bg-[#F5F2EB] rounded-md w-3/4 mx-auto mb-6 skeleton-shimmer" />
+                  <div className="h-10 bg-[#F5F2EB] rounded-xl skeleton-shimmer" />
                 </div>
               ))}
             </div>
-          ) : products.length === 0 ? (
-            <div className="text-center py-20 text-[#6C685F] bg-white rounded-3xl border border-yellow-500/10 shadow-card font-inter">
-              Products are currently being restocked. Please check back soon.
-            </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {products.map((product, idx) => (
                 <ProductCard
                   key={product.id}
                   product={product}
-                  index={index}
-                  onAddToCart={addToCart}
-                  onBuyNow={buyNow}
+                  index={idx}
+                  onAddToCart={handleAddToCart}
+                  onBuyNow={handleBuyNow}
                 />
               ))}
             </div>
@@ -644,10 +751,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ══ REVIEWS ══════════════════════════════════════════════ */}
-      <section className="py-24 bg-white border-t border-yellow-500/10 relative overflow-hidden" aria-labelledby="reviews-heading">
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-yellow-500/4 blur-[100px] rounded-full pointer-events-none" />
-
+      {/* ══ CUSTOMER REVIEWS & FORM ══════════════════════════════ */}
+      <section className="py-24 bg-white relative border-t border-yellow-500/10" aria-labelledby="reviews-heading">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
           <div className="text-center mb-14 scroll-animate">
             <h2 id="reviews-heading" className="text-4xl md:text-5xl font-bold text-[#1C1A16] mb-3 font-soria">
@@ -663,7 +768,7 @@ export default function Landing() {
                 {avgRating}
               </div>
               <div className="text-yellow-500 text-2xl tracking-widest my-2" aria-hidden="true">★★★★★</div>
-              <p className="text-[#6C685F] text-sm mb-6 font-inter">Based on {reviews.length} reviews</p>
+              <p className="text-[#6C685F] text-sm mb-6 font-inter">Based on {reviews.length} customer review{reviews.length !== 1 ? "s" : ""}</p>
               <div className="space-y-2.5">
                 {ratingStats.map(row => (
                   <div key={row.stars} className="flex items-center gap-3 text-xs font-inter">
@@ -751,21 +856,25 @@ export default function Landing() {
             </div>
           </div>
 
-          {/* ── Review Marquee (with images) ────────────────── */}
-          <div className="relative w-screen -mx-[calc((100vw-100%)/2)] overflow-hidden py-6 border-t border-yellow-500/8" aria-label="Customer reviews carousel">
-            {/* Edge fade masks */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-24 sm:w-40 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-
-            <div className="flex gap-5 w-max">
-              <div className="animate-marquee gap-5">
-                {reviews.map((review, i) => <ReviewCard key={`m1-${review._id || i}`} review={review} />)}
-              </div>
-              <div className="animate-marquee gap-5" aria-hidden="true">
-                {reviews.map((review, i) => <ReviewCard key={`m2-${review._id || i}`} review={review} />)}
-              </div>
+          {/* ── Auto-Scrolling + Manual Touch/Mouse Reviews Slider ── */}
+          {reviews.length > 0 ? (
+            <div className="pt-4 border-t border-yellow-500/8">
+              <p className="text-xs text-[#9A9690] font-inter uppercase tracking-widest mb-3 text-center">
+                Swipe or drag to scroll reviews horizontally
+              </p>
+              <AutoManualScroll speed={0.8}>
+                {reviews.map((review, i) => (
+                  <ReviewCard key={review._id || i} review={review} />
+                ))}
+              </AutoManualScroll>
             </div>
-          </div>
+          ) : (
+            <div className="py-12 px-6 text-center bg-[#FDFBF7] rounded-3xl border border-yellow-500/10">
+              <div className="text-4xl mb-3">🌿</div>
+              <h4 className="text-lg font-bold text-[#1C1A16] font-grotesk mb-1">No Customer Reviews Yet</h4>
+              <p className="text-sm text-[#6C685F] font-inter">Be the first to share your experience with Kala Agalya Herbals!</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -808,7 +917,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ══ INGREDIENTS MARQUEE ══════════════════════════════════ */}
+      {/* ══ INGREDIENTS SLIDER (Auto + Manual Horizontal Scroll) ══ */}
       <section id="ingredients" className="py-24 bg-[#FDFBF7] border-t border-yellow-500/10 relative overflow-hidden" aria-labelledby="herbs-heading">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
 
@@ -821,26 +930,13 @@ export default function Landing() {
           </p>
         </div>
 
-        {/* Row 1 — left */}
-        <div className="relative w-screen -mx-[calc((100vw-100%)/2)] overflow-hidden mb-5">
-          <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
-          <div className="flex gap-5 w-max animate-marquee">
-            {[...ingredients, ...ingredients].map((item, i) => (
+        {/* Auto + Manual Touch/Mouse Scrollable Slider */}
+        <div className="max-w-7xl mx-auto px-5">
+          <AutoManualScroll speed={0.9}>
+            {ingredients.map((item, i) => (
               <IngredientCard key={i} item={item} />
             ))}
-          </div>
-        </div>
-
-        {/* Row 2 — right (reverse) */}
-        <div className="relative w-screen -mx-[calc((100vw-100%)/2)] overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-r from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-32 bg-gradient-to-l from-[#FDFBF7] to-transparent z-10 pointer-events-none" />
-          <div className="flex gap-5 w-max" style={{ animation: "marquee 35s linear infinite reverse" }}>
-            {[...ingredients.slice().reverse(), ...ingredients.slice().reverse()].map((item, i) => (
-              <IngredientCard key={i} item={item} />
-            ))}
-          </div>
+          </AutoManualScroll>
         </div>
       </section>
 
@@ -864,32 +960,8 @@ export default function Landing() {
               <div className="absolute -inset-full h-full w-1/2 -skew-x-12 bg-white/20 opacity-0 group-hover:opacity-100 group-hover:left-full transition-all duration-600" />
             </button>
           </a>
-          <div className="mt-10 flex justify-center flex-wrap gap-4">
-            {["🔒 Secure Payment", "🌿 100% Organic", "🚚 Pan India Delivery", "↩ Easy Returns"].map(t => (
-              <span key={t} className="text-xs text-gray-500 font-inter">{t}</span>
-            ))}
-          </div>
         </div>
       </section>
-    </div>
-  );
-}
-
-/* ── IngredientCard (extracted for cleanliness) ─────────────── */
-function IngredientCard({ item }) {
-  return (
-    <div className="flex-shrink-0 flex flex-col items-center bg-white rounded-2xl border border-yellow-500/10 hover:border-yellow-400/40 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 p-5 w-36 group cursor-default">
-      <div className="w-16 h-16 rounded-full overflow-hidden mb-3 border-2 border-yellow-500/15 group-hover:border-yellow-400/50 transition-colors shadow-sm flex-shrink-0">
-        <img
-          src={item.img}
-          alt={`${item.name} — ${item.benefit}`}
-          className="w-full h-full object-cover group-hover:scale-115 transition-transform duration-500"
-          loading="lazy"
-          width="64" height="64"
-        />
-      </div>
-      <h4 className="font-semibold text-[#2C2921] text-xs text-center mb-1.5 font-grotesk leading-tight group-hover:text-yellow-700 transition-colors">{item.name}</h4>
-      <span className="text-[9px] text-emerald-700 font-bold bg-emerald-900/8 border border-emerald-500/20 px-2 py-0.5 rounded-full uppercase tracking-wide text-center font-grotesk">{item.benefit}</span>
     </div>
   );
 }
