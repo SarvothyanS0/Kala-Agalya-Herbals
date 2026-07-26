@@ -366,12 +366,24 @@
   background: var(--cream-dark);
   border: 1.5px solid var(--border);
   border-radius: 14px;
-  padding: 14px 20px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  padding-left: 20px;
+  padding-right: 20px;
   font-family: 'Inter', sans-serif;
   color: var(--text-primary);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   outline: none;
   width: 100%;
+}
+
+.input-with-icon-left {
+  padding-left: 48px !important;
+}
+
+.input-with-icon-both {
+  padding-left: 48px !important;
+  padding-right: 48px !important;
 }
 
 .input-premium:focus {
