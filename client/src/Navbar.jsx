@@ -68,10 +68,10 @@ export default function Navbar() {
             <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
           </Link>
           
-          <Link to="/product" className="relative group overflow-hidden py-2 text-[#2C2921]">
+          <a href="/#product" className="relative group overflow-hidden py-2 text-[#2C2921]">
             <span className="relative z-10 group-hover:text-yellow-700 transition-colors duration-300">Product</span>
             <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
-          </Link>
+          </a>
 
           {token ? (
             <>
@@ -156,7 +156,7 @@ export default function Navbar() {
         {/* Menu Content */}
         <div className={`relative h-full flex flex-col items-center justify-center space-y-8 transition-transform duration-500 ${isMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
           <Link to="/" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Home</Link>
-          <Link to="/product" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Product</Link>
+          <a href="/#product" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Product</a>
           {token ? (
             <>
               <Link to="/my-orders" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">My Orders</Link>
