@@ -202,6 +202,20 @@
 .scroll-delay-5 { transition-delay: 0.25s; }
 .scroll-delay-6 { transition-delay: 0.3s; }
 
+/* ── Scrollbar Hiding Utilities ─────────────────────────────── */
+.scrollbar-none::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.scrollbar-none,
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 /* ── Premium Shimmer Skeleton ─────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: -400px 0; }
