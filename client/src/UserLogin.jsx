@@ -110,7 +110,7 @@ export default function UserLogin() {
             <Link to="/" className="inline-flex flex-col items-center gap-3 group" aria-label="Back to home">
               <div className="relative mb-1">
                 <img
-                  src="/images/icons/logo.webp"
+                  src="/images/icons/logo.png"
                   alt="Kala Agalya Herbals"
                   className="h-16 w-auto group-hover:scale-110 transition-transform duration-400 drop-shadow-[0_0_12px_rgba(217,119,6,0.3)]"
                   loading="eager"

@@ -94,7 +94,7 @@ export default function Navbar() {
             className="flex items-center gap-2 min-w-0 group shrink-0"
           >
             <img
-              src="/images/icons/logo.webp"
+              src="/images/icons/logo.png"
               alt="Kala Agalya Herbals"
               className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_rgba(217,119,6,0.25)]"
               width="40" height="40"

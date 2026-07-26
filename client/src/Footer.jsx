@@ -92,7 +92,7 @@ export default function Footer() {
             {/* Brand */}
             <div className="space-y-5">
               <Link to="/" onClick={scrollToTop} className="flex items-center gap-3 group w-fit" aria-label="Kala Agalya Herbals home">
-                <img src="/images/icons/logo.webp" alt="Kala Agalya Herbals" className="h-10 w-auto drop-shadow-[0_0_10px_rgba(217,119,6,0.4)] group-hover:scale-110 transition-transform duration-300" width="40" height="40" loading="lazy" />
+                <img src="/images/icons/logo.png" alt="Kala Agalya Herbals" className="h-10 w-auto drop-shadow-[0_0_10px_rgba(217,119,6,0.4)] group-hover:scale-110 transition-transform duration-300" width="40" height="40" loading="lazy" />
                 <h2 className="text-lg font-bold bg-gradient-to-r from-yellow-400 to-amber-300 bg-clip-text text-transparent font-soria">
                   Kala Agalya Herbals
                 </h2>
