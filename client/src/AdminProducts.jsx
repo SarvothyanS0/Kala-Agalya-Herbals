@@ -170,99 +170,97 @@ export default function AdminProducts() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0d0b03]">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.5)]"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] text-yellow-700">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-600 shadow-gold"></div>
       </div>
     );
   }
 
   return (
     <AdminLayout>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Product Management</h1>
-          <p className="text-gray-500 text-sm">Create and update your herbal oil inventory</p>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">Product Management</h1>
+          <p className="text-[#6C685F] text-sm font-inter">Create and update your herbal oil inventory</p>
         </div>
         <button
           onClick={() => {
             resetForm();
             setShowModal(true);
           }}
-          className="group relative px-6 py-3 bg-gradient-to-r from-yellow-600 to-amber-500 text-black font-extrabold rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_35px_rgba(234,179,8,0.5)] transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 overflow-hidden w-full sm:w-auto justify-center"
+          className="group relative px-6 py-3.5 bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-extrabold font-grotesk rounded-xl shadow-gold hover:shadow-gold-lg transform hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 overflow-hidden w-full sm:w-auto justify-center uppercase tracking-wider text-xs"
         >
-          <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none skew-x-12 -translate-x-full group-hover:translate-x-full duration-1000"></div>
           <svg className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          <span className="relative z-10 text-sm uppercase">Add New Product</span>
+          <span className="relative z-10">Add New Product</span>
         </button>
       </div>
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {products.map((product) => (
-          <div key={product._id} className="bg-[#111a11] rounded-2xl border border-yellow-500/10 overflow-hidden shadow-xl hover:shadow-[0_0_30px_rgba(234,179,8,0.1)] hover:-translate-y-2 transition-all duration-300 group">
-            <div className="h-56 bg-gradient-to-br from-green-900/40 to-[#0a0f0a] flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/20 z-10 transition-opacity group-hover:opacity-0"></div>
+          <div key={product._id} className="bg-white rounded-3xl border border-yellow-500/12 overflow-hidden shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
+            <div className="h-56 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] flex items-center justify-center relative overflow-hidden p-6 border-b border-yellow-500/10">
               {product.images && product.images.length > 0 ? (
                 <img
                   src={product.images[0].startsWith("http") || product.images[0].startsWith("data:image") ? product.images[0] : `${BASE_URL.replace(/\/api$/, "")}${product.images[0]}`}
                   alt={product.name}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                  className="max-h-full max-w-full object-contain filter drop-shadow-md group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (
-                <svg className="w-20 h-20 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-20 h-20 text-yellow-600/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               )}
               <div className="absolute top-4 right-4 z-20">
                 <span
-                  className={`px-3 py-1 rounded-full text-[10px] font-bold shadow-lg ${product.isActive ? "bg-yellow-500 text-black" : "bg-red-500 text-white"
+                  className={`px-3 py-1 rounded-full text-[10px] font-bold font-grotesk tracking-wider uppercase shadow-xs ${product.isActive ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-red-50 text-red-800 border border-red-200"
                     }`}
                 >
                   {product.isActive ? "ACTIVE" : "INACTIVE"}
                 </span>
               </div>
             </div>
-            <div className="p-6 relative">
-              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-yellow-400 transition-colors">{product.name}</h3>
-              <p className="text-sm text-gray-400 mb-6 line-clamp-2 h-10">{product.description}</p>
+            <div className="p-6 relative font-inter">
+              <h3 className="text-xl font-bold text-[#1C1A16] mb-1 font-soria group-hover:text-yellow-700 transition-colors">{product.name}</h3>
+              <p className="text-xs text-[#6C685F] mb-5 line-clamp-2 h-8">{product.description}</p>
 
-              <div className="space-y-3 mb-6 bg-black/20 p-4 rounded-xl border border-white/5">
+              <div className="space-y-2.5 mb-6 bg-[#FDFBF7] p-4 rounded-2xl border border-yellow-500/12">
                 {product.sizes.map((sizeInfo, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-sm">
-                    <span className="text-gray-300 font-medium bg-white/5 px-2 py-0.5 rounded text-xs">{sizeInfo.size}</span>
-                    <div className="flex gap-4 items-center">
-                      <div className="flex flex-col items-end">
+                  <div key={idx} className="flex justify-between items-center text-xs">
+                    <span className="text-[#1C1A16] font-bold bg-white px-2 py-0.5 rounded border border-yellow-500/10 font-grotesk">{sizeInfo.size}</span>
+                    <div className="flex gap-3 items-center">
+                      <div className="flex items-center gap-1.5">
                         {sizeInfo.mrp && sizeInfo.mrp > sizeInfo.price && (
-                          <span className="text-gray-500 line-through text-[10px] font-mono">₹{sizeInfo.mrp}</span>
+                          <span className="text-[#9A9690] line-through text-[10px]">₹{sizeInfo.mrp}</span>
                         )}
-                        <span className="text-yellow-400 font-bold font-mono">₹{sizeInfo.price}</span>
+                        <span className="text-yellow-800 font-bold font-soria text-sm">₹{sizeInfo.price}</span>
                       </div>
-                      <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${sizeInfo.stock < 10 ? 'bg-red-900/50 text-red-400' : 'bg-yellow-900/20 text-yellow-500'}`}>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold font-grotesk uppercase ${sizeInfo.stock < 10 ? 'bg-red-50 text-red-800 border border-red-200' : 'bg-yellow-500/10 text-yellow-800 border border-yellow-500/20'}`}>
                         {sizeInfo.stock} left
                       </span>
                     </div>
                   </div>
                 ))}
                 {product.gstPercentage > 0 && (
-                  <div className="flex justify-between items-center text-[10px] pt-2 border-t border-white/5">
-                    <span className="text-gray-500 uppercase font-bold">GST</span>
-                    <span className="text-amber-400 font-bold">{product.gstPercentage}%</span>
+                  <div className="flex justify-between items-center text-[10px] pt-2 border-t border-yellow-500/10 font-grotesk">
+                    <span className="text-[#6C685F] uppercase font-bold">GST</span>
+                    <span className="text-yellow-800 font-bold">{product.gstPercentage}%</span>
                   </div>
                 )}
               </div>
 
-              <div className="flex gap-3 pt-2 border-t border-white/5">
+              <div className="flex gap-3 pt-2 border-t border-yellow-500/10 font-grotesk">
                 <button
                   onClick={() => openEditModal(product)}
-                  className="flex-1 py-2.5 bg-blue-900/20 text-blue-400 border border-blue-500/30 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all duration-300"
+                  className="flex-1 py-2.5 bg-[#F5F2EB] text-yellow-800 border border-yellow-500/25 rounded-xl text-xs font-bold hover:bg-yellow-500/15 transition-all duration-300 uppercase tracking-wider"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(product._id)}
-                  className="flex-1 py-2.5 bg-red-900/20 text-red-400 border border-red-500/30 rounded-xl text-sm font-bold hover:bg-red-600 hover:text-white transition-all duration-300"
+                  className="flex-1 py-2.5 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-bold hover:bg-red-100 transition-all duration-300 uppercase tracking-wider"
                 >
                   Delete
                 </button>
@@ -273,17 +271,17 @@ export default function AdminProducts() {
       </div>
 
       {products.length === 0 && (
-        <div className="text-center py-20 bg-[#111a11] rounded-3xl border border-dashed border-yellow-500/20">
-          <div className="w-16 h-16 bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-yellow-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+        <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-yellow-500/30">
+          <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
           </div>
-          <p className="text-gray-400 mb-4">No products found in inventory.</p>
+          <p className="text-[#6C685F] mb-3 font-inter text-sm">No products found in inventory.</p>
           <button
             onClick={() => {
               resetForm();
               setShowModal(true);
             }}
-            className="text-yellow-400 font-bold hover:underline"
+            className="text-yellow-800 font-bold underline font-grotesk uppercase tracking-wider text-xs"
           >
             Add your first product
           </button>
@@ -292,10 +290,10 @@ export default function AdminProducts() {
 
       {/* Add/Edit Product Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 z-[60] animate-fadeIn overflow-y-auto">
-          <div className="bg-[#111a11] rounded-2xl shadow-2xl max-w-2xl w-full my-auto border border-yellow-500/20 relative">
-            <div className="sticky top-0 bg-[#111a11]/95 backdrop-blur border-b border-yellow-900/30 px-6 py-4 flex justify-between items-center z-10">
-              <h2 className="text-xl font-bold text-white tracking-wide">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 z-[60] animate-fadeIn overflow-y-auto">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full my-auto border border-yellow-500/20 relative overflow-hidden">
+            <div className="sticky top-0 bg-white/95 backdrop-blur border-b border-yellow-500/12 px-6 py-4 flex justify-between items-center z-10">
+              <h2 className="text-xl font-bold text-[#1C1A16] font-grotesk tracking-wide">
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
               <button
@@ -303,7 +301,7 @@ export default function AdminProducts() {
                   setShowModal(false);
                   resetForm();
                 }}
-                className="text-gray-500 hover:text-red-400 transition-colors p-2"
+                className="text-[#9A9690] hover:text-red-600 transition-colors p-2"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -311,44 +309,43 @@ export default function AdminProducts() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 font-inter">
               <div>
-                <label className="block text-[10px] font-bold text-yellow-500 uppercase tracking-widest mb-2">Product Name</label>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Product Name</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#0d0b03] border border-yellow-900/40 rounded-xl focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 text-white placeholder-gray-600 outline-none transition-all"
-                  placeholder="e.g. Herbal Essence Oil"
+                  className="input-premium"
+                  placeholder="e.g. Kala Agalya Herbal Hair Oil"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-yellow-500 uppercase tracking-widest mb-2">Description</label>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#0d0b03] border border-yellow-900/40 rounded-xl focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 text-white placeholder-gray-600 outline-none transition-all"
-                  rows="3"
-                  placeholder="Describe the benefits..."
+                  className="input-premium h-24 resize-none"
+                  placeholder="Describe the product benefits..."
                   required
                 />
               </div>
 
               {/* GST Percentage */}
-              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
-                <label className="block text-[10px] font-bold text-yellow-500 uppercase tracking-widest mb-3">GST Percentage (%)</label>
-                <div className="flex gap-3 flex-wrap">
+              <div className="bg-[#FDFBF7] p-5 rounded-2xl border border-yellow-500/12">
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-3 font-grotesk">GST Percentage (%)</label>
+                <div className="flex gap-2.5 flex-wrap">
                   {[0, 5, 12, 18, 28].map(gst => (
                     <button
                       key={gst}
                       type="button"
                       onClick={() => setFormData({ ...formData, gstPercentage: gst })}
-                      className={`px-4 py-2 rounded-lg text-xs font-bold border transition-all ${
+                      className={`px-4 py-2 rounded-xl text-xs font-bold font-grotesk border transition-all ${
                         formData.gstPercentage === gst
-                          ? 'bg-yellow-500 text-black border-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.4)]'
-                          : 'bg-black/30 text-gray-400 border-yellow-900/30 hover:border-yellow-500/50 hover:text-yellow-400'
+                          ? 'bg-gradient-to-r from-yellow-500 to-amber-600 text-black border-yellow-500 shadow-gold'
+                          : 'bg-white text-[#6C685F] border-yellow-500/20 hover:border-yellow-500/50 hover:text-[#1C1A16]'
                       }`}
                     >
                       {gst}%
@@ -360,15 +357,14 @@ export default function AdminProducts() {
                     max="100"
                     value={formData.gstPercentage}
                     onChange={(e) => setFormData({ ...formData, gstPercentage: Number(e.target.value) })}
-                    className="w-20 px-3 py-2 bg-[#0d0b03] border border-yellow-900/40 rounded-lg text-white text-xs outline-none focus:border-yellow-500 text-center"
+                    className="w-20 px-3 py-2 bg-white border border-yellow-500/20 rounded-xl text-[#1C1A16] text-xs outline-none focus:border-yellow-600 text-center font-bold font-grotesk"
                     placeholder="Custom"
                   />
                 </div>
-                <p className="text-[9px] text-gray-600 mt-2">Click a preset or type a custom GST %</p>
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-yellow-500 uppercase tracking-widest mb-2">Product Images (Up to 5)</label>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Product Images (Up to 5)</label>
                 <div className="space-y-4">
                   <input
                     type="file"
@@ -384,20 +380,17 @@ export default function AdminProducts() {
                         });
                       }
                     }}
-                    className="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-yellow-900/20 file:text-yellow-500 hover:file:bg-yellow-900/40 transition-all cursor-pointer"
+                    className="block w-full text-xs text-[#6C685F] file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-yellow-500/10 file:text-yellow-800 hover:file:bg-yellow-500/20 transition-all cursor-pointer font-grotesk"
                   />
                   {(formData.imageUrls.length > 0) && (
                     <div className="flex flex-wrap gap-3">
                       {formData.imageUrls.map((url, idx) => (
-                        <div key={idx} className="relative w-20 h-20 rounded-xl border border-yellow-500/20 overflow-hidden bg-black flex-shrink-0 group">
+                        <div key={idx} className="relative w-20 h-20 rounded-2xl border border-yellow-500/20 overflow-hidden bg-[#FDFBF7] flex-shrink-0 group p-1">
                           <img
                             src={url.startsWith("blob") || url.startsWith("http") || url.startsWith("data:image") ? url : `${BASE_URL.replace(/\/api$/, "")}${url}`}
                             alt={`Preview ${idx}`}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                           />
-                          <div className="absolute top-0 left-0 right-0 bg-yellow-500 text-black text-[8px] font-black text-center py-0.5 uppercase">
-                            IMG {idx + 1}
-                          </div>
                           <button
                             type="button"
                             onClick={() => {
@@ -405,9 +398,9 @@ export default function AdminProducts() {
                               const newImages = formData.images.filter((_, i) => i !== idx);
                               setFormData({ ...formData, imageUrls: newUrls, images: newImages });
                             }}
-                            className="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                            className="absolute inset-0 bg-red-600/70 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl"
                           >
-                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                           </button>
                         </div>
                       ))}
@@ -416,71 +409,71 @@ export default function AdminProducts() {
                 </div>
               </div>
 
-              <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+              <div className="bg-[#FDFBF7] p-5 rounded-2xl border border-yellow-500/12">
                 <div className="flex justify-between items-center mb-4">
-                  <label className="block text-[10px] font-bold text-yellow-500 uppercase tracking-widest">Pricing & Inventory</label>
+                  <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider font-grotesk">Sizes & Inventory</label>
                   <button
                     type="button"
                     onClick={addSize}
-                    className="text-[9px] bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 px-2 py-1 rounded hover:bg-yellow-500 hover:text-black transition-all font-bold uppercase"
+                    className="text-[10px] bg-yellow-500/12 text-yellow-900 border border-yellow-500/30 px-3 py-1 rounded-lg hover:bg-yellow-500 hover:text-black transition-all font-bold uppercase font-grotesk"
                   >
                     + Add Size
                   </button>
                 </div>
                 <div className="space-y-4">
                   {formData.sizes.map((sizeInfo, index) => (
-                    <div key={index} className="space-y-4 p-4 bg-black/40 border border-yellow-900/20 rounded-xl relative group/size">
+                    <div key={index} className="space-y-3 p-4 bg-white border border-yellow-500/15 rounded-2xl relative group/size shadow-xs">
                       {formData.sizes.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeSize(index)}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-lg z-10"
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-md z-10"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
                       )}
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <label className="text-[9px] text-gray-500 uppercase font-black">Size (e.g. 100ml)</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[10px] text-[#6C685F] uppercase font-bold font-grotesk">Size (e.g. 100ml)</label>
                           <input
                             type="text"
                             value={sizeInfo.size}
                             onChange={(e) => updateSize(index, "size", e.target.value)}
-                            className="w-full px-3 py-2 bg-[#0d0b03] border border-yellow-900/30 rounded-lg text-white text-xs outline-none focus:border-yellow-500"
+                            className="input-premium py-2 px-3 text-xs"
                             required
                           />
                         </div>
-                        <div className="space-y-1">
-                          <label className="text-[9px] text-gray-500 uppercase font-black">MRP — Original Price (₹)</label>
+                        <div>
+                          <label className="text-[10px] text-[#6C685F] uppercase font-bold font-grotesk">MRP (₹)</label>
                           <input
                             type="number"
                             value={sizeInfo.mrp || ""}
                             onChange={(e) => updateSize(index, "mrp", e.target.value)}
-                            className="w-full px-3 py-2 bg-[#0d0b03] border border-yellow-900/30 rounded-lg text-white text-xs outline-none focus:border-yellow-500"
-                            placeholder="e.g. 499"
+                            className="input-premium py-2 px-3 text-xs"
+                            placeholder="e.g. 249"
                           />
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-1">
-                          <label className="text-[9px] text-yellow-400 uppercase font-black">Selling / Discount Price (₹)</label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[10px] text-yellow-800 uppercase font-bold font-grotesk">Selling Price (₹)</label>
                           <input
                             type="number"
                             value={sizeInfo.price}
                             onChange={(e) => updateSize(index, "price", e.target.value)}
-                            className="w-full px-3 py-2 bg-[#0d0b03] border border-yellow-500/40 rounded-lg text-yellow-400 text-xs outline-none focus:border-yellow-500 font-bold"
+                            className="input-premium py-2 px-3 text-xs font-bold text-yellow-800"
                             required
                           />
                         </div>
-                        <div className="space-y-1">
-                          <label className="text-[9px] text-gray-500 uppercase font-black">Stock</label>
+                        <div>
+                          <label className="text-[10px] text-[#6C685F] uppercase font-bold font-grotesk">Stock Qty</label>
                           <input
                             type="number"
                             value={sizeInfo.stock}
                             onChange={(e) => updateSize(index, "stock", e.target.value)}
-                            className="w-full px-3 py-2 bg-[#0d0b03] border border-yellow-900/30 rounded-lg text-white text-xs outline-none focus:border-yellow-500"
+                            className="input-premium py-2 px-3 text-xs"
                             required
                           />
                         </div>
@@ -490,31 +483,31 @@ export default function AdminProducts() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/5">
+              <div className="flex items-center gap-3 bg-[#FDFBF7] p-4 rounded-2xl border border-yellow-500/12">
                 <input
                   type="checkbox"
                   id="active-check"
                   checked={formData.isActive}
                   onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-5 h-5 accent-yellow-500 rounded cursor-pointer"
+                  className="w-5 h-5 accent-yellow-600 rounded cursor-pointer"
                 />
-                <label htmlFor="active-check" className="text-xs font-bold text-gray-300 cursor-pointer uppercase tracking-tight">Set Product as Active</label>
+                <label htmlFor="active-check" className="text-xs font-bold text-[#1C1A16] cursor-pointer uppercase tracking-wider font-grotesk">Set Product as Active</label>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2 font-grotesk">
                 <button
                   type="button"
                   onClick={() => {
                     setShowModal(false);
                     resetForm();
                   }}
-                  className="flex-1 px-4 py-3 bg-gray-800 text-gray-400 rounded-xl font-bold hover:bg-gray-700 hover:text-white transition-colors text-xs uppercase tracking-widest"
+                  className="flex-1 px-4 py-3 bg-[#F5F2EB] text-[#6C685F] border border-yellow-500/20 rounded-xl font-bold hover:bg-yellow-500/10 transition-colors text-xs uppercase tracking-wider"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-3 bg-yellow-600 text-black rounded-xl font-bold hover:bg-yellow-500 transition-all text-xs uppercase tracking-widest shadow-lg shadow-yellow-900/20"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold hover:from-yellow-400 hover:to-amber-500 transition-all text-xs uppercase tracking-wider shadow-gold"
                 >
                   {editingProduct ? "Save Changes" : "Create Product"}
                 </button>

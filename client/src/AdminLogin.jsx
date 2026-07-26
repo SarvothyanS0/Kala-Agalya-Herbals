@@ -104,30 +104,26 @@ export default function AdminLogin() {
   };
 
   // Shared input style
-  const inputClass = "w-full px-4 py-3.5 bg-[#0d0b03] text-yellow-100 border border-yellow-900/50 rounded-xl focus:ring-0 focus:border-yellow-500 transition-all placeholder-gray-700 shadow-inner";
-  const labelClass = "block text-xs font-semibold text-yellow-500/80 uppercase tracking-wider mb-2 ml-1";
+  const inputClass = "input-premium font-inter";
+  const labelClass = "block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-1.5 font-grotesk";
 
   return (
-    <div className="min-h-screen bg-[#0d0b03] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 relative overflow-hidden font-inter">
       {/* Background Ambience */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/20 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/10 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-      <div className="relative bg-[#15120a] border border-yellow-900/40 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] w-full max-w-md p-8 backdrop-blur-xl">
-        <div className="text-center mb-10">
+      <div className="relative bg-white border border-yellow-500/12 rounded-3xl shadow-card w-full max-w-md p-8 sm:p-10 z-10">
+        <div className="text-center mb-8">
           <div className="relative inline-block mb-4">
-             <img
-               src="/images/icons/logo.png"
-               alt="Kala Agalya Herbals"
-               className="h-16 w-auto mx-auto hover:scale-105 transition-transform duration-500 drop-shadow-[0_0_15px_rgba(234,179,8,0.35)]"
-               width="64"
-               height="64"
-             />
+             <div className="relative w-20 h-20 rounded-2xl flex items-center justify-center p-2 mx-auto">
+                <img src="/images/icons/logo.png" alt="Kala Agalya Herbals" className="w-full h-auto drop-shadow-md" />
+             </div>
           </div>
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 tracking-wide mb-2">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] font-soria tracking-wide mb-1">
             {forgotMode ? "Reset Password" : "Admin Access"}
           </h1>
-          <p className="text-gray-500 text-sm tracking-widest uppercase">
+          <p className="text-[#6C685F] text-xs font-grotesk tracking-wider uppercase">
             {forgotMode === "email" && "Enter your admin email"}
             {forgotMode === "otp" && "Enter the OTP sent to your email"}
             {forgotMode === "newpass" && "Set your new password"}
@@ -139,15 +135,15 @@ export default function AdminLogin() {
         {/* ── LOGIN FORM ── */}
         {!forgotMode && (
           <>
-            <form onSubmit={handleLogin} className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-4">
-                <div className="group">
+                <div>
                   <label className={labelClass}>Email Address</label>
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                     className={inputClass} placeholder="admin@kalaagalya.com" required />
                 </div>
 
-                <div className="group">
+                <div>
                   <label className={labelClass}>Password</label>
                   <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                     className={inputClass} placeholder="••••••••" required />
@@ -155,11 +151,11 @@ export default function AdminLogin() {
               </div>
 
               <button type="submit" disabled={loading}
-                className="w-full py-4 bg-gradient-to-r from-yellow-600 to-amber-700 text-black rounded-xl font-bold tracking-wide uppercase shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden group">
-                <span className="relative z-10 flex items-center justify-center gap-2">
+                className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold font-grotesk tracking-wider uppercase shadow-gold hover:from-yellow-400 hover:to-amber-500 transition-all duration-300 disabled:opacity-50 text-xs">
+                <span className="flex items-center justify-center gap-2">
                   {loading ? (
                     <>
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
@@ -168,17 +164,16 @@ export default function AdminLogin() {
                   ) : (
                     <>
                       Enter Dashboard
-                      <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                     </>
                   )}
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             </form>
 
             <div className="mt-6 text-center">
               <button onClick={() => setForgotMode("email")}
-                className="text-xs text-yellow-500/50 hover:text-yellow-400 uppercase tracking-widest transition-colors border-b border-yellow-500/20 hover:border-yellow-500/50 pb-0.5">
+                className="text-xs text-[#6C685F] hover:text-[#1C1A16] font-grotesk font-bold uppercase tracking-wider transition-colors underline">
                 Forgot Password?
               </button>
             </div>
@@ -187,31 +182,23 @@ export default function AdminLogin() {
 
         {/* ── STEP 1: ENTER EMAIL ── */}
         {forgotMode === "email" && (
-          <form onSubmit={handleSendOtp} className="space-y-6 animate-fadeIn">
-            <div className="group">
+          <form onSubmit={handleSendOtp} className="space-y-5 animate-fadeIn">
+            <div>
               <label className={labelClass}>Admin Email</label>
-              <div className="relative">
-                <input type="email" value={fpEmail} onChange={(e) => setFpEmail(e.target.value)}
-                  className={inputClass} placeholder="admin@kalaagalya.com" required autoFocus />
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                  </svg>
-                </div>
-              </div>
+              <input type="email" value={fpEmail} onChange={(e) => setFpEmail(e.target.value)}
+                className={inputClass} placeholder="admin@kalaagalya.com" required autoFocus />
             </div>
 
             <button type="submit" disabled={fpLoading}
-              className="w-full py-4 bg-gradient-to-r from-yellow-600 to-amber-700 text-black rounded-xl font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-all disabled:opacity-50 relative overflow-hidden group">
-              <span className="relative z-10 flex items-center justify-center gap-2">
+              className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold font-grotesk uppercase tracking-wider shadow-gold hover:from-yellow-400 hover:to-amber-500 transition-all disabled:opacity-50 text-xs">
+              <span className="flex items-center justify-center gap-2">
                 {fpLoading ? "Sending OTP..." : "Send OTP"}
-                {!fpLoading && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>}
+                {!fpLoading && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>}
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
 
-            <div className="text-center">
-              <button type="button" onClick={resetForgotState} className="text-xs text-gray-500 hover:text-yellow-500 uppercase tracking-widest transition-colors">
+            <div className="text-center font-grotesk">
+              <button type="button" onClick={resetForgotState} className="text-xs text-[#6C685F] hover:text-[#1C1A16] font-bold uppercase tracking-wider transition-colors">
                 ← Back to Login
               </button>
             </div>
@@ -220,103 +207,78 @@ export default function AdminLogin() {
 
         {/* ── STEP 2: ENTER OTP ── */}
         {forgotMode === "otp" && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="bg-[#0d0b03] border border-yellow-900/30 rounded-xl p-4 text-center">
-              <p className="text-xs text-gray-400">OTP sent to <strong className="text-yellow-400">{fpEmail}</strong></p>
-              <p className="text-[10px] text-gray-600 mt-1">Check inbox & spam. Expires in 5 minutes.</p>
+          <div className="space-y-5 animate-fadeIn font-inter">
+            <div className="bg-[#FDFBF7] border border-yellow-500/15 rounded-2xl p-4 text-center">
+              <p className="text-xs text-[#6C685F]">OTP sent to <strong className="text-yellow-800 font-bold">{fpEmail}</strong></p>
+              <p className="text-[11px] text-[#9A9690] mt-0.5">Check inbox & spam. Expires in 5 minutes.</p>
             </div>
 
-            <div className="group">
+            <div>
               <label className={labelClass}>Enter 6-Digit OTP</label>
-              <div className="relative">
-                <input type="text" value={fpOtp} onChange={(e) => setFpOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="w-full text-center text-3xl tracking-[0.5em] py-4 bg-[#0d0b03] text-yellow-400 border border-yellow-900/50 rounded-xl focus:border-yellow-500 transition-all font-mono font-bold placeholder-gray-800"
-                  placeholder="••••••" maxLength={6} required autoFocus />
-              </div>
+              <input type="text" value={fpOtp} onChange={(e) => setFpOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="w-full text-center text-3xl tracking-[0.4em] py-3.5 bg-[#FDFBF7] text-yellow-800 border border-yellow-500/20 rounded-2xl focus:border-yellow-600 transition-all font-mono font-bold"
+                placeholder="••••••" maxLength={6} required autoFocus />
             </div>
 
             <button onClick={() => { if (fpOtp.length === 6) setForgotMode("newpass"); else addToast("Enter a 6-digit OTP", "error"); }}
-              className="w-full py-4 bg-gradient-to-r from-yellow-600 to-amber-700 text-black rounded-xl font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-all relative overflow-hidden group">
-              <span className="relative z-10 flex items-center justify-center gap-2">
+              className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold font-grotesk uppercase tracking-wider shadow-gold hover:from-yellow-400 hover:to-amber-500 transition-all text-xs">
+              <span className="flex items-center justify-center gap-2">
                 Verify & Continue
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
 
-            <div className="flex justify-between">
-              <button onClick={() => setForgotMode("email")} className="text-xs text-gray-500 hover:text-yellow-500 uppercase tracking-widest transition-colors">← Change Email</button>
-              <button onClick={handleSendOtp} className="text-xs text-yellow-500/50 hover:text-yellow-400 uppercase tracking-widest transition-colors">Resend OTP</button>
+            <div className="flex justify-between font-grotesk">
+              <button onClick={() => setForgotMode("email")} className="text-xs text-[#6C685F] hover:text-[#1C1A16] font-bold uppercase tracking-wider transition-colors">← Change Email</button>
+              <button onClick={handleSendOtp} className="text-xs text-yellow-800 font-bold uppercase tracking-wider hover:underline transition-colors">Resend OTP</button>
             </div>
           </div>
         )}
 
         {/* ── STEP 3: NEW PASSWORD ── */}
         {forgotMode === "newpass" && (
-          <form onSubmit={handleResetPassword} className="space-y-6 animate-fadeIn">
-            <div className="group">
+          <form onSubmit={handleResetPassword} className="space-y-5 animate-fadeIn">
+            <div>
               <label className={labelClass}>New Password</label>
-              <div className="relative">
-                <input type="password" value={fpPassword} onChange={(e) => setFpPassword(e.target.value)}
-                  className={inputClass} placeholder="Min 6 characters" required minLength={6} autoFocus />
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-              </div>
+              <input type="password" value={fpPassword} onChange={(e) => setFpPassword(e.target.value)}
+                className={inputClass} placeholder="Min 6 characters" required minLength={6} autoFocus />
             </div>
 
-            <div className="group">
+            <div>
               <label className={labelClass}>Confirm Password</label>
-              <div className="relative">
-                <input type="password" value={fpConfirm} onChange={(e) => setFpConfirm(e.target.value)}
-                  className={inputClass} placeholder="Re-enter password" required minLength={6} />
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                </div>
-              </div>
+              <input type="password" value={fpConfirm} onChange={(e) => setFpConfirm(e.target.value)}
+                className={inputClass} placeholder="Re-enter password" required minLength={6} />
             </div>
 
             <button type="submit" disabled={fpLoading}
-              className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-xl font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all disabled:opacity-50 relative overflow-hidden group">
-              <span className="relative z-10 flex items-center justify-center gap-2">
+              className="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold font-grotesk uppercase tracking-wider shadow-md hover:bg-emerald-500 transition-all disabled:opacity-50 text-xs">
+              <span className="flex items-center justify-center gap-2">
                 {fpLoading ? "Resetting..." : "Reset Password"}
-                {!fpLoading && <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
+                {!fpLoading && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
               </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </button>
 
-            <div className="text-center">
-              <button type="button" onClick={() => setForgotMode("otp")} className="text-xs text-gray-500 hover:text-yellow-500 uppercase tracking-widest transition-colors">← Back to OTP</button>
+            <div className="text-center font-grotesk">
+              <button type="button" onClick={() => setForgotMode("otp")} className="text-xs text-[#6C685F] hover:text-[#1C1A16] font-bold uppercase tracking-wider transition-colors">← Back to OTP</button>
             </div>
           </form>
         )}
 
         {/* ── SUCCESS STATE ── */}
         {forgotMode === "done" && (
-          <div className="text-center space-y-6 animate-fadeIn">
-            <div className="w-20 h-20 mx-auto bg-green-900/20 rounded-full flex items-center justify-center border border-green-500/30">
-              <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center space-y-5 animate-fadeIn">
+            <div className="w-16 h-16 mx-auto bg-emerald-50 text-emerald-700 rounded-full flex items-center justify-center border border-emerald-200">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <p className="text-gray-300 text-sm">Your admin password has been reset. You can now login.</p>
+            <p className="text-[#6C685F] text-sm font-inter">Your admin password has been reset. You can now login.</p>
             <button onClick={resetForgotState}
-              className="w-full py-4 bg-gradient-to-r from-yellow-600 to-amber-700 text-black rounded-xl font-bold uppercase tracking-widest transition-all relative overflow-hidden group">
-              <span className="relative z-10">Back to Login</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500 to-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold font-grotesk uppercase tracking-wider transition-all shadow-gold text-xs">
+              Back to Login
             </button>
           </div>
         )}
-
-        <div className="mt-8 pt-6 border-t border-yellow-900/30 text-center">
-          <p className="text-xs text-gray-500 uppercase tracking-widest">
-            Protected • 256-bit Encryption • Secure Access
-          </p>
-        </div>
       </div>
 
       <style>{`

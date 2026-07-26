@@ -39,19 +39,19 @@ export default function AdminOrders() {
 
   const getStatusColor = (status) => {
     const colors = {
-      Pending: "bg-orange-900/40 text-orange-400 border-orange-500/50",
-      Packed: "bg-blue-900/40 text-blue-400 border-blue-500/50",
-      Shipped: "bg-purple-900/40 text-purple-400 border-purple-500/50",
-      Delivered: "bg-green-900/40 text-yellow-400 border-yellow-500/50",
-      Cancelled: "bg-red-900/40 text-red-400 border-red-500/50",
+      Pending: "bg-amber-50 text-amber-800 border-amber-200",
+      Packed: "bg-blue-50 text-blue-800 border-blue-200",
+      Shipped: "bg-purple-50 text-purple-800 border-purple-200",
+      Delivered: "bg-emerald-50 text-emerald-800 border-emerald-200",
+      Cancelled: "bg-red-50 text-red-800 border-red-200",
     };
-    return colors[status] || "bg-gray-800 text-gray-400 border-gray-600";
+    return colors[status] || "bg-gray-100 text-gray-700 border-gray-200";
   };
 
   const getPaymentStatusColor = (status) => {
     return status === "PAID"
-      ? "text-yellow-400 bg-yellow-900/20 border border-yellow-500/30"
-      : "text-yellow-400 bg-yellow-900/30 border border-yellow-500/30";
+      ? "text-emerald-800 bg-emerald-50 border border-emerald-200"
+      : "text-amber-800 bg-amber-50 border border-amber-200";
   };
 
   const filteredOrders = orders.filter((order) => {
@@ -81,20 +81,20 @@ export default function AdminOrders() {
 
   return (
     <AdminLayout>
-      <div className="mb-10">
-        <h1 className="text-3xl font-bold text-white mb-2">Order Management</h1>
-        <p className="text-gray-500 text-sm">Monitor and process incoming customer orders</p>
+      <div className="mb-8">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">Order Management</h1>
+        <p className="text-[#6C685F] text-sm font-inter">Monitor and process incoming customer orders</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-[#111a11] rounded-2xl border border-yellow-500/10 p-2 mb-8 flex flex-wrap gap-2">
+      <div className="bg-white rounded-2xl border border-yellow-500/12 p-2 mb-8 flex flex-wrap gap-2 shadow-xs">
         {["all", "Pending", "Packed", "Shipped", "Delivered"].map((status) => (
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-6 py-2 rounded-xl font-bold transition-all duration-300 relative overflow-hidden group text-xs uppercase tracking-wider ${filter === status
-                ? "text-black bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.4)]"
-                : "text-gray-400 hover:text-white hover:bg-white/5"
+            className={`px-5 py-2.5 rounded-xl font-bold font-grotesk transition-all duration-300 relative overflow-hidden text-xs uppercase tracking-wider ${filter === status
+                ? "text-black bg-gradient-to-r from-yellow-500 to-amber-600 shadow-gold"
+                : "text-[#6C685F] hover:text-[#1C1A16] hover:bg-yellow-500/8"
               }`}
           >
             <span className="relative z-10">
@@ -105,44 +105,44 @@ export default function AdminOrders() {
       </div>
 
       {/* Orders Table */}
-      <div className="bg-[#111a11] rounded-2xl border border-yellow-500/10 overflow-hidden shadow-2xl relative">
+      <div className="bg-white rounded-3xl border border-yellow-500/12 overflow-hidden shadow-card relative">
         {loading ? (
           <div className="p-20 text-center">
-            <div className="animate-spin h-10 w-10 border-4 border-yellow-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-500">Retrieving order history...</p>
+            <div className="animate-spin h-10 w-10 border-4 border-yellow-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-[#6C685F] font-inter text-sm">Retrieving order history...</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-[#0d0b03] border-b border-yellow-900/10">
+              <thead className="bg-[#FDFBF7] border-b border-yellow-500/12">
                 <tr>
                   {["Order ID", "Customer Name", "Contact", "Amount", "Payment", "Status", "Fast Action", "Date", "Details"].map((head) => (
-                    <th key={head} className={`px-6 py-4 text-left text-[10px] font-bold text-yellow-500/60 uppercase tracking-widest whitespace-nowrap ${head === 'Fast Action' ? 'text-center' : ''}`}>
+                    <th key={head} className={`px-6 py-4 text-left text-xs font-bold text-yellow-800 uppercase tracking-widest whitespace-nowrap font-grotesk ${head === 'Fast Action' ? 'text-center' : ''}`}>
                       {head}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-yellow-900/10">
+              <tbody className="divide-y divide-yellow-500/10 font-inter">
                 {filteredOrders.length > 0 ? (
                   filteredOrders.map((order) => (
-                    <tr key={order._id} className="hover:bg-yellow-500/[0.02] transition-colors group">
-                      <td className="px-6 py-4 text-xs font-mono text-gray-500 group-hover:text-yellow-400 transition-colors whitespace-nowrap">
+                    <tr key={order._id} className="hover:bg-yellow-500/4 transition-colors group">
+                      <td className="px-6 py-4 text-xs font-mono font-bold text-yellow-700 whitespace-nowrap">
                         {order.orderId || order._id.slice(-8).toUpperCase()}
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-white whitespace-nowrap">
+                      <td className="px-6 py-4 text-sm font-bold text-[#1C1A16] whitespace-nowrap">
                         {order.customer.name}
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-400 whitespace-nowrap">{order.customer.phone}</div>
-                        <div className="text-[10px] text-gray-600 truncate max-w-[150px]">{order.customer.address.district}</div>
+                        <div className="text-xs text-[#4A473E] font-medium whitespace-nowrap">{order.customer.phone}</div>
+                        <div className="text-[11px] text-[#9A9690] truncate max-w-[150px]">{order.customer.address.district}</div>
                       </td>
-                      <td className="px-6 py-4 text-sm font-bold text-white font-mono whitespace-nowrap">
+                      <td className="px-6 py-4 text-sm font-black text-[#1C1A16] font-soria whitespace-nowrap">
                         ₹{order.totalAmount.toFixed(0)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight border ${getPaymentStatusColor(
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold font-grotesk uppercase tracking-wider border ${getPaymentStatusColor(
                             order.paymentStatus
                           )}`}
                         >
@@ -151,7 +151,7 @@ export default function AdminOrders() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight border ${getStatusColor(
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold font-grotesk uppercase tracking-wider border ${getStatusColor(
                             order.orderStatus
                           )}`}
                         >
@@ -168,8 +168,8 @@ export default function AdminOrders() {
                               onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Shipped" : "Pending")}
                               disabled={order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
                             />
-                            <div className="w-11 h-6 bg-gray-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-disabled:opacity-50"></div>
-                            <span className="ml-3 text-[9px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-white transition-colors w-16 text-center">
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600 peer-disabled:opacity-50"></div>
+                            <span className="ml-2 text-[10px] font-bold text-[#6C685F] uppercase tracking-wider font-grotesk w-16 text-center">
                               Dispatched
                             </span>
                           </label>
@@ -177,20 +177,20 @@ export default function AdminOrders() {
                           {(order.orderStatus === "Shipped") && (
                             <button
                               onClick={() => handleFastUpdate(order._id, "Delivered")}
-                              className="px-3 py-1 bg-green-500/10 text-green-500 border border-green-500/30 rounded text-[9px] font-bold uppercase tracking-widest hover:bg-green-500/20 transition-all w-24 text-center mt-1"
+                              className="px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg text-[9px] font-bold font-grotesk uppercase tracking-wider hover:bg-emerald-100 transition-all w-24 text-center mt-1"
                             >
                               Mark Delivered
                             </button>
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap border-l border-yellow-900/10">
+                      <td className="px-6 py-4 text-xs text-[#9A9690] whitespace-nowrap border-l border-yellow-500/10">
                         {new Date(order.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         <Link
                           to={`/admin/orders/${order._id}`}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#0d0b03] text-gray-400 border border-yellow-900/30 rounded-lg hover:border-yellow-500/50 hover:text-yellow-400 transition-all font-bold text-[9px] uppercase tracking-wider"
+                          className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#FDFBF7] text-yellow-800 border border-yellow-500/25 rounded-xl hover:bg-yellow-500/15 transition-all font-bold text-[10px] font-grotesk uppercase tracking-wider"
                         >
                           View
                         </Link>
@@ -199,11 +199,11 @@ export default function AdminOrders() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="px-6 py-20 text-center text-gray-500">
+                    <td colSpan="9" className="px-6 py-20 text-center text-[#6C685F]">
                       <div className="flex flex-col items-center">
-                        <svg className="w-16 h-16 text-gray-800 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                        <p className="text-xl font-bold text-white mb-1">No Orders Found</p>
-                        <p className="text-sm">Try selecting a different status filter</p>
+                        <svg className="w-16 h-16 text-yellow-600/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                        <p className="text-xl font-bold text-[#1C1A16] font-grotesk mb-1">No Orders Found</p>
+                        <p className="text-sm font-inter">Try selecting a different status filter</p>
                       </div>
                     </td>
                   </tr>

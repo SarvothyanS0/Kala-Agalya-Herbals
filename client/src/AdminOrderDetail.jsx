@@ -73,8 +73,8 @@ export default function AdminOrderDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0d0b03]">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.5)]"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] text-yellow-700">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-600 shadow-gold"></div>
       </div>
     );
   }
@@ -82,10 +82,10 @@ export default function AdminOrderDetail() {
   if (!order) {
     return (
       <AdminLayout>
-        <div className="text-center p-20 bg-[#111a11] rounded-2xl border border-yellow-500/10">
-          <svg className="w-16 h-16 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <h2 className="text-2xl font-bold text-gray-200 mb-4">Order Not Found</h2>
-          <Link to="/admin/orders" className="text-yellow-500 hover:text-yellow-400 font-semibold underline uppercase tracking-widest text-xs">
+        <div className="text-center p-20 bg-white rounded-3xl border border-yellow-500/12 shadow-card">
+          <svg className="w-16 h-16 text-yellow-600/30 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <h2 className="text-2xl font-bold text-[#1C1A16] font-grotesk mb-4">Order Not Found</h2>
+          <Link to="/admin/orders" className="text-yellow-700 hover:text-yellow-600 font-bold underline font-grotesk uppercase tracking-wider text-xs">
             Back to Orders
           </Link>
         </div>
@@ -95,28 +95,28 @@ export default function AdminOrderDetail() {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-10">
-        <div className="flex items-center gap-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-8">
+        <div className="flex items-center gap-4">
           <Link
             to="/admin/orders"
-            className="group relative inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-bold text-yellow-500 bg-[#0d0b03] border border-yellow-500/20 hover:border-yellow-500/60 transition-all uppercase tracking-widest"
+            className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-yellow-800 bg-white border border-yellow-500/25 hover:bg-yellow-500/10 transition-all font-grotesk uppercase tracking-wider shadow-xs"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 transform group-hover:-translate-x-1 transition-transform relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            <span className="relative z-10">Back to Orders</span>
+            <span>Back to Orders</span>
           </Link>
           <div>
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Order ID</p>
-            <p className="font-mono text-sm text-yellow-400 bg-yellow-900/20 px-3 py-1 rounded-lg border border-yellow-500/10 inline-block font-bold">
+            <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk mb-0.5">Order Reference</p>
+            <p className="font-mono text-sm text-yellow-800 bg-yellow-500/10 px-3 py-1 rounded-lg border border-yellow-500/20 inline-block font-bold">
               {order.orderId || order._id.slice(-8).toUpperCase()}
             </p>
           </div>
         </div>
 
         <div className="text-left sm:text-right">
-          <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Order Date</p>
-          <p className="font-bold text-white text-sm">
+          <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk mb-0.5">Order Date</p>
+          <p className="font-bold text-[#1C1A16] text-sm font-inter">
             {new Date(order.createdAt).toLocaleDateString("en-IN", {
               year: "numeric",
               month: "short",
@@ -128,78 +128,77 @@ export default function AdminOrderDetail() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Customer Details */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="bg-[#111a11] rounded-2xl shadow-xl p-8 border border-yellow-500/10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 blur-[60px] rounded-full"></div>
-            <h2 className="text-xl font-bold text-white mb-8 flex items-center border-b border-yellow-900/10 pb-4">
+          <div className="bg-white rounded-3xl shadow-card p-8 border border-yellow-500/12 relative overflow-hidden">
+            <h2 className="text-xl font-bold text-[#1C1A16] mb-6 flex items-center border-b border-yellow-500/12 pb-4 font-grotesk">
               <Avatar src={order.customer.avatar} name={order.customer.name} size="sm" className="mr-3" />
               Customer Details
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-inter">
               <div>
-                <p className="text-[10px] text-yellow-500 uppercase tracking-widest mb-2 font-bold">Full Name</p>
-                <p className="font-bold text-white text-lg group-hover:text-yellow-400 transition-colors uppercase tracking-tight">{order.customer.name}</p>
+                <p className="text-[10px] text-yellow-800 uppercase tracking-widest mb-1 font-bold font-grotesk">Full Name</p>
+                <p className="font-bold text-[#1C1A16] text-base">{order.customer.name}</p>
               </div>
               <div>
-                <p className="text-[10px] text-yellow-500 uppercase tracking-widest mb-2 font-bold">Primary Phone</p>
-                <p className="font-bold text-white text-lg font-mono">{order.customer.phone}</p>
+                <p className="text-[10px] text-yellow-800 uppercase tracking-widest mb-1 font-bold font-grotesk">Primary Phone</p>
+                <p className="font-bold text-[#1C1A16] text-base font-mono">{order.customer.phone}</p>
               </div>
               {order.customer.altPhone && (
                 <div>
-                  <p className="text-[10px] text-yellow-500 uppercase tracking-widest mb-2 font-bold">Alt Phone</p>
-                  <p className="font-bold text-white text-lg font-mono">{order.customer.altPhone}</p>
+                  <p className="text-[10px] text-yellow-800 uppercase tracking-widest mb-1 font-bold font-grotesk">Alt Phone</p>
+                  <p className="font-bold text-[#1C1A16] text-base font-mono">{order.customer.altPhone}</p>
                 </div>
               )}
             </div>
-            <div className="mt-10 pt-8 border-t border-yellow-900/10">
-              <p className="text-[10px] text-yellow-500 uppercase tracking-widest mb-4 font-bold">Shipping Information</p>
-              <div className="bg-[#0a0f0a]/60 rounded-2xl p-6 border border-yellow-900/20 shadow-inner">
-                <p className="text-gray-300 text-lg leading-relaxed font-medium">
+            <div className="mt-8 pt-6 border-t border-yellow-500/12">
+              <p className="text-[10px] text-yellow-800 uppercase tracking-widest mb-3 font-bold font-grotesk">Shipping Address</p>
+              <div className="bg-[#FDFBF7] rounded-2xl p-5 border border-yellow-500/15">
+                <p className="text-[#1C1A16] text-base font-medium font-inter leading-relaxed">
                   {order.customer.address.door}, {order.customer.address.street}
                 </p>
                 {order.customer.address.landmark && (
-                  <p className="text-gray-500 text-xs mt-2 uppercase tracking-wide">Landmark: <span className="text-gray-400">{order.customer.address.landmark}</span></p>
+                  <p className="text-[#6C685F] text-xs mt-1.5 uppercase font-grotesk">Landmark: <span className="text-[#1C1A16] font-medium">{order.customer.address.landmark}</span></p>
                 )}
-                <p className="text-gray-300 text-lg mt-1 font-medium">
-                  {order.customer.address.district}, {order.customer.address.state} - <span className="font-mono text-yellow-500 font-black">{order.customer.address.pincode}</span>
+                <p className="text-[#1C1A16] text-base mt-1 font-medium font-inter">
+                  {order.customer.address.district}, {order.customer.address.state} - <span className="font-mono text-yellow-700 font-bold">{order.customer.address.pincode}</span>
                 </p>
               </div>
             </div>
           </div>
 
           {/* Ordered Products */}
-          <div className="bg-[#111a11] rounded-2xl shadow-xl p-8 border border-yellow-500/10 relative overflow-hidden">
-            <h2 className="text-xl font-bold text-white mb-8 flex items-center border-b border-yellow-900/10 pb-4">
-              <div className="bg-green-900/20 p-2 rounded-xl mr-3 border border-yellow-500/20">
-                <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white rounded-3xl shadow-card p-8 border border-yellow-500/12 relative overflow-hidden">
+            <h2 className="text-xl font-bold text-[#1C1A16] mb-6 flex items-center border-b border-yellow-500/12 pb-4 font-grotesk">
+              <div className="bg-yellow-500/15 p-2 rounded-xl mr-3">
+                <svg className="w-5 h-5 text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
               </div>
-              Ordered Products
+              Ordered Items
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4 font-inter">
               {order.items.map((item, index) => (
-                <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#0a0f0a]/60 rounded-2xl p-6 border border-yellow-900/20 hover:border-yellow-500/30 transition-all group gap-6">
+                <div key={index} className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#FDFBF7] rounded-2xl p-5 border border-yellow-500/12 gap-4">
                   <div className="flex-1">
-                    <p className="font-bold text-white text-lg uppercase tracking-tight group-hover:text-yellow-400 transition-colors">{item.name}</p>
-                    <div className="flex items-center gap-3 mt-2">
-                      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded">Size: <span className="text-yellow-500">{item.size}</span></p>
-                      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded">Qty: <span className="text-yellow-500">{item.quantity}</span></p>
+                    <p className="font-bold text-[#1C1A16] text-base font-grotesk">{item.name}</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <p className="text-[10px] text-[#6C685F] font-bold uppercase tracking-wider font-grotesk bg-white px-2 py-0.5 rounded border border-yellow-500/10">Size: <span className="text-yellow-800">{item.size}</span></p>
+                      <p className="text-[10px] text-[#6C685F] font-bold uppercase tracking-wider font-grotesk bg-white px-2 py-0.5 rounded border border-yellow-500/10">Qty: <span className="text-yellow-800">{item.quantity}</span></p>
                     </div>
                   </div>
-                  <div className="text-left sm:text-right min-w-[120px] pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5 w-full sm:w-auto">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 font-bold">Line Total</p>
-                    <p className="font-black text-white text-xl font-mono">₹{item.price.toFixed(0)}</p>
+                  <div className="text-left sm:text-right min-w-[100px]">
+                    <p className="text-[10px] text-[#9A9690] uppercase tracking-wider font-grotesk font-bold">Line Total</p>
+                    <p className="font-black text-[#1C1A16] text-lg font-soria">₹{item.price.toFixed(0)}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-10 pt-8 border-t border-yellow-900/20">
+            <div className="mt-8 pt-6 border-t border-yellow-500/12">
               <div className="flex justify-between items-center">
-                <p className="text-xl font-black text-gray-400 uppercase tracking-widest">Grand Total</p>
-                <p className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 font-mono shadow-sm">₹{order.totalAmount.toFixed(0)}</p>
+                <p className="text-lg font-bold text-[#6C685F] font-grotesk uppercase tracking-wider">Grand Total</p>
+                <p className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-700 to-amber-800 font-soria">₹{order.totalAmount.toFixed(0)}</p>
               </div>
             </div>
           </div>
@@ -208,28 +207,28 @@ export default function AdminOrderDetail() {
         {/* Order Status & Actions */}
         <div className="space-y-8">
           {/* Payment Information */}
-          <div className="bg-[#111a11] rounded-2xl shadow-xl p-8 border border-yellow-500/10 relative overflow-hidden group">
-            <h2 className="text-lg font-bold text-white mb-6 flex items-center">
-              <div className="bg-yellow-900/20 p-2 rounded-xl mr-3 border border-yellow-500/10">
-                <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white rounded-3xl shadow-card p-7 border border-yellow-500/12">
+            <h2 className="text-lg font-bold text-[#1C1A16] mb-5 flex items-center font-grotesk">
+              <div className="bg-yellow-500/15 p-2 rounded-xl mr-3">
+                <svg className="w-5 h-5 text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
               </div>
               Transaction Info
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4">
               {order.paymentId && (
                 <div>
-                  <p className="text-[10px] text-gray-600 uppercase tracking-widest mb-2 font-bold">RazorPay Payment ID</p>
-                  <p className="font-mono text-[10px] text-yellow-500 bg-[#0d0b03] p-3 rounded-xl border border-yellow-900/40 break-all font-bold shadow-inner">{order.paymentId}</p>
+                  <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk font-bold mb-1">Razorpay Payment ID</p>
+                  <p className="font-mono text-[11px] text-yellow-800 bg-[#FDFBF7] p-3 rounded-xl border border-yellow-500/15 break-all font-bold">{order.paymentId}</p>
                 </div>
               )}
               <div>
-                <p className="text-[10px] text-gray-600 uppercase tracking-widest mb-2 font-bold">Payment Status</p>
+                <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk font-bold mb-1.5">Payment Status</p>
                 <span
-                  className={`inline-flex items-center px-4 py-2 rounded-xl text-xs font-black tracking-widest border shadow-lg ${order.paymentStatus === "PAID"
-                      ? "bg-green-500/10 text-green-500 border-green-500/40"
-                      : "bg-red-500/10 text-red-500 border-red-500/40"
+                  className={`inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold font-grotesk tracking-wider uppercase border ${order.paymentStatus === "PAID"
+                      ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                      : "bg-amber-50 text-amber-800 border-amber-200"
                     }`}
                 >
                   {order.paymentStatus === "PAID" && <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>}
@@ -239,42 +238,35 @@ export default function AdminOrderDetail() {
             </div>
           </div>
 
-          {/* Activity Logs / Control Panel */}
-          <div className="bg-[#111a11] rounded-2xl shadow-xl p-8 border border-yellow-500/10 relative overflow-hidden">
-            <h2 className="text-lg font-bold text-white mb-8 bg-yellow-900/10 -mx-8 px-8 py-3 border-y border-yellow-900/10 uppercase tracking-widest text-[10px]">Processing Control Panel</h2>
+          {/* Action Buttons */}
+          <div className="bg-white rounded-3xl shadow-card p-7 border border-yellow-500/12">
+            <h2 className="text-xs font-bold text-yellow-800 uppercase tracking-widest mb-6 font-grotesk bg-yellow-500/8 -mx-7 -mt-7 px-7 py-3 border-b border-yellow-500/12 rounded-t-3xl">Logistics Control Panel</h2>
 
-            <div className="text-center mb-10">
-              <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-bold">Current Logistics Status</p>
-              <div className="relative inline-block">
-                <div className={`absolute inset-0 blur-2xl opacity-40 rounded-full scale-110 ${order.orderStatus === "Delivered" ? "bg-green-500" :
-                    order.orderStatus === "Cancelled" ? "bg-red-500" :
-                      "bg-yellow-500"
-                  }`}></div>
-                <span
-                  className={`relative z-10 inline-block px-10 py-5 rounded-2xl text-2xl font-black tracking-tighter uppercase border-2 shadow-2xl transition-all ${order.orderStatus === "Pending"
-                      ? "bg-orange-600 text-white border-white/20"
-                      : order.orderStatus === "Packed"
-                        ? "bg-blue-600 text-white border-white/20"
-                        : order.orderStatus === "Shipped"
-                          ? "bg-indigo-600 text-white border-white/20"
-                          : order.orderStatus === "Delivered"
-                            ? "bg-emerald-600 text-white border-white/20"
-                            : "bg-red-600 text-white border-white/20"
-                    }`}
-                >
-                  {order.orderStatus}
-                </span>
-              </div>
+            <div className="text-center mb-8">
+              <p className="text-[10px] text-[#9A9690] uppercase tracking-widest mb-3 font-bold font-grotesk">Current Order Status</p>
+              <span
+                className={`inline-block px-8 py-3.5 rounded-2xl text-lg font-black tracking-wider font-grotesk uppercase border-2 shadow-xs ${order.orderStatus === "Pending"
+                    ? "bg-amber-50 text-amber-900 border-amber-300"
+                    : order.orderStatus === "Packed"
+                      ? "bg-blue-50 text-blue-900 border-blue-300"
+                      : order.orderStatus === "Shipped"
+                        ? "bg-purple-50 text-purple-900 border-purple-300"
+                        : order.orderStatus === "Delivered"
+                          ? "bg-emerald-50 text-emerald-900 border-emerald-300"
+                          : "bg-red-50 text-red-900 border-red-300"
+                  }`}
+              >
+                {order.orderStatus}
+              </span>
             </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 text-center">Execute State Change</p>
+            <div className="space-y-3 font-grotesk">
+              <p className="text-[10px] font-bold text-[#9A9690] uppercase tracking-widest mb-1 text-center">Execute Status Update</p>
               {order.orderStatus !== "Packed" && order.orderStatus !== "Cancelled" && order.orderStatus !== "Shipped" && order.orderStatus !== "Delivered" && (
                 <button
                   onClick={() => updateOrderStatus("Packed")}
                   disabled={updating}
-                  className="w-full bg-[#0d0b03] text-blue-500 border border-blue-500/30 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-600 hover:text-white transition-all shadow-[0_0_15px_rgba(37,99,235,0.1)] hover:shadow-[0_0_25px_rgba(37,99,235,0.3)] disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 text-black py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-yellow-400 hover:to-amber-500 transition-all shadow-gold disabled:opacity-50"
                 >
                   {updating ? "Processing..." : "Move to Packed State"}
                 </button>
@@ -283,16 +275,16 @@ export default function AdminOrderDetail() {
                 <button
                   onClick={() => updateOrderStatus("Shipped")}
                   disabled={updating}
-                  className="w-full bg-[#0d0b03] text-indigo-500 border border-indigo-500/30 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-[0_0_15px_rgba(147,51,234,0.1)] hover:shadow-[0_0_25px_rgba(147,51,234,0.3)] disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 text-black py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-yellow-400 hover:to-amber-500 transition-all shadow-gold disabled:opacity-50"
                 >
-                  {updating ? "Processing..." : "Mark as Dispatched"}
+                  {updating ? "Processing..." : "Mark as Dispatched (Shipped)"}
                 </button>
               )}
               {order.orderStatus === "Shipped" && (
                 <button
                   onClick={() => updateOrderStatus("Delivered")}
                   disabled={updating}
-                  className="w-full bg-[#0d0b03] text-emerald-500 border border-emerald-500/30 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-emerald-600 hover:text-white transition-all shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_25px_rgba(16,185,129,0.3)] disabled:opacity-50"
+                  className="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-emerald-500 transition-all shadow-md disabled:opacity-50"
                 >
                   {updating ? "Processing..." : "Confirm Delivery"}
                 </button>
@@ -300,20 +292,15 @@ export default function AdminOrderDetail() {
               {order.orderStatus !== "Delivered" && order.orderStatus !== "Cancelled" && (
                 <button
                   onClick={() => {
-                    if (window.confirm("CRITICAL ACTION: Are you sure you want to cancel this order?")) {
+                    if (window.confirm("Are you sure you want to cancel this order?")) {
                       updateOrderStatus("Cancelled");
                     }
                   }}
                   disabled={updating}
-                  className="w-full bg-red-600/10 text-red-500 border border-red-500/30 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-[0_0_15px_rgba(220,38,38,0.1)] hover:shadow-[0_0_25px_rgba(220,38,38,0.3)] disabled:opacity-50"
+                  className="w-full bg-red-50 text-red-700 border border-red-200 py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider hover:bg-red-100 transition-all disabled:opacity-50"
                 >
                   {updating ? "Processing..." : "Cancel Order"}
                 </button>
-              )}
-              {order.orderStatus === "Delivered" && (
-                <div className="bg-emerald-900/10 border border-emerald-500/20 p-4 rounded-xl text-center">
-                  <p className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Fulfillment Cycle Complete</p>
-                </div>
               )}
             </div>
           </div>
