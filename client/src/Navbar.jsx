@@ -8,6 +8,7 @@ export default function Navbar() {
 
   const [avatar, setAvatar] = useState(localStorage.getItem("userAvatar"));
   const [userName, setUserName] = useState(localStorage.getItem("userName"));
+  const [token, setToken] = useState(localStorage.getItem("userToken"));
 
   useEffect(() => {
     const updateCart = () => {
@@ -19,6 +20,7 @@ export default function Navbar() {
     const updateProfile = () => {
       setAvatar(localStorage.getItem("userAvatar"));
       setUserName(localStorage.getItem("userName"));
+      setToken(localStorage.getItem("userToken"));
     };
 
     updateCart();
@@ -71,14 +73,23 @@ export default function Navbar() {
             <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
           </Link>
 
-          <Link to="/my-orders" className="relative group overflow-hidden py-2 text-[#2C2921]">
-            <span className="relative z-10 group-hover:text-yellow-700 transition-colors duration-300">My Orders</span>
-            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
-          </Link>
+          {token ? (
+            <>
+              <Link to="/my-orders" className="relative group overflow-hidden py-2 text-[#2C2921]">
+                <span className="relative z-10 group-hover:text-yellow-700 transition-colors duration-300">My Orders</span>
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
+              </Link>
 
-          <Link to="/profile" className="relative hover:scale-110 transition-transform duration-300 group">
-             <Avatar src={avatar} name={userName} size="sm" />
-          </Link>
+              <Link to="/profile" className="relative hover:scale-110 transition-transform duration-300 group">
+                 <Avatar src={avatar} name={userName} size="sm" />
+              </Link>
+            </>
+          ) : (
+            <Link to="/login" className="relative group overflow-hidden py-2 text-[#2C2921]">
+              <span className="relative z-10 group-hover:text-yellow-700 transition-colors duration-300">Login</span>
+              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
+            </Link>
+          )}
 
           <Link to="/cart" className="relative hover:scale-110 transition-transform duration-300 group">
             <div className="relative p-2 bg-yellow-900/10 rounded-full border border-yellow-500/20 group-hover:border-yellow-500/50 group-hover:shadow-[0_0_15px_rgba(234,179,8,0.2)] transition-all">
@@ -94,9 +105,15 @@ export default function Navbar() {
         
         {/* Mobile controls */}
         <div className="flex items-center gap-4 shrink-0 md:hidden">
-          <Link to="/profile" onClick={closeMenu} className="relative hover:scale-110 transition-transform">
-             <Avatar src={avatar} name={userName} size="sm" />
-          </Link>
+          {token ? (
+            <Link to="/profile" onClick={closeMenu} className="relative hover:scale-110 transition-transform">
+               <Avatar src={avatar} name={userName} size="sm" />
+            </Link>
+          ) : (
+            <Link to="/login" onClick={closeMenu} className="text-sm font-semibold text-yellow-700 hover:text-yellow-600 uppercase tracking-wider">
+               Login
+            </Link>
+          )}
           <Link to="/cart" onClick={closeMenu} className="relative hover:scale-110 transition-transform">
              <div className="relative p-2 bg-yellow-900/10 rounded-full border border-yellow-500/20">
                 <img src="/images/icons/cart.svg" className="w-5 h-5" alt="cart" />
@@ -140,8 +157,14 @@ export default function Navbar() {
         <div className={`relative h-full flex flex-col items-center justify-center space-y-8 transition-transform duration-500 ${isMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
           <Link to="/" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Home</Link>
           <Link to="/product" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Product</Link>
-          <Link to="/my-orders" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">My Orders</Link>
-          <Link to="/profile" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Profile</Link>
+          {token ? (
+            <>
+              <Link to="/my-orders" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">My Orders</Link>
+              <Link to="/profile" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Profile</Link>
+            </>
+          ) : (
+            <Link to="/login" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Login</Link>
+          )}
           <Link to="/cart" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Cart ({count})</Link>
           <Link to="/contact" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Contact</Link>
           
