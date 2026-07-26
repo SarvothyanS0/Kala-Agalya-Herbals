@@ -1,3 +1,13 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /admin/dashboard
+Disallow: /admin/orders
+Disallow: /admin/products
+Disallow: /admin/reports
+Disallow: /admin/users
+Disallow: /admin/reviews
+
+Sitemap: https://kalaagalyaherbals.com/sitemap.xml
