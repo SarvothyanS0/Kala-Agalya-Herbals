@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Landing from "./Landing";
 import Navbar from "./Navbar";
 import Cart from "./Cart";
@@ -33,15 +34,51 @@ import { HelmetProvider } from "react-helmet-async";
 import { ReactLenis } from "@studio-freight/react-lenis";
 import useScrollAnimation from "./useScrollAnimation";
 
+/* ── Global cursor + scroll-progress bar ─────────────── */
+function useGlobalEffects() {
+  useEffect(() => {
+    const cursor  = document.getElementById("custom-cursor");
+    const ring    = document.getElementById("custom-cursor-ring");
+    const bar     = document.getElementById("scroll-progress");
+
+    // Custom cursor
+    const onMouse = (e) => {
+      if (cursor) { cursor.style.left = e.clientX + "px"; cursor.style.top = e.clientY + "px"; }
+      if (ring)   { ring.style.left   = e.clientX + "px"; ring.style.top   = e.clientY + "px"; }
+    };
+
+    // Scroll progress bar
+    const onScroll = () => {
+      if (!bar) return;
+      const doc = document.documentElement;
+      const pct = window.scrollY / (doc.scrollHeight - doc.clientHeight);
+      bar.style.transform = `scaleX(${Math.min(pct, 1)})`;
+    };
+
+    window.addEventListener("mousemove", onMouse, { passive: true });
+    window.addEventListener("scroll",    onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("mousemove", onMouse);
+      window.removeEventListener("scroll",    onScroll);
+    };
+  }, []);
+}
+
 
 function Layout() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const isAuthenticated = !!localStorage.getItem("userToken");
-  const isAuthRoute = ["/login", "/register", "/forgot-password"].includes(location.pathname) || location.pathname.startsWith("/reset-password");
+  const isAuthRoute  = ["/login", "/register", "/forgot-password"].includes(location.pathname)
+    || location.pathname.startsWith("/reset-password");
 
   // Global scroll animations
   useScrollAnimation();
+  // Global cursor + scroll-progress bar
+  useGlobalEffects();
+
+  // Scroll to top on route change
+  useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
 
   return (
     <>
