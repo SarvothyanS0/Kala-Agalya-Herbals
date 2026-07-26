@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "./Alert";
 import { GoogleLogin } from "@react-oauth/google";
@@ -10,6 +10,18 @@ export default function UserLogin() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { addToast } = useToast();
+
+  const [btnWidth, setBtnWidth] = useState(320);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const pad = window.innerWidth < 640 ? 96 : 128;
+      setBtnWidth(Math.max(200, Math.min(384, window.innerWidth - pad)));
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -55,7 +67,7 @@ export default function UserLogin() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/5 blur-[150px] rounded-full pointer-events-none"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/5 blur-[150px] rounded-full pointer-events-none"></div>
 
-      <div className="relative bg-white border border-yellow-500/15 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.06)] w-full max-w-md p-8 backdrop-blur-xl">
+      <div className="relative bg-white border border-yellow-500/15 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.06)] w-full max-w-md p-6 sm:p-8 backdrop-blur-xl">
         <div className="text-center mb-10">
           <div className="relative inline-block mb-6">
              <div className="absolute inset-0 bg-yellow-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
@@ -150,54 +162,54 @@ export default function UserLogin() {
           <div className="flex-1 h-[1px] bg-yellow-500/20"></div>
         </div>
 
-        <div className="mt-8">
-           <div className="flex justify-center relative group">
-             <div className="absolute inset-0 bg-yellow-500/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
-             <div className="relative z-10 w-full flex justify-center border border-yellow-500/20 rounded-full p-[2px] hover:border-yellow-500/50 transition-all shadow-lg overflow-hidden bg-white">
-               <GoogleLogin
-                  onSuccess={async (credentialResponse) => {
-                    setLoading(true);
-                    try {
-                      const res = await fetch(`${API_URL}/users/google`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ token: credentialResponse.credential }),
-                      });
-                      const data = await res.json();
-                      if (data.success) {
-                        localStorage.setItem("userToken", data.token);
-                        localStorage.setItem("userEmail", data.user.email);
-                        localStorage.setItem("userName", data.user.name);
-                        if (data.user.avatar) {
-                          localStorage.setItem("userAvatar", data.user.avatar);
-                        }
-                        addToast("Welcome back! " + data.user.name, "success");
-                        document.dispatchEvent(new Event("profileUpdated"));
-                        const params = new URLSearchParams(window.location.search);
-                        const redirect = params.get("redirect");
-                        if (redirect) {
-                          navigate(`/${redirect}`);
-                        } else {
-                          navigate("/");
-                        }
-                      } else {
-                        addToast(data.message || "Google Login Failed", "error");
-                      }
-                    } catch (error) {
-                      addToast("Server connection failed", "error");
-                    } finally {
-                      setLoading(false);
-                    }
-                  }}
-                  onError={() => addToast("Google Login Failed", "error")}
-                  theme="filled_black"
-                  shape="pill"
-                  size="large"
-                  width={384}
-                  text="continue_with"
-               />
-             </div>
-           </div>
+        <div className="mt-8 flex justify-center">
+          <div className="relative group">
+            <div className="absolute inset-0 bg-yellow-500/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
+            <div className="relative z-10 flex justify-center">
+              <GoogleLogin
+                 onSuccess={async (credentialResponse) => {
+                   setLoading(true);
+                   try {
+                     const res = await fetch(`${API_URL}/users/google`, {
+                       method: "POST",
+                       headers: { "Content-Type": "application/json" },
+                       body: JSON.stringify({ token: credentialResponse.credential }),
+                     });
+                     const data = await res.json();
+                     if (data.success) {
+                       localStorage.setItem("userToken", data.token);
+                       localStorage.setItem("userEmail", data.user.email);
+                       localStorage.setItem("userName", data.user.name);
+                       if (data.user.avatar) {
+                         localStorage.setItem("userAvatar", data.user.avatar);
+                       }
+                       addToast("Welcome back! " + data.user.name, "success");
+                       document.dispatchEvent(new Event("profileUpdated"));
+                       const params = new URLSearchParams(window.location.search);
+                       const redirect = params.get("redirect");
+                       if (redirect) {
+                         navigate(`/${redirect}`);
+                       } else {
+                         navigate("/");
+                       }
+                     } else {
+                       addToast(data.message || "Google Login Failed", "error");
+                     }
+                   } catch (error) {
+                     addToast("Server connection failed", "error");
+                   } finally {
+                     setLoading(false);
+                   }
+                 }}
+                 onError={() => addToast("Google Login Failed", "error")}
+                 theme="filled_black"
+                 shape="pill"
+                 size="large"
+                 width={btnWidth}
+                 text="continue_with"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="mt-8 pt-6 border-t border-yellow-500/20 text-center">
