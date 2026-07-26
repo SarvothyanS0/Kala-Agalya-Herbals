@@ -48,22 +48,18 @@ exports.updateOrderStatus = async (req, res) => {
 // Get dashboard statistics
 exports.getDashboardStats = async (req, res) => {
   try {
-    const totalOrders = await Order.countDocuments();
-    const totalSales = await Order.aggregate([
-      { $group: { _id: null, total: { $sum: "$totalAmount" } } }
-    ]);
-    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    const todayOrders = await Order.countDocuments({
-      createdAt: { $gte: today }
-    });
-    
-    const pendingOrders = await Order.countDocuments({
-      orderStatus: "Pending"
-    });
-    
+
+    const [totalOrders, totalSales, todayOrders, pendingOrders] = await Promise.all([
+      Order.countDocuments(),
+      Order.aggregate([
+        { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+      ]),
+      Order.countDocuments({ createdAt: { $gte: today } }),
+      Order.countDocuments({ orderStatus: "Pending" })
+    ]);
+
     res.json({
       success: true,
       stats: {

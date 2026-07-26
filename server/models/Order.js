@@ -51,6 +51,9 @@ async function generateUniqueOrderId() {
   return orderId;
 }
 
+orderSchema.index({ createdAt: -1 });
+orderSchema.index({ orderStatus: 1 });
+
 orderSchema.pre("save", async function () {
   if (!this.orderId) {
     this.orderId = await generateUniqueOrderId();

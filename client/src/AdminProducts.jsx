@@ -168,17 +168,16 @@ export default function AdminProducts() {
     setFormData({ ...formData, sizes: newSizes });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] text-yellow-700">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-600 shadow-gold"></div>
-      </div>
-    );
-  }
-
   return (
     <AdminLayout>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+      {loading ? (
+        <div className="py-24 text-center">
+          <div className="animate-spin h-10 w-10 border-4 border-yellow-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-[#6C685F] font-inter text-sm">Loading product catalog...</p>
+        </div>
+      ) : (
+        <>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">Product Management</h1>
           <p className="text-[#6C685F] text-sm font-inter">Create and update your herbal oil inventory</p>
@@ -515,6 +514,8 @@ export default function AdminProducts() {
             </form>
           </div>
         </div>
+      )}
+        </>
       )}
     </AdminLayout>
   );

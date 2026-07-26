@@ -15,42 +15,30 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchDashboardData = useCallback(async () => {
+  const fetchAllDashboardData = useCallback(async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`${API_URL}/admin/orders/dashboard/stats`, {
-        headers: { 
-          "Authorization": `Bearer ${token}` 
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setStats(data.stats);
+      const headers = { "Authorization": `Bearer ${token}` };
+
+      // Parallel fetch for stats and sales chart
+      const [statsRes, chartRes] = await Promise.all([
+        fetch(`${API_URL}/admin/orders/dashboard/stats`, { headers }),
+        fetch(`${API_URL}/admin/orders/dashboard/sales-chart?period=${period}`, { headers })
+      ]);
+
+      const statsData = await statsRes.json();
+      const chartData = await chartRes.json();
+
+      if (statsData.success) {
+        setStats(statsData.stats);
+      }
+      if (chartData.success) {
+        setSalesData(chartData.salesData);
       }
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
+      console.error("Error fetching dashboard data:", error);
     } finally {
       setLoading(false);
-    }
-  }, []);
-
-  const fetchSalesChart = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-      const response = await fetch(
-        `${API_URL}/admin/orders/dashboard/sales-chart?period=${period}`,
-        { 
-          headers: { 
-            "Authorization": `Bearer ${token}` 
-          } 
-        }
-      );
-      const data = await response.json();
-      if (data.success) {
-        setSalesData(data.salesData);
-      }
-    } catch (error) {
-      console.error("Error fetching sales chart:", error);
     }
   }, [period]);
 
@@ -60,23 +48,18 @@ export default function AdminDashboard() {
       navigate("/admin/login");
       return;
     }
-    fetchDashboardData();
-  }, [navigate, fetchDashboardData]);
-
-  useEffect(() => {
-    if(stats.totalOrders > 0) fetchSalesChart();
-  }, [stats.totalOrders, fetchSalesChart]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] text-yellow-700">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-600 shadow-gold"></div>
-      </div>
-    );
-  }
+    fetchAllDashboardData();
+  }, [navigate, fetchAllDashboardData]);
 
   return (
     <AdminLayout>
+      {loading ? (
+        <div className="py-24 text-center">
+          <div className="animate-spin h-10 w-10 border-4 border-yellow-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-[#6C685F] text-sm font-inter">Loading dashboard insights...</p>
+        </div>
+      ) : (
+        <>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
          <div>
            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">
@@ -212,6 +195,8 @@ export default function AdminDashboard() {
            </div>
         </div>
       </div>
+        </>
+      )}
     </AdminLayout>
   );
 }

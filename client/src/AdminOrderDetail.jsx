@@ -73,9 +73,12 @@ export default function AdminOrderDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] text-yellow-700">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-yellow-600 shadow-gold"></div>
-      </div>
+      <AdminLayout>
+        <div className="py-24 text-center">
+          <div className="animate-spin h-10 w-10 border-4 border-yellow-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-[#6C685F] font-inter text-sm">Loading order details...</p>
+        </div>
+      </AdminLayout>
     );
   }
 
