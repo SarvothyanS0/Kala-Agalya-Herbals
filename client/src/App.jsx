@@ -162,13 +162,11 @@ function Layout() {
 export default function App() {
   return (
     <HelmetProvider>
-      <ReactLenis root options={{ lerp: 0.1, duration: 0.8, smoothTouch: false }}>
-        <ToastProvider>
-          <Router>
-            <Layout />
-          </Router>
-        </ToastProvider>
-      </ReactLenis>
+      <ToastProvider>
+        <Router>
+          <Layout />
+        </Router>
+      </ToastProvider>
     </HelmetProvider>
   );
 }

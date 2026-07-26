@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { FaWhatsapp, FaInstagram, FaYoutube } from "react-icons/fa6";
@@ -26,6 +26,58 @@ const stats = [
   { value: "100%",  label: "Organic Formula" },
   { value: "4.9★",  label: "Average Rating" },
 ];
+
+/* ── Animated stat counter ───────────────────────────────────── */
+function StatCounter({ value, label }) {
+  const numMatch = value.match(/[\d.]+/);
+  const target = numMatch ? parseFloat(numMatch[0]) : 0;
+  const suffix = numMatch ? value.replace(numMatch[0], "") : "";
+  const prefix = value.startsWith("★") ? "★" : "";
+  const cleanSuffix = suffix.replace("★", "");
+
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const animatedRef = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !animatedRef.current) {
+        animatedRef.current = true;
+        let startTimestamp = null;
+        const duration = 1200;
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          const easeOut = 1 - Math.pow(1 - progress, 4);
+          const current = easeOut * target;
+          setCount(current);
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            setCount(target);
+          }
+        };
+        requestAnimationFrame(step);
+      }
+    }, { threshold: 0.1 });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [target]);
+
+  const formattedCount = target % 1 !== 0 ? count.toFixed(1) : Math.floor(count);
+
+  return (
+    <div ref={ref} className="py-5 px-3 text-center group">
+      <div className="text-2xl sm:text-3xl font-black text-yellow-600 font-soria tabular-nums group-hover:scale-110 transition-transform duration-300">
+        {prefix}{formattedCount}{cleanSuffix}
+      </div>
+      <div className="text-xs sm:text-sm text-[#6C685F] mt-1 font-inter">{label}</div>
+    </div>
+  );
+}
 
 export default function About() {
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -115,10 +167,7 @@ export default function About() {
       <section className="py-8 px-5 sm:px-8" aria-label="Key statistics">
         <div className="max-w-4xl mx-auto bg-white rounded-2xl sm:rounded-3xl shadow-card border border-yellow-500/10 grid grid-cols-2 md:grid-cols-4 divide-x divide-yellow-500/10 -mt-6 relative z-10 scroll-animate">
           {stats.map((s, i) => (
-            <div key={i} className="py-5 px-3 text-center group">
-              <div className="text-2xl sm:text-3xl font-black text-yellow-600 font-soria group-hover:scale-110 transition-transform duration-300">{s.value}</div>
-              <div className="text-xs sm:text-sm text-[#6C685F] mt-1 font-inter">{s.label}</div>
-            </div>
+            <StatCounter key={i} value={s.value} label={s.label} />
           ))}
         </div>
       </section>

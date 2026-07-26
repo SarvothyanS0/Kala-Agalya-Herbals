@@ -124,7 +124,13 @@ function useTilt(ref) {
 
 /* ── Animated stat counter ───────────────────────────────────── */
 function StatCounter({ value, label }) {
-  const [display, setDisplay] = useState("0");
+  const numMatch = value.match(/[\d.]+/);
+  const target = numMatch ? parseFloat(numMatch[0]) : 0;
+  const suffix = numMatch ? value.replace(numMatch[0], "") : "";
+  const prefix = value.startsWith("★") ? "★" : "";
+  const cleanSuffix = suffix.replace("★", "");
+
+  const [count, setCount] = useState(0);
   const ref = useRef(null);
   const animatedRef = useRef(false);
 
@@ -134,31 +140,34 @@ function StatCounter({ value, label }) {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !animatedRef.current) {
         animatedRef.current = true;
-        const numMatch = value.match(/[\d.]+/);
-        if (!numMatch) { setDisplay(value); return; }
-        const target = parseFloat(numMatch[0]);
-        const suffix = value.replace(numMatch[0], "");
-        let start = 0;
-        const duration = 1600;
-        const step = (ts) => {
-          if (!start) start = ts;
-          const progress = Math.min((ts - start) / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          const current = (eased * target).toFixed(target % 1 !== 0 ? 1 : 0);
-          setDisplay(current + suffix);
-          if (progress < 1) requestAnimationFrame(step);
+        let startTimestamp = null;
+        const duration = 1200; // Fast 1.2s count up
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          const easeOut = 1 - Math.pow(1 - progress, 4);
+          const current = easeOut * target;
+          setCount(current);
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            setCount(target);
+          }
         };
         requestAnimationFrame(step);
       }
-    }, { threshold: 0.5 });
+    }, { threshold: 0.1 });
+
     observer.observe(el);
     return () => observer.disconnect();
-  }, [value]);
+  }, [target]);
+
+  const formattedCount = target % 1 !== 0 ? count.toFixed(1) : Math.floor(count);
 
   return (
     <div ref={ref} className="text-center group py-4 px-2">
       <div className="text-3xl md:text-4xl font-black text-yellow-600 font-soria tabular-nums group-hover:scale-110 transition-transform duration-300">
-        {display || value}
+        {prefix}{formattedCount}{cleanSuffix}
       </div>
       <div className="text-[#6C685F] text-sm mt-1 font-inter">{label}</div>
     </div>
