@@ -128,7 +128,7 @@ export default function Landing() {
           const master = data.products[0];
           setDbProduct(master);
           fetchReviews(master._id);
-          const parsed = data.products.filter(p => p.isActive).flatMap(prod =>
+          const parsed = data.products.filter(p => p.isActive !== false).flatMap(prod =>
             prod.sizes.map((s, idx) => {
               const sellingPrice = s.price;
               const mrpPrice = (s.mrp && s.mrp > s.price) ? s.mrp : null;
@@ -408,7 +408,8 @@ export default function Landing() {
               {products.map((product, index) => (
                 <div
                   key={product.id}
-                  className={`scroll-animate scroll-delay-${(index % 3) + 1} group relative bg-white rounded-3xl overflow-hidden border border-yellow-500/10 shadow-md hover:shadow-[0_15px_45px_rgba(234,179,8,0.12)] hover:-translate-y-2 hover:border-yellow-500/40 transition-all duration-500`}
+                  className="group relative bg-white rounded-3xl overflow-hidden border border-yellow-500/10 shadow-md hover:shadow-[0_15px_45px_rgba(234,179,8,0.12)] hover:-translate-y-2 hover:border-yellow-500/40 transition-all duration-500"
+                  style={{ animation: `fadeInUp 0.5s ease-out ${index * 0.12}s both` }}
                 >
                   {product.savings && (
                     <div className="absolute top-5 right-5 bg-gradient-to-r from-red-600 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-bold z-20 shadow-lg tracking-wider font-sans">
@@ -739,6 +740,10 @@ export default function Landing() {
         @keyframes gradient-x {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>
