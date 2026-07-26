@@ -8,6 +8,7 @@ const footerContent = {
     description: "Experience the ancient power of 18+ rare herbs blended in pure coconut oil. 100% Naturopathy & Organic care for your hair.",
   },
   quickLinks: [
+    { name: "About Us",        path: "/about" },
     { name: "Contact Us",      path: "/contact" },
     { name: "Privacy Policy",  path: "/privacy-policy" },
     { name: "Refund Policy",   path: "/refund-policy" },

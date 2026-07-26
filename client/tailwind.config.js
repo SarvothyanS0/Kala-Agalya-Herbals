@@ -3,6 +3,9 @@ module.exports = {
   darkMode: 'media',
   theme: {
     extend: {
+      screens: {
+        'xs': '375px',
+      },
       fontFamily: {
         soria:       ["Soria", "Bodoni Moda", "Playfair Display", "serif"],
         playfair:    ["Playfair Display", "serif"],

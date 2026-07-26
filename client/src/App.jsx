@@ -26,6 +26,7 @@ import AdminReviews from "./AdminReviews";
 import { ToastProvider } from "./Alert";
 import Footer from "./Footer.jsx";
 import Contact from "./Contact";
+import About from "./About";
 import PrivacyPolicy from "./PrivacyPolicy";
 import RefundPolicy from "./RefundPolicy";
 import ShippingPolicy from "./ShippingPolicy";
@@ -97,6 +98,7 @@ function Layout() {
           
           <Route path="/cart" element={<Cart />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/shipping-policy" element={<ShippingPolicy />} />
@@ -160,7 +162,7 @@ function Layout() {
 export default function App() {
   return (
     <HelmetProvider>
-      <ReactLenis root options={{ lerp: 0.05, duration: 1.5, smoothTouch: true }}>
+      <ReactLenis root options={{ lerp: 0.1, duration: 0.8, smoothTouch: false }}>
         <ToastProvider>
           <Router>
             <Layout />

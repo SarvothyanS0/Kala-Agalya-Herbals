@@ -287,9 +287,14 @@ export default function Landing() {
 
   const heroRef = useRef(null);
 
-  /* ── Hero slider ─────────────────────────────────────────── */
+  /* ── Hero slider & Image Preloading ─────────────────────────── */
   useEffect(() => {
-    const t = setInterval(() => setCurrentSlide(p => (p + 1) % heroSlides.length), 5500);
+    // Preload hero slide images for zero-latency slide transitions
+    heroSlides.forEach(slide => {
+      const img = new Image();
+      img.src = slide.image;
+    });
+    const t = setInterval(() => setCurrentSlide(p => (p + 1) % heroSlides.length), 4000);
     return () => clearInterval(t);
   }, []);
 
