@@ -21,6 +21,7 @@ export default function UserLogin() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+      const data = await response.json();
 
       if (data.success) {
         localStorage.setItem("userToken", data.token);
