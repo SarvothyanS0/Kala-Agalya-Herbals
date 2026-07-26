@@ -224,15 +224,12 @@ export default function UserLogin() {
           </div>
 
           {/* Footer links */}
-          <div className="mt-7 pt-6 border-t border-yellow-500/10 text-center space-y-2">
+          <div className="mt-7 pt-6 border-t border-yellow-500/10 text-center">
             <p className="text-sm text-[#6C685F] font-inter">
               New here?{" "}
               <Link to={`/register${window.location.search}`} className="text-yellow-700 font-semibold hover:text-yellow-600 underline underline-offset-2 transition-colors">
                 Create account
               </Link>
-            </p>
-            <p className="text-[10px] text-[#B0ABA3] uppercase tracking-[0.18em] font-grotesk">
-              🔒 256-bit Encrypted · Secure Access
             </p>
           </div>
         </div>
