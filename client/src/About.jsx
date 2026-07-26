@@ -97,17 +97,16 @@ export default function About() {
 
       {/* ══ HERO BANNER ══════════════════════════════════════ */}
       <section className="relative min-h-[70vh] sm:min-h-[75vh] flex items-center overflow-hidden" aria-label="About Us hero">
-        {/* Background — blurred product image */}
+        {/* Background — clear visible product image */}
         <div className="absolute inset-0">
           <img
             src="/images/Home 1.webp"
-            alt=""
-            aria-hidden="true"
-            className="w-full h-full object-cover object-center scale-105 blur-[2px] brightness-[0.25]"
+            alt="Kala Agalya Herbals Hair Oil banner"
+            className="w-full h-full object-cover object-center brightness-[0.70] scale-105 transition-all duration-700"
             loading="eager"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-[#0d0b03]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+          {/* Subtle gradient overlay for high text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-[#0d0b03]" />
         </div>
 
         {/* Ambient orbs */}
@@ -178,11 +177,11 @@ export default function About() {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-20 items-center">
           {/* Image */}
           <div className="scroll-animate scroll-fade-left relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-card-hover border border-yellow-500/10">
+            <div className="relative rounded-3xl overflow-hidden shadow-card-hover border border-yellow-500/10 bg-[#F5F2EB]">
               <img
                 src="/images/home 2.webp"
                 alt="Kala Agalya Herbals founder crafting hair oil"
-                className="w-full h-[300px] sm:h-[450px] object-cover object-center hover:scale-105 transition-transform duration-700"
+                className="w-full h-auto aspect-[4/5] object-cover object-top hover:scale-105 transition-transform duration-700"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
