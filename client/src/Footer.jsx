@@ -59,8 +59,8 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
-              <img src="/images/icons/logo.png" alt="Kala Agalya Herbals - Authentic Naturopathy Oil Logo" className="h-10 w-auto drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-200 bg-clip-text text-transparent">
+              <img src="/images/icons/logo.webp" alt="Kala Agalya Herbals - Authentic Naturopathy Oil Logo" className="h-10 w-auto drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" />
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-amber-200 bg-clip-text text-transparent font-soria">
                 Kala Agalya Herbals
               </h2>
             </div>
@@ -82,10 +82,10 @@ export default function Footer() {
               ))}
             </div>
           </div>
-
+ 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-bold text-lg mb-6 relative inline-block">
+            <h3 className="text-white font-bold text-lg mb-6 relative inline-block font-playfair">
               Quick Links
               <span className="absolute -bottom-2 left-0 w-1/2 h-0.5 bg-yellow-500 rounded-full"></span>
             </h3>
@@ -107,10 +107,10 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-
+ 
           {/* Contact Info */}
           <div className="lg:col-span-2">
-            <h3 className="text-white font-bold text-lg mb-6 relative inline-block">
+            <h3 className="text-white font-bold text-lg mb-6 relative inline-block font-playfair">
               Get in Touch
               <span className="absolute -bottom-2 left-0 w-1/2 h-0.5 bg-yellow-500 rounded-full"></span>
             </h3>
@@ -123,11 +123,11 @@ export default function Footer() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-white font-semibold mb-1">Visit Us</h4>
+                  <h4 className="text-white font-semibold mb-1 font-playfair">Visit Us</h4>
                   <p className="text-sm text-gray-400">{footerContent.contact.address}</p>
                 </div>
               </div>
-
+ 
               <div className="flex items-start gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-yellow-500/30 transition-colors">
                 <div className="p-3 rounded-full bg-yellow-500/10 text-yellow-400">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -135,7 +135,7 @@ export default function Footer() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-white font-semibold mb-1">Call Us</h4>
+                  <h4 className="text-white font-semibold mb-1 font-playfair">Call Us</h4>
                   <p className="text-sm text-gray-400 mb-1">{footerContent.contact.phone}</p>
                   {/* <p className="text-sm text-gray-400">{footerContent.contact.email}</p> */}
                 </div>

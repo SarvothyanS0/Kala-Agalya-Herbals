@@ -80,7 +80,13 @@ export default function Register() {
         }
         addToast("Registration Successful! Welcome to Kala Agalya Herbals", "success");
         document.dispatchEvent(new Event("profileUpdated"));
-        navigate("/");
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect");
+        if (redirect) {
+          navigate(`/${redirect}`);
+        } else {
+          navigate("/");
+        }
       } else {
         addToast(data.message || "Registration failed", "error");
       }
@@ -92,14 +98,14 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d0b03] text-gray-200 font-sans selection:bg-yellow-500 selection:text-black pt-12">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#2C2921] font-sans selection:bg-yellow-500 selection:text-black pt-12">
       {/* Background Ambient Glow */}
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-yellow-900/5 blur-[120px] pointer-events-none mix-blend-screen"></div>
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-yellow-500/5 blur-[120px] pointer-events-none mix-blend-screen"></div>
 
       <div className="relative min-h-[80vh] flex items-center justify-center p-6 font-sans">
-        <div className="relative bg-[#15120a] border border-yellow-900/40 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] w-full max-w-md p-8 backdrop-blur-xl">
+        <div className="relative bg-white border border-yellow-500/15 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.06)] w-full max-w-md p-8 backdrop-blur-xl">
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 tracking-wide mb-2">
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-800 tracking-wide mb-2 font-soria">
               Create Account
             </h1>
             <p className="text-gray-500 text-[10px] tracking-[0.2em] uppercase">Start Your Herbal Journey Today</p>
@@ -133,10 +139,9 @@ export default function Register() {
               </div>
               <p className="text-[10px] text-gray-500 mt-3 uppercase tracking-widest font-bold">Upload Identity Photo</p>
             </div>
-
-            <div className="space-y-4">
+             <div className="space-y-4">
               <div className="group">
-                <label className="block text-[10px] font-bold text-yellow-500/60 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-400 transition-colors">
+                <label className="block text-[10px] font-bold text-yellow-800/80 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-600 transition-colors">
                   Full Name
                 </label>
                 <div className="relative">
@@ -144,7 +149,7 @@ export default function Register() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-[#0d0b03] text-yellow-100 border border-yellow-900/40 rounded-xl focus:border-yellow-500 transition-all placeholder-gray-800 text-sm shadow-inner"
+                    className="w-full pl-12 pr-4 py-4 bg-[#F5F2EB] text-[#2C2921] border border-yellow-500/20 rounded-xl focus:border-yellow-500 transition-all placeholder-gray-400 text-sm shadow-inner"
                     placeholder="John Doe"
                     required
                   />
@@ -157,7 +162,7 @@ export default function Register() {
               </div>
 
               <div className="group">
-                <label className="block text-[10px] font-bold text-yellow-500/60 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-400 transition-colors">
+                <label className="block text-[10px] font-bold text-yellow-800/80 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-600 transition-colors">
                   Email Address
                 </label>
                 <div className="relative">
@@ -166,7 +171,7 @@ export default function Register() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-[#0d0b03] text-yellow-100 border border-yellow-900/40 rounded-xl focus:border-yellow-500 transition-all placeholder-gray-800 text-sm shadow-inner"
+                    className="w-full pl-12 pr-4 py-4 bg-[#F5F2EB] text-[#2C2921] border border-yellow-500/20 rounded-xl focus:border-yellow-500 transition-all placeholder-gray-400 text-sm shadow-inner"
                     placeholder="john@example.com"
                     required
                   />
@@ -179,7 +184,7 @@ export default function Register() {
               </div>
 
               <div className="group">
-                <label className="block text-[10px] font-bold text-yellow-500/60 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-400 transition-colors">
+                <label className="block text-[10px] font-bold text-yellow-800/80 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-600 transition-colors">
                   Phone Number
                 </label>
                 <div className="relative">
@@ -187,7 +192,7 @@ export default function Register() {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 bg-[#0d0b03] text-yellow-100 border border-yellow-900/40 rounded-xl focus:border-yellow-500 transition-all placeholder-gray-800 text-sm shadow-inner"
+                    className="w-full pl-12 pr-4 py-4 bg-[#F5F2EB] text-[#2C2921] border border-yellow-500/20 rounded-xl focus:border-yellow-500 transition-all placeholder-gray-400 text-sm shadow-inner"
                     placeholder="+91 98765 43210"
                   />
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -199,7 +204,7 @@ export default function Register() {
               </div>
 
               <div className="group">
-                <label className="block text-[10px] font-bold text-yellow-500/60 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-400 transition-colors">
+                <label className="block text-[10px] font-bold text-yellow-800/80 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-600 transition-colors">
                   Create Password
                 </label>
                 <div className="relative">
@@ -207,11 +212,11 @@ export default function Register() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full pl-12 pr-12 py-4 bg-[#0d0b03] text-yellow-100 border rounded-xl transition-all placeholder-gray-800 text-sm shadow-inner ${password.length > 0
+                    className={`w-full pl-12 pr-12 py-4 bg-[#F5F2EB] text-[#2C2921] border rounded-xl transition-all placeholder-gray-400 text-sm shadow-inner ${password.length > 0
                         ? allPoliciesPassed
                           ? "border-green-500/50 focus:border-green-500"
                           : "border-red-500/50 focus:border-red-500"
-                        : "border-yellow-900/40 focus:border-yellow-500"
+                        : "border-yellow-500/20 focus:border-yellow-500"
                       }`}
                     placeholder="••••••••"
                     required
@@ -267,7 +272,7 @@ export default function Register() {
               </div>
 
               <div className="group">
-                <label className="block text-[10px] font-bold text-yellow-500/60 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-400 transition-colors">
+                <label className="block text-[10px] font-bold text-yellow-800/80 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-yellow-600 transition-colors">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -275,11 +280,11 @@ export default function Register() {
                     type={showConfirm ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className={`w-full pl-12 pr-12 py-4 bg-[#0d0b03] text-yellow-100 border rounded-xl transition-all placeholder-gray-800 text-sm shadow-inner ${confirmPassword.length > 0
+                    className={`w-full pl-12 pr-12 py-4 bg-[#F5F2EB] text-[#2C2921] border rounded-xl transition-all placeholder-gray-400 text-sm shadow-inner ${confirmPassword.length > 0
                         ? passwordsMatch
                           ? "border-green-500/50 focus:border-green-500"
                           : "border-red-500/50 focus:border-red-500"
-                        : "border-yellow-900/40 focus:border-yellow-500"
+                        : "border-yellow-500/20 focus:border-yellow-500"
                       }`}
                     placeholder="Re-enter password"
                     required
@@ -335,11 +340,11 @@ export default function Register() {
             </button>
           </form>
 
-          <div className="mt-10 pt-6 border-t border-yellow-900/30 text-center">
+          <div className="mt-10 pt-6 border-t border-yellow-500/20 text-center">
             <p className="text-sm text-gray-500 uppercase tracking-widest mb-4">
-              Already registered? <Link to="/login" className="text-yellow-500 border-b border-yellow-500/50 hover:border-yellow-400 transition-colors">Login Vault</Link>
+              Already registered? <Link to={`/login${window.location.search}`} className="text-yellow-600 border-b border-yellow-600/50 hover:border-yellow-400 transition-colors">Login Vault</Link>
             </p>
-            <p className="text-[10px] text-gray-600 uppercase tracking-[0.2em] font-bold">
+            <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">
               Nature's Secret • Purest Quality • Bio-Active
             </p>
           </div>

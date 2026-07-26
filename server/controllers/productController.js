@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const sharp = require("sharp");
 
 // Get all products
 exports.getAllProducts = async (req, res) => {
@@ -32,10 +33,20 @@ exports.createProduct = async (req, res) => {
     let images = [];
 
     if (req.files && req.files.length > 0) {
-      images = req.files.map(file => {
-        const b64 = Buffer.from(file.buffer).toString("base64");
-        return `data:${file.mimetype};base64,${b64}`;
-      });
+      images = await Promise.all(
+        req.files.map(async (file) => {
+          try {
+            const webpBuffer = await sharp(file.buffer).webp({ quality: 80 }).toBuffer();
+            const b64 = webpBuffer.toString("base64");
+            return `data:image/webp;base64,${b64}`;
+          } catch (err) {
+            console.error("Error converting uploaded product image to WebP:", err);
+            // Fallback to original format if sharp fails
+            const b64 = Buffer.from(file.buffer).toString("base64");
+            return `data:${file.mimetype};base64,${b64}`;
+          }
+        })
+      );
     }
 
     // Sizes might come as a JSON string from FormData
@@ -88,10 +99,20 @@ exports.updateProduct = async (req, res) => {
     }
 
     if (req.files && req.files.length > 0) {
-      updateData.images = req.files.map(file => {
-        const b64 = Buffer.from(file.buffer).toString("base64");
-        return `data:${file.mimetype};base64,${b64}`;
-      });
+      updateData.images = await Promise.all(
+        req.files.map(async (file) => {
+          try {
+            const webpBuffer = await sharp(file.buffer).webp({ quality: 80 }).toBuffer();
+            const b64 = webpBuffer.toString("base64");
+            return `data:image/webp;base64,${b64}`;
+          } catch (err) {
+            console.error("Error converting uploaded product image to WebP:", err);
+            // Fallback to original format if sharp fails
+            const b64 = Buffer.from(file.buffer).toString("base64");
+            return `data:${file.mimetype};base64,${b64}`;
+          }
+        })
+      );
     }
 
     if (sizesStr) {

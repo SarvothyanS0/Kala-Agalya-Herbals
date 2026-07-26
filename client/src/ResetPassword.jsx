@@ -90,33 +90,33 @@ export default function ResetPassword() {
   // Invalid/expired token state
   if (!tokenValid) {
     return (
-      <div className="min-h-screen bg-[#0d0b03] flex items-center justify-center p-6 relative overflow-hidden font-sans">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/10 blur-[150px] rounded-full pointer-events-none"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/2 blur-[150px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/2 blur-[150px] rounded-full pointer-events-none"></div>
 
-        <div className="relative bg-[#15120a] border border-yellow-900/40 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] w-full max-w-md p-8 backdrop-blur-xl text-center">
+        <div className="relative bg-white border border-yellow-500/10 rounded-3xl shadow-lg w-full max-w-md p-8 text-center">
           <div className="relative inline-block mb-6">
             <div className="absolute inset-0 bg-red-500 blur-xl opacity-20 rounded-full"></div>
-            <div className="relative bg-gradient-to-br from-red-900/50 to-[#0d0b03] w-20 h-20 rounded-2xl flex items-center justify-center shadow-2xl border border-red-500/30 p-3">
-              <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="relative bg-gradient-to-br from-red-50 to-red-100 w-20 h-20 rounded-2xl flex items-center justify-center shadow-md border border-red-500/30 p-3">
+              <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 tracking-wide mb-3">
+          <h1 className="text-2xl font-bold text-red-600 tracking-wide mb-3 font-soria">
             Link Expired
           </h1>
-          <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+          <p className="text-[#6C685F] text-sm mb-6 leading-relaxed font-playfair">
             This password reset link is invalid or has expired. Please request a new one.
           </p>
           <Link
             to="/forgot-password"
-            className="inline-block w-full py-4 bg-gradient-to-r from-yellow-600 to-amber-700 text-black rounded-xl font-bold uppercase tracking-wide shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transition-all duration-300"
+            className="inline-block w-full py-4 bg-gradient-to-r from-yellow-600 to-amber-600 text-black rounded-xl font-bold uppercase tracking-wide shadow-md hover:shadow-lg transition-all duration-300 text-center"
           >
             Request New Link
           </Link>
-          <div className="mt-6 pt-4 border-t border-yellow-900/30">
-            <Link to="/login" className="text-sm text-yellow-500/60 hover:text-yellow-500 uppercase tracking-widest transition-colors">
+          <div className="mt-6 pt-4 border-t border-yellow-500/10">
+            <Link to="/login" className="text-sm text-[#7C786E] hover:text-yellow-600 uppercase tracking-widest transition-colors">
               Back to Login
             </Link>
           </div>
@@ -126,49 +126,49 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0d0b03] flex items-center justify-center p-6 relative overflow-hidden font-sans">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/10 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+    <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/2 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/2 blur-[150px] rounded-full pointer-events-none"></div>
 
-      <div className="relative bg-[#15120a] border border-yellow-900/40 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] w-full max-w-md p-8 backdrop-blur-xl">
+      <div className="relative bg-white border border-yellow-500/10 rounded-3xl shadow-lg w-full max-w-md p-8">
         {/* Logo + Header */}
         <div className="text-center mb-8">
           <div className="relative inline-block mb-4">
             <div className="absolute inset-0 bg-yellow-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
-            <div className="relative bg-gradient-to-br from-yellow-900 to-[#0d0b03] w-20 h-20 rounded-2xl flex items-center justify-center shadow-2xl border border-yellow-500/30 transform rotate-3 p-3">
-              <img src="/images/icons/logo.png" alt="Kala Agalya Herbals" className="w-full h-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+            <div className="relative bg-gradient-to-br from-yellow-50 to-amber-50 w-20 h-20 rounded-2xl flex items-center justify-center shadow-md border border-yellow-500/30 transform rotate-3 p-3">
+              <img src="/images/icons/logo.webp" alt="Kala Agalya Herbals" className="w-full h-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.2)]" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 tracking-wide mb-2">
+          <h1 className="text-2xl font-bold text-[#2C2921] tracking-wide mb-2 font-soria">
             Reset Password
           </h1>
-          <p className="text-gray-500 text-xs tracking-widest uppercase">Create a new secure password</p>
+          <p className="text-[#6C685F] text-xs tracking-widest uppercase font-playfair">Create a new secure password</p>
         </div>
 
         <form onSubmit={handleReset} className="space-y-5">
           {/* New Password Field */}
           <div className="group">
-            <label htmlFor="new-password" className="block text-[10px] font-semibold text-yellow-500/60 uppercase tracking-widest mb-2 ml-1">New Password</label>
+            <label htmlFor="new-password" className="block text-[10px] font-semibold text-[#6C685F] uppercase tracking-widest mb-2 ml-1">New Password</label>
             <div className="relative">
               <input
                 id="new-password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-12 pr-12 py-4 bg-[#0d0b03] text-yellow-100 border border-yellow-900/40 rounded-xl focus:border-yellow-500 transition-all placeholder-gray-800"
+                className="w-full pl-12 pr-12 py-4 bg-[#F5F2EB] text-[#2C2921] border border-yellow-500/10 rounded-xl focus:border-yellow-600 focus:bg-white transition-all placeholder-gray-400 font-sans"
                 placeholder="Enter new password"
                 required
                 autoComplete="new-password"
               />
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-yellow-700 hover:text-yellow-500 transition-colors"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-yellow-600 hover:text-yellow-700 transition-colors"
                 tabIndex={-1}
               >
                 {showPassword ? (
@@ -182,21 +182,21 @@ export default function ResetPassword() {
 
           {/* Password Policy Checklist */}
           {password.length > 0 && (
-            <div className="bg-black/30 border border-yellow-900/20 rounded-xl p-4 space-y-2">
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Password Requirements</p>
+            <div className="bg-[#F5F2EB] border border-yellow-500/10 rounded-xl p-4 space-y-2 font-sans">
+              <p className="text-[10px] font-bold text-[#7C786E] uppercase tracking-widest mb-2">Password Requirements</p>
               {policyResults.map((rule) => (
                 <div key={rule.id} className="flex items-center gap-2.5">
                   <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${rule.passed
-                      ? "bg-green-500/20 border border-green-500/50"
-                      : "bg-red-500/10 border border-red-500/30"
+                      ? "bg-green-50 border border-green-200"
+                      : "bg-red-50 border border-red-200"
                     }`}>
                     {rule.passed ? (
-                      <svg className="w-2.5 h-2.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                      <svg className="w-2.5 h-2.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     ) : (
-                      <svg className="w-2.5 h-2.5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                      <svg className="w-2.5 h-2.5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                     )}
                   </div>
-                  <span className={`text-xs transition-colors duration-300 ${rule.passed ? "text-green-400/80" : "text-gray-500"
+                  <span className={`text-xs transition-colors duration-300 ${rule.passed ? "text-green-700 font-medium" : "text-[#7C786E]"
                     }`}>
                     {rule.label}
                   </span>
@@ -207,32 +207,32 @@ export default function ResetPassword() {
 
           {/* Confirm Password Field */}
           <div className="group">
-            <label htmlFor="confirm-password" className="block text-[10px] font-semibold text-yellow-500/60 uppercase tracking-widest mb-2 ml-1">Confirm Password</label>
+            <label htmlFor="confirm-password" className="block text-[10px] font-semibold text-[#6C685F] uppercase tracking-widest mb-2 ml-1">Confirm Password</label>
             <div className="relative">
               <input
                 id="confirm-password"
                 type={showConfirm ? "text" : "password"}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className={`w-full pl-12 pr-12 py-4 bg-[#0d0b03] text-yellow-100 border rounded-xl transition-all placeholder-gray-800 ${confirmPassword.length > 0
+                className={`w-full pl-12 pr-12 py-4 bg-[#F5F2EB] text-[#2C2921] border rounded-xl focus:bg-white transition-all placeholder-gray-400 font-sans ${confirmPassword.length > 0
                     ? passwordsMatch
                       ? "border-green-500/50 focus:border-green-500"
                       : "border-red-500/50 focus:border-red-500"
-                    : "border-yellow-900/40 focus:border-yellow-500"
+                    : "border-yellow-500/10 focus:border-yellow-600"
                   }`}
                 placeholder="Re-enter your password"
                 required
                 autoComplete="new-password"
               />
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-yellow-700 hover:text-yellow-500 transition-colors"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-yellow-600 hover:text-yellow-700 transition-colors"
                 tabIndex={-1}
               >
                 {showConfirm ? (
@@ -244,7 +244,7 @@ export default function ResetPassword() {
             </div>
             {/* Match indicator */}
             {confirmPassword.length > 0 && (
-              <p className={`text-xs mt-2 ml-1 flex items-center gap-1.5 transition-colors ${passwordsMatch ? "text-green-400/70" : "text-red-400/70"
+              <p className={`text-xs mt-2 ml-1 flex items-center gap-1.5 transition-colors ${passwordsMatch ? "text-green-600" : "text-red-600"
                 }`}>
                 {passwordsMatch ? (
                   <>
@@ -265,7 +265,7 @@ export default function ResetPassword() {
             type="submit"
             disabled={loading || !allPoliciesPassed || !passwordsMatch}
             id="reset-password-btn"
-            className="w-full py-4 bg-gradient-to-r from-yellow-600 to-amber-700 text-black rounded-xl font-bold uppercase tracking-wide shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)] transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none relative overflow-hidden group"
+            className="w-full py-4 bg-gradient-to-r from-yellow-600 to-amber-600 text-black rounded-xl font-bold uppercase tracking-wide shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none relative overflow-hidden group font-sans"
           >
             <span className="relative z-10 flex items-center justify-center gap-2">
               {loading ? (
@@ -287,8 +287,8 @@ export default function ResetPassword() {
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-yellow-900/30 text-center">
-          <Link to="/login" className="text-sm text-gray-500 uppercase tracking-widest hover:text-yellow-500 transition-colors">
+        <div className="mt-6 pt-4 border-t border-yellow-500/10 text-center font-sans">
+          <Link to="/login" className="text-sm text-[#7C786E] uppercase tracking-widest hover:text-yellow-600 transition-colors">
             Back to Login
           </Link>
         </div>

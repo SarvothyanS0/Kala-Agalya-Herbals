@@ -59,14 +59,29 @@ export default function Checkout() {
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
 
-  const [form, setForm] = useState({
-    name: localStorage.getItem("userName") || "",
-    email: localStorage.getItem("userEmail") || "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: ""
+  const [form, setForm] = useState(() => {
+    const saved = localStorage.getItem("checkoutForm");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return {
+          ...parsed,
+          name: localStorage.getItem("userName") || parsed.name || "",
+          email: localStorage.getItem("userEmail") || parsed.email || "",
+        };
+      } catch (e) {
+        // ignore
+      }
+    }
+    return {
+      name: localStorage.getItem("userName") || "",
+      email: localStorage.getItem("userEmail") || "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: ""
+    };
   });
 
   const shipping = useMemo(() => getShippingInfo(form.state), [form.state]);
@@ -79,6 +94,10 @@ export default function Checkout() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    
+    // Always save form fields first
+    localStorage.setItem("checkoutForm", JSON.stringify(form));
+
     const orderData = {
       customer: {
         name: form.name,
@@ -101,11 +120,19 @@ export default function Checkout() {
       totalAmount: finalAmount
     };
 
+    // Check if logged in. If not, redirect to login
+    if (!localStorage.getItem("userToken")) {
+      navigate("/login?redirect=checkout");
+      return;
+    }
+
     try {
       const data = await createOrder(orderData);
       if (data.success && data.order && data.order._id) {
         localStorage.setItem("lastOrderId", data.order._id);
         localStorage.setItem("lastOrderTotal", finalAmount);
+        // Clear checkout cache on successful order creation
+        localStorage.removeItem("checkoutForm");
         navigate("/payment");
       } else {
         console.error("Order creation returned no ID:", data);
@@ -118,10 +145,10 @@ export default function Checkout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0802] pt-10 pb-20 relative overflow-hidden text-gray-200">
+    <div className="min-h-screen bg-[#FDFBF7] pt-10 pb-20 relative overflow-hidden text-[#2C2921]">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-yellow-900/5 rounded-full blur-[120px]"></div>
+        <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-yellow-500/5 rounded-full blur-[120px]"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -129,7 +156,7 @@ export default function Checkout() {
         <div className="mb-8">
           <Link
             to="/cart"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-yellow-500 transition-colors group px-4 py-2 rounded-lg hover:bg-white/5"
+            className="inline-flex items-center gap-2 text-[#7C786E] hover:text-yellow-600 transition-colors group px-4 py-2 rounded-lg hover:bg-black/5 font-playfair"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -138,44 +165,45 @@ export default function Checkout() {
           </Link>
         </div>
 
-        <h2 className="text-4xl md:text-5xl font-bold mb-12 text-yellow-500 text-center drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+        <h2 className="text-4xl md:text-5xl font-bold mb-12 text-yellow-600 text-center drop-shadow-[0_0_15px_rgba(234,179,8,0.1)] font-soria">
           Checkout
         </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Shipping Form */}
           <div className="lg:col-span-2">
-            <div className="bg-[#15120a]/80 backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-yellow-500/10 shadow-2xl">
-              <h3 className="text-2xl font-bold text-white mb-8">Shipping Address</h3>
+            <div className="bg-white p-8 md:p-10 rounded-3xl border border-yellow-500/10 shadow-xl">
+              <h3 className="text-2xl font-bold text-[#2C2921] mb-8 font-playfair">Shipping Address</h3>
 
               <form id="checkout-form" onSubmit={onSubmit} className="space-y-6">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Full Name</label>
+                  <label className="text-xs font-bold text-yellow-800 uppercase ml-1">Full Name</label>
                   <input
                     required
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    className="w-full bg-[#0d0b03] border border-yellow-500/10 text-white p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-700"
+                    className="w-full bg-[#F5F2EB] border border-yellow-500/20 text-[#2C2921] p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-400"
                     placeholder="Enter full name"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Email</label>
+                    <label className="text-xs font-bold text-yellow-800 uppercase ml-1">Email</label>
                     <input
                       required
                       type="email"
                       name="email"
                       value={form.email}
-                      readOnly
-                      className="w-full bg-[#0d0b03] border border-yellow-500/10 text-white/60 p-4 rounded-xl focus:outline-none transition-all placeholder:text-gray-700 cursor-not-allowed"
+                      readOnly={!!localStorage.getItem("userToken")}
+                      onChange={handleChange}
+                      className={`w-full bg-[#F5F2EB] border border-yellow-500/20 text-[#2C2921] p-4 rounded-xl focus:outline-none transition-all placeholder:text-gray-400 ${localStorage.getItem("userToken") ? 'opacity-60 cursor-not-allowed' : ''}`}
                       placeholder="Enter email address"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Phone</label>
+                    <label className="text-xs font-bold text-yellow-800 uppercase ml-1">Phone</label>
                     <input
                       required
                       type="tel"
@@ -184,63 +212,63 @@ export default function Checkout() {
                       name="phone"
                       value={form.phone}
                       onChange={handleChange}
-                      className="w-full bg-[#0d0b03] border border-yellow-500/10 text-white p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-700"
+                      className="w-full bg-[#F5F2EB] border border-yellow-500/20 text-[#2C2921] p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-400"
                       placeholder="Enter 10-digit phone number"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-500 uppercase ml-1">Address</label>
+                  <label className="text-xs font-bold text-yellow-800 uppercase ml-1">Address</label>
                   <textarea
                     required
                     rows="3"
                     name="address"
                     value={form.address}
                     onChange={handleChange}
-                    className="w-full bg-[#0d0b03] border border-yellow-500/10 text-white p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all resize-none placeholder:text-gray-700"
+                    className="w-full bg-[#F5F2EB] border border-yellow-500/20 text-[#2C2921] p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all resize-none placeholder:text-gray-400"
                     placeholder="Enter complete address"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">City / District</label>
+                    <label className="text-xs font-bold text-yellow-800 uppercase ml-1">City / District</label>
                     <input
                       required
                       name="city"
                       value={form.city}
                       onChange={handleChange}
-                      className="w-full bg-[#0d0b03] border border-yellow-500/10 text-white p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-700"
+                      className="w-full bg-[#F5F2EB] border border-yellow-500/20 text-[#2C2921] p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-400"
                       placeholder="City"
                     />
                   </div>
 
                   {/* State Dropdown */}
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">State</label>
+                    <label className="text-xs font-bold text-yellow-800 uppercase ml-1">State</label>
                     <div className="relative">
                       <select
                         required
                         name="state"
                         value={form.state}
                         onChange={handleChange}
-                        className="w-full bg-[#0d0b03] border border-yellow-500/10 text-white p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all appearance-none cursor-pointer pr-10"
+                        className="w-full bg-[#F5F2EB] border border-yellow-500/20 text-[#2C2921] p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all appearance-none cursor-pointer pr-10"
                       >
-                        <option value="" disabled className="text-gray-600">Select State</option>
+                        <option value="" disabled className="text-gray-500">Select State</option>
                         {INDIAN_STATES.map(s => (
-                          <option key={s} value={s} className="bg-[#0d0b03] text-white">{s}</option>
+                          <option key={s} value={s} className="bg-white text-[#2C2921]">{s}</option>
                         ))}
                       </select>
                       <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                        <svg className="w-4 h-4 text-yellow-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </div>
                     </div>
                     {/* Shipping preview badge under state */}
                     {form.state && (
-                      <div className="mt-1.5 ml-1 flex items-center gap-1.5 text-[10px] font-bold uppercase text-amber-400">
+                      <div className="mt-1.5 ml-1 flex items-center gap-1.5 text-[10px] font-bold uppercase text-amber-600">
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 11a2 2 0 002 2h8a2 2 0 002-2L19 8" />
                         </svg>
@@ -250,7 +278,7 @@ export default function Checkout() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Pincode</label>
+                    <label className="text-xs font-bold text-yellow-800 uppercase ml-1">Pincode</label>
                     <input
                       required
                       pattern="[0-9]{6}"
@@ -258,7 +286,7 @@ export default function Checkout() {
                       name="pincode"
                       value={form.pincode}
                       onChange={handleChange}
-                      className="w-full bg-[#0d0b03] border border-yellow-500/10 text-white p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-700"
+                      className="w-full bg-[#F5F2EB] border border-yellow-500/20 text-[#2C2921] p-4 rounded-xl focus:outline-none focus:ring-1 focus:ring-yellow-500/50 focus:border-yellow-500 transition-all placeholder:text-gray-400"
                       placeholder="Pincode"
                     />
                   </div>
@@ -269,58 +297,58 @@ export default function Checkout() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-[#15120a] p-8 rounded-3xl border border-yellow-500/10 shadow-2xl sticky top-24">
-              <h3 className="text-2xl font-bold text-white mb-8 border-b border-yellow-500/10 pb-4">Order Summary</h3>
+            <div className="bg-white p-8 rounded-3xl border border-yellow-500/10 shadow-xl sticky top-24">
+              <h3 className="text-2xl font-bold text-[#2C2921] mb-8 border-b border-yellow-500/10 pb-4 font-playfair">Order Summary</h3>
 
               <div className="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                 {cart.map((item, idx) => (
                   <div key={idx} className="flex justify-between items-start text-sm">
                     <div className="flex-1 pr-4">
-                      <p className="text-gray-300 font-medium">{item.name} ({item.size})</p>
-                      <p className="text-gray-500 italic">x {item.quantity}</p>
+                      <p className="text-[#4A473E] font-medium">{item.name} ({item.size})</p>
+                      <p className="text-[#7C786E] italic">x {item.quantity}</p>
                     </div>
-                    <span className="text-yellow-500 font-bold">₹{item.price * item.quantity}</span>
+                    <span className="text-yellow-600 font-bold font-soria">₹{item.price * item.quantity}</span>
                   </div>
                 ))}
               </div>
 
               {/* Original Price */}
               <div className="flex justify-between items-center py-3 border-t border-yellow-500/10">
-                <span className="text-sm text-gray-400">Original Price</span>
-                <span className="text-sm font-bold text-gray-200">₹{subtotal.toFixed(2)}</span>
+                <span className="text-sm text-[#7C786E]">Original Price</span>
+                <span className="text-sm font-bold text-[#2C2921]">₹{subtotal.toFixed(2)}</span>
               </div>
 
               {/* GST Row — label only, 18% included in price */}
               <div className="flex justify-between items-center py-2 border-yellow-500/10">
-                <span className="text-sm text-gray-400">GST</span>
-                <span className="text-sm font-bold text-amber-400">18%</span>
+                <span className="text-sm text-[#7C786E]">GST</span>
+                <span className="text-sm font-bold text-amber-600">18%</span>
               </div>
 
               {/* Shipping Row */}
               <div className="flex justify-between items-center py-3 border-b border-yellow-500/10">
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-[#7C786E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 11a2 2 0 002 2h8a2 2 0 002-2L19 8" />
                   </svg>
-                  <span className="text-sm text-gray-400">Shipping</span>
+                  <span className="text-sm text-[#7C786E]">Shipping</span>
                 </div>
                 {shipping.pending ? (
-                  <span className="text-xs text-gray-600 italic">Select state</span>
+                  <span className="text-xs text-[#7C786E] italic">Select state</span>
                 ) : (
-                  <span className="text-sm font-bold text-amber-400">{shipping.label}</span>
+                  <span className="text-sm font-bold text-amber-600">{shipping.label}</span>
                 )}
               </div>
 
               {/* Crossed Total */}
               <div className="flex justify-between items-center py-2 mt-2">
-                <span className="text-sm text-gray-500">Total Amount</span>
-                <span className="text-sm text-gray-500 line-through">₹{crossedTotal.toFixed(2)}</span>
+                <span className="text-sm text-[#7C786E]">Total Amount</span>
+                <span className="text-sm text-[#7C786E] line-through">₹{crossedTotal.toFixed(2)}</span>
               </div>
 
               {/* Final Amount */}
-              <div className="flex justify-between items-center mt-1 mb-8 pt-3 border-t-2 border-yellow-600/50">
-                <span className="text-xl font-bold text-yellow-400">Final Amount</span>
-                <span className="text-3xl font-bold text-yellow-500 drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]">₹{finalAmount.toFixed(2)}</span>
+              <div className="flex justify-between items-center mt-1 mb-8 pt-3 border-t-2 border-yellow-600/50 font-soria">
+                <span className="text-xl font-bold text-yellow-700">Final Amount</span>
+                <span className="text-3xl font-bold text-yellow-600 drop-shadow-[0_0_10px_rgba(234,179,8,0.1)]">₹{finalAmount.toFixed(2)}</span>
               </div>
 
               {/* Shipping note */}
@@ -359,7 +387,7 @@ export default function Checkout() {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #eab30866; }
         .bg-size-200 { background-size: 200% auto; }
         .hover\\:bg-pos-100:hover { background-position: right center; }
-        select option { background-color: #0d0b03; color: white; }
+        select option { background-color: white; color: #2C2921; }
       `}</style>
     </div>
   );

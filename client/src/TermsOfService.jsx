@@ -7,7 +7,7 @@ export default function TermsOfService() {
   }, []);
 
   return (
-    <div className="bg-[#0d0b03] min-h-screen relative overflow-hidden text-gray-300">
+    <div className="bg-[#FDFBF7] min-h-screen relative overflow-hidden text-[#2C2921] font-sans">
       <Helmet>
         <title>Terms of Service | Kala Agalya Herbals</title>
         <meta name="description" content="Read the terms and conditions for using Kala Agalya Herbals website and purchasing our Naturopathy hair growth products." />
@@ -17,16 +17,16 @@ export default function TermsOfService() {
         
         {/* Header */}
         <div className="text-center mb-16 animate-[fadeIn_0.5s_ease-out]">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-[#2C2921] mb-4 font-soria">
             Terms of Service
           </h1>
-          <p className="text-gray-400">Last Updated: January 2026</p>
+          <p className="text-[#6C685F]">Last Updated: January 2026</p>
         </div>
 
-        <div className="bg-[#1c1b1b]/40 backdrop-blur-md rounded-3xl border border-yellow-900/30 p-8 md:p-12 shadow-2xl space-y-12">
+        <div className="bg-white rounded-3xl border border-yellow-500/10 p-8 md:p-12 shadow-lg space-y-12">
             
-            <p className="text-lg leading-relaxed text-gray-300 border-b border-yellow-900/30 pb-8">
-              By accessing and using the website of <strong className="text-yellow-400">KALA AGALYA HERBALSKALAVATHI H</strong>, you agree to be bound by the following Terms and Conditions. Please read them carefully.
+            <p className="text-lg leading-relaxed text-[#4A473E] border-b border-yellow-500/10 pb-8 font-playfair">
+              By accessing and using the website of <strong className="text-yellow-600 font-playfair">KALA AGALYA HERBALSKALAVATHI H</strong>, you agree to be bound by the following Terms and Conditions. Please read them carefully.
             </p>
 
             <div className="grid gap-10">
@@ -41,11 +41,11 @@ export default function TermsOfService() {
                     { title: "8. Governing Law", content: "These terms are governed by the laws of India." }
                 ].map((term, idx) => (
                     <div key={idx} className="group">
-                        <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-3">
-                            <span className="text-yellow-500 font-mono opacity-50">0{idx + 1}</span>
+                        <h2 className="text-xl font-bold text-[#2C2921] mb-3 flex items-center gap-3 font-playfair">
+                            <span className="text-yellow-600 font-mono opacity-50">0{idx + 1}</span>
                             {term.title.split('. ')[1]}
                         </h2>
-                        <p className="text-gray-400 leading-relaxed pl-9 border-l-2 border-yellow-500/10 group-hover:border-yellow-500/50 transition-colors duration-300">
+                        <p className="text-[#6C685F] leading-relaxed pl-9 border-l-2 border-yellow-500/10 group-hover:border-yellow-500/30 transition-colors duration-300">
                              {term.content}
                         </p>
                     </div>

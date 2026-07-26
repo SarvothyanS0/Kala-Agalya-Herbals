@@ -7,7 +7,7 @@ export default function ShippingPolicy() {
   }, []);
 
   return (
-    <div className="bg-[#0d0b03] min-h-screen relative overflow-hidden text-gray-300">
+    <div className="bg-[#FDFBF7] min-h-screen relative overflow-hidden text-[#2C2921] font-sans">
       <Helmet>
         <title>Shipping Policy | Kala Agalya Herbals</title>
         <meta name="description" content="Kala Agalya Herbals provides fast and secure shipping across India. Estimated delivery is 3-10 business days based on location." />
@@ -18,10 +18,10 @@ export default function ShippingPolicy() {
         
         {/* Header */}
          <div className="text-center mb-20 animate-[fadeIn_0.5s_ease-out]">
-            <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-[#2C2921] mb-6 font-soria">
             Shipping Policy
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xl text-[#6C685F] max-w-2xl mx-auto font-playfair">
              Fast, reliable, and secure delivery across India.
           </p>
         </div>
@@ -57,12 +57,12 @@ export default function ShippingPolicy() {
                     desc: "Live SMS/Email updates once your order is shipped." 
                 }
             ].map((item, i) => (
-                <div key={i} className="bg-[#1c1b1b]/50 p-8 rounded-2xl border border-yellow-900/30 hover:border-yellow-500/40 transition-all duration-300 group">
-                    <div className="w-14 h-14 bg-green-900/20 rounded-xl flex items-center justify-center text-yellow-400 mb-6 group-hover:scale-110 transition-transform">
+                <div key={i} className="bg-white p-8 rounded-2xl border border-yellow-500/10 hover:border-yellow-500/30 shadow-md hover:shadow-lg transition-all duration-300 group">
+                    <div className="w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-600 mb-6 group-hover:scale-110 transition-transform">
                         {item.icon}
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                    <p className="text-gray-400">{item.desc}</p>
+                    <h3 className="text-xl font-bold text-[#2C2921] mb-2 font-playfair">{item.title}</h3>
+                    <p className="text-[#6C685F]">{item.desc}</p>
                 </div>
             ))}
         </div>
@@ -70,36 +70,38 @@ export default function ShippingPolicy() {
         <div className="grid md:grid-cols-2 gap-12">
             
             {/* Delivery Estimates */}
-            <div className="bg-[#101810] rounded-3xl p-8 border border-yellow-900/30">
-                <h2 className="text-2xl font-bold text-white mb-6 border-b border-yellow-900/30 pb-4">Estimated Delivery Time</h2>
-                <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                        <span className="text-lg text-gray-300">Metro Cities</span>
-                        <span className="bg-yellow-900/20 text-yellow-400 px-4 py-1 rounded-full text-sm font-bold border border-yellow-500/20">3 - 5 Days</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <span className="text-lg text-gray-300">Rest of India</span>
-                        <span className="bg-yellow-900/20 text-yellow-400 px-4 py-1 rounded-full text-sm font-bold border border-yellow-500/20">5 - 10 Days</span>
-                    </div>
+            <div className="bg-white rounded-3xl p-8 border border-yellow-500/10 shadow-md flex flex-col justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-[#2C2921] mb-6 border-b border-yellow-500/10 pb-4 font-playfair">Estimated Delivery Time</h2>
+                  <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                          <span className="text-lg text-[#2C2921]">Metro Cities</span>
+                          <span className="bg-yellow-500/10 text-yellow-700 px-4 py-1 rounded-full text-sm font-bold border border-yellow-500/20">3 - 5 Days</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                          <span className="text-lg text-[#2C2921]">Rest of India</span>
+                          <span className="bg-yellow-500/10 text-yellow-700 px-4 py-1 rounded-full text-sm font-bold border border-yellow-500/20">5 - 10 Days</span>
+                      </div>
+                  </div>
                 </div>
-                <p className="mt-8 text-sm text-gray-500 italic">
+                <p className="mt-8 text-sm text-[#7C786E] italic">
                     *Note: Delivery times may vary due to weather conditions or government restrictions.
                 </p>
             </div>
 
             {/* Other Details */}
             <div className="space-y-6">
-                <div className="bg-[#1c1b1b]/40 backdrop-blur rounded-2xl p-6 border border-white/5">
-                    <h3 className="text-lg font-bold text-white mb-2">Shipping Charges</h3>
-                    <p className="text-gray-400">Calculated at checkout based on your location and order value.</p>
+                <div className="bg-white rounded-2xl p-6 border border-yellow-500/10 shadow-sm">
+                    <h3 className="text-lg font-bold text-[#2C2921] mb-2 font-playfair">Shipping Charges</h3>
+                    <p className="text-[#6C685F]">Calculated at checkout based on your location and order value.</p>
                 </div>
-                 <div className="bg-[#1c1b1b]/40 backdrop-blur rounded-2xl p-6 border border-white/5">
-                    <h3 className="text-lg font-bold text-white mb-2">Delays</h3>
-                    <p className="text-gray-400">We are not liable for delays caused by natural disasters or incorrect addresses.</p>
+                 <div className="bg-white rounded-2xl p-6 border border-yellow-500/10 shadow-sm">
+                    <h3 className="text-lg font-bold text-[#2C2921] mb-2 font-playfair">Delays</h3>
+                    <p className="text-[#6C685F]">We are not liable for delays caused by natural disasters or incorrect addresses.</p>
                 </div>
-                 <div className="bg-[#1c1b1b]/40 backdrop-blur rounded-2xl p-6 border border-white/5">
-                    <h3 className="text-lg font-bold text-white mb-2">Wrong Address?</h3>
-                    <p className="text-gray-400">Re-delivery charges may apply if the customer provides incorrect information.</p>
+                 <div className="bg-white rounded-2xl p-6 border border-yellow-500/10 shadow-sm">
+                    <h3 className="text-lg font-bold text-[#2C2921] mb-2 font-playfair">Wrong Address?</h3>
+                    <p className="text-[#6C685F]">Re-delivery charges may apply if the customer provides incorrect information.</p>
                 </div>
             </div>
 

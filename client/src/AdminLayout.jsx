@@ -52,7 +52,7 @@ export default function AdminLayout({ children }) {
         <div className="h-28 flex flex-col items-center justify-center border-b border-yellow-900/30 relative overflow-hidden px-4">
            <div className="absolute inset-0 bg-yellow-500/5 bg-[radial-gradient(circle_at_top,_transparent_0%,_#0a0802_70%)]"></div>
            <Link to="/" className="flex items-center gap-2 mb-1 relative z-10">
-             <img src="/images/icons/logo.png" alt="Logo" className="h-8 w-auto drop-shadow-[0_0_5px_rgba(234,179,8,0.4)]" />
+             <img src="/images/icons/logo.webp" alt="Logo" className="h-8 w-auto drop-shadow-[0_0_5px_rgba(234,179,8,0.4)]" />
              <h1 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 tracking-tight">
                Kala Agalya Herbals
              </h1>

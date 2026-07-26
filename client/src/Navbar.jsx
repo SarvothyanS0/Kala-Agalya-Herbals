@@ -44,16 +44,16 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full bg-[#0a0802]/80 backdrop-blur-md text-white shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-yellow-500/20 transition-all duration-300 animate-[slideDown_0.5s_ease-out]">
+      <nav className="sticky top-0 z-50 w-full bg-[#FDFBF7]/90 backdrop-blur-md text-[#2C2921] shadow-[0_4px_30px_rgba(0,0,0,0.05)] border-b border-yellow-500/10 transition-all duration-300 animate-[slideDown_0.5s_ease-out]">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
 
         <Link to="/" onClick={closeMenu} className="flex items-center gap-3 group transition-all duration-300">
           <img 
-            src="/images/icons/logo.png"
+            src="/images/icons/logo.webp"
             alt="Kala Agalya Herbals - Premium Naturopathy Herbal Hair Oil"
-            className="h-10 w-auto group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]"
+            className="h-10 w-auto group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_rgba(234,179,8,0.2)]"
           />
-          <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-200 tracking-wide group-hover:to-white transition-colors">
+          <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-800 tracking-wide group-hover:to-black transition-colors font-soria">
             Kala Agalya Herbals
           </span>
         </Link>
@@ -61,19 +61,19 @@ export default function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex space-x-8 items-center font-medium">
-          <Link to="/" className="relative group overflow-hidden py-2">
-            <span className="relative z-10 group-hover:text-yellow-300 transition-colors duration-300">Home</span>
-            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#facc15]"></span>
+          <Link to="/" className="relative group overflow-hidden py-2 text-[#2C2921]">
+            <span className="relative z-10 group-hover:text-yellow-700 transition-colors duration-300">Home</span>
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
           </Link>
           
-          <Link to="/product" className="relative group overflow-hidden py-2">
-            <span className="relative z-10 group-hover:text-yellow-300 transition-colors duration-300">Product</span>
-            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#facc15]"></span>
+          <Link to="/product" className="relative group overflow-hidden py-2 text-[#2C2921]">
+            <span className="relative z-10 group-hover:text-yellow-700 transition-colors duration-300">Product</span>
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
           </Link>
 
-          <Link to="/my-orders" className="relative group overflow-hidden py-2">
-            <span className="relative z-10 group-hover:text-yellow-300 transition-colors duration-300">My Orders</span>
-            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-400 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#facc15]"></span>
+          <Link to="/my-orders" className="relative group overflow-hidden py-2 text-[#2C2921]">
+            <span className="relative z-10 group-hover:text-yellow-700 transition-colors duration-300">My Orders</span>
+            <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left shadow-[0_0_10px_#d97706]"></span>
           </Link>
 
           <Link to="/profile" className="relative hover:scale-110 transition-transform duration-300 group">
@@ -81,10 +81,10 @@ export default function Navbar() {
           </Link>
 
           <Link to="/cart" className="relative hover:scale-110 transition-transform duration-300 group">
-            <div className="relative p-2 bg-yellow-900/20 rounded-full border border-yellow-500/20 group-hover:border-yellow-500/50 group-hover:shadow-[0_0_15px_rgba(234,179,8,0.3)] transition-all">
-              <img src="/images/icons/cart.svg" className="w-6 h-6 invert opacity-90 group-hover:opacity-100 transition-opacity" alt="cart" />
+            <div className="relative p-2 bg-yellow-900/10 rounded-full border border-yellow-500/20 group-hover:border-yellow-500/50 group-hover:shadow-[0_0_15px_rgba(234,179,8,0.2)] transition-all">
+              <img src="/images/icons/cart.svg" className="w-6 h-6 opacity-90 group-hover:opacity-100 transition-opacity" alt="cart" />
               {count > 0 && (
-                <span className="absolute -top-1 -right-1 bg-lime-400 text-black font-bold px-1.5 py-0.5 rounded-full text-xs shadow-[0_0_10px_rgba(163,230,53,0.6)] animate-pulse">
+                <span className="absolute -top-1 -right-1 bg-lime-400 text-black font-bold px-1.5 py-0.5 rounded-full text-xs shadow-[0_0_10px_rgba(163,230,53,0.3)] animate-pulse">
                   {count}
                 </span>
               )}
@@ -98,13 +98,13 @@ export default function Navbar() {
              <Avatar src={avatar} name={userName} size="sm" />
           </Link>
           <Link to="/cart" onClick={closeMenu} className="relative hover:scale-110 transition-transform">
-             <div className="relative p-2 bg-yellow-900/20 rounded-full border border-yellow-500/20">
-               <img src="/images/icons/cart.svg" className="w-5 h-5 invert" alt="cart" />
-               {count > 0 && (
-                 <span className="absolute -top-1 -right-1 bg-lime-400 text-black font-bold px-1 py-0.5 rounded-full text-[10px] animate-pulse">
-                   {count}
-                 </span>
-               )}
+             <div className="relative p-2 bg-yellow-900/10 rounded-full border border-yellow-500/20">
+                <img src="/images/icons/cart.svg" className="w-5 h-5" alt="cart" />
+                {count > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-lime-400 text-black font-bold px-1 py-0.5 rounded-full text-[10px] animate-pulse">
+                    {count}
+                  </span>
+                )}
              </div>
           </Link>
           
@@ -134,16 +134,16 @@ export default function Navbar() {
     {/* Mobile Menu Overlay */}
     <div className={`fixed inset-0 z-40 md:hidden transition-all duration-500 ease-in-out ${isMenuOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" onClick={closeMenu}></div>
+        <div className="absolute inset-0 bg-[#FDFBF7]/95 backdrop-blur-xl" onClick={closeMenu}></div>
         
         {/* Menu Content */}
         <div className={`relative h-full flex flex-col items-center justify-center space-y-8 transition-transform duration-500 ${isMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
-          <Link to="/" onClick={closeMenu} className="text-3xl font-bold text-white hover:text-yellow-400 transition-colors">Home</Link>
-          <Link to="/product" onClick={closeMenu} className="text-3xl font-bold text-white hover:text-yellow-400 transition-colors">Product</Link>
-          <Link to="/my-orders" onClick={closeMenu} className="text-3xl font-bold text-white hover:text-yellow-400 transition-colors">My Orders</Link>
-          <Link to="/profile" onClick={closeMenu} className="text-3xl font-bold text-white hover:text-yellow-400 transition-colors">Profile</Link>
-          <Link to="/cart" onClick={closeMenu} className="text-3xl font-bold text-white hover:text-yellow-400 transition-colors">Cart ({count})</Link>
-          <Link to="/contact" onClick={closeMenu} className="text-3xl font-bold text-white hover:text-yellow-400 transition-colors">Contact</Link>
+          <Link to="/" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Home</Link>
+          <Link to="/product" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Product</Link>
+          <Link to="/my-orders" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">My Orders</Link>
+          <Link to="/profile" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Profile</Link>
+          <Link to="/cart" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Cart ({count})</Link>
+          <Link to="/contact" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Contact</Link>
           
           <div className="absolute bottom-10 flex gap-6">
             <a href="https://instagram.com" className="text-gray-400 hover:text-yellow-500 transition-colors text-sm">Instagram</a>

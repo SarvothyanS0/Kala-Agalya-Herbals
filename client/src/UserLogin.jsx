@@ -22,8 +22,6 @@ export default function UserLogin() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
       if (data.success) {
         localStorage.setItem("userToken", data.token);
         localStorage.setItem("userEmail", data.user.email);
@@ -33,7 +31,13 @@ export default function UserLogin() {
         }
         addToast("Welcome back! " + data.user.name, "success");
         document.dispatchEvent(new Event("profileUpdated"));
-        navigate("/"); // Home page
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect");
+        if (redirect) {
+          navigate(`/${redirect}`);
+        } else {
+          navigate("/");
+        }
       } else {
         addToast(data.message || "Invalid credentials", "error");
       }
@@ -45,20 +49,20 @@ export default function UserLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d0b03] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 relative overflow-hidden font-sans">
       {/* Background Ambience */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/20 blur-[150px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/10 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-yellow-500/5 blur-[150px] rounded-full pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-600/5 blur-[150px] rounded-full pointer-events-none"></div>
 
-      <div className="relative bg-[#15120a] border border-yellow-900/40 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] w-full max-w-md p-8 backdrop-blur-xl">
+      <div className="relative bg-white border border-yellow-500/15 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.06)] w-full max-w-md p-8 backdrop-blur-xl">
         <div className="text-center mb-10">
           <div className="relative inline-block mb-6">
              <div className="absolute inset-0 bg-yellow-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
              <div className="relative bg-gradient-to-br from-yellow-900 to-[#0d0b03] w-24 h-24 rounded-2xl flex items-center justify-center shadow-2xl border border-yellow-500/30 transform rotate-3 hover:rotate-6 transition-transform duration-500 p-4">
-                <img src="/images/icons/logo.png" alt="Kala Agalya Herbals" className="w-full h-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                <img src="/images/icons/logo.webp" alt="Kala Agalya Herbals" className="w-full h-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
              </div>
           </div>
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 tracking-wide mb-2">
+          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-800 tracking-wide mb-2 font-soria">
             User Login
           </h1>
           <p className="text-gray-500 text-sm tracking-widest uppercase">Welcome back to Kala Agalya Herbals</p>
@@ -67,7 +71,7 @@ export default function UserLogin() {
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-4">
             <div className="group">
-              <label className="block text-xs font-semibold text-yellow-500/80 uppercase tracking-wider mb-2 ml-1 group-focus-within:text-yellow-400 transition-colors">
+              <label className="block text-xs font-semibold text-yellow-800/80 uppercase tracking-wider mb-2 ml-1 group-focus-within:text-yellow-600 transition-colors">
                 Email Address
               </label>
               <div className="relative">
@@ -75,7 +79,7 @@ export default function UserLogin() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-[#0d0b03] text-yellow-100 border border-yellow-900/50 rounded-xl focus:ring-0 focus:border-yellow-500 transition-all placeholder-gray-700 shadow-inner"
+                  className="w-full pl-12 pr-4 py-4 bg-[#F5F2EB] text-[#2C2921] border border-yellow-500/20 rounded-xl focus:ring-0 focus:border-yellow-500 transition-all placeholder-gray-400 shadow-inner"
                   placeholder="yourname@gmail.com"
                   required
                 />
@@ -89,10 +93,10 @@ export default function UserLogin() {
 
             <div className="group">
               <div className="flex justify-between items-center mb-2 ml-1">
-                <label className="block text-xs font-semibold text-yellow-500/80 uppercase tracking-wider group-focus-within:text-yellow-400 transition-colors">
+                <label className="block text-xs font-semibold text-yellow-800/80 uppercase tracking-wider group-focus-within:text-yellow-600 transition-colors">
                   Password
                 </label>
-                <Link to="/forgot-password" title="Forgot Password" className="text-xs font-semibold text-amber-600 hover:text-yellow-400 uppercase tracking-wider transition-colors">
+                <Link to="/forgot-password" title="Forgot Password" className="text-xs font-semibold text-amber-700 hover:text-yellow-600 uppercase tracking-wider transition-colors">
                   Forgot?
                 </Link>
               </div>
@@ -101,7 +105,7 @@ export default function UserLogin() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 bg-[#0d0b03] text-yellow-100 border border-yellow-900/50 rounded-xl focus:ring-0 focus:border-yellow-500 transition-all placeholder-gray-700 shadow-inner"
+                  className="w-full pl-12 pr-4 py-4 bg-[#F5F2EB] text-[#2C2921] border border-yellow-500/20 rounded-xl focus:ring-0 focus:border-yellow-500 transition-all placeholder-gray-400 shadow-inner"
                   placeholder="••••••••"
                   required
                 />
@@ -140,15 +144,15 @@ export default function UserLogin() {
         </form>
 
         <div className="mt-8 flex items-center gap-4">
-          <div className="flex-1 h-[1px] bg-yellow-900/40"></div>
-          <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">or continue with</span>
-          <div className="flex-1 h-[1px] bg-yellow-900/40"></div>
+          <div className="flex-1 h-[1px] bg-yellow-500/20"></div>
+          <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">or continue with</span>
+          <div className="flex-1 h-[1px] bg-yellow-500/20"></div>
         </div>
 
         <div className="mt-8">
            <div className="flex justify-center relative group">
-             <div className="absolute inset-0 bg-yellow-500/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
-             <div className="relative z-10 w-full flex justify-center border border-yellow-900/30 rounded-full p-[2px] hover:border-yellow-500/50 transition-all shadow-lg overflow-hidden">
+             <div className="absolute inset-0 bg-yellow-500/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-full"></div>
+             <div className="relative z-10 w-full flex justify-center border border-yellow-500/20 rounded-full p-[2px] hover:border-yellow-500/50 transition-all shadow-lg overflow-hidden bg-white">
                <GoogleLogin
                   onSuccess={async (credentialResponse) => {
                     setLoading(true);
@@ -168,7 +172,13 @@ export default function UserLogin() {
                         }
                         addToast("Welcome back! " + data.user.name, "success");
                         document.dispatchEvent(new Event("profileUpdated"));
-                        navigate("/");
+                        const params = new URLSearchParams(window.location.search);
+                        const redirect = params.get("redirect");
+                        if (redirect) {
+                          navigate(`/${redirect}`);
+                        } else {
+                          navigate("/");
+                        }
                       } else {
                         addToast(data.message || "Google Login Failed", "error");
                       }
@@ -189,11 +199,11 @@ export default function UserLogin() {
            </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-yellow-900/30 text-center">
+        <div className="mt-8 pt-6 border-t border-yellow-500/20 text-center">
           <p className="text-sm text-gray-500 uppercase tracking-widest mb-4">
-            New here? <Link to="/register" className="text-yellow-500 border-b border-yellow-500/50 hover:border-yellow-400 transition-colors">Create Account</Link>
+            New here? <Link to={`/register${window.location.search}`} className="text-yellow-600 border-b border-yellow-600/50 hover:border-yellow-500 transition-colors">Create Account</Link>
           </p>
-          <p className="text-[10px] text-gray-600 uppercase tracking-[0.2em]">
+          <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em]">
             Protected • 256-bit Encryption • Secure Access
           </p>
         </div>

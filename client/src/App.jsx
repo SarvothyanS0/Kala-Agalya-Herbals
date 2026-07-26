@@ -39,7 +39,7 @@ function Layout() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isAuthenticated = !!localStorage.getItem("userToken");
-  const isAuthRoute = ["/login", "/register", "/forgot-password"].includes(location.pathname) || location.pathname.startsWith("/reset-password") || (location.pathname === "/" && !isAuthenticated);
+  const isAuthRoute = ["/login", "/register", "/forgot-password"].includes(location.pathname) || location.pathname.startsWith("/reset-password");
 
   // Global scroll animations
   useScrollAnimation();
@@ -52,7 +52,7 @@ function Layout() {
           {/* Public Pages */}
           <Route 
             path="/" 
-            element={isAuthenticated ? <Landing /> : <UserLogin />} 
+            element={<Landing />} 
           />
           <Route path="/login" element={<UserLogin />} />
           <Route path="/register" element={<Register />} />
@@ -87,11 +87,9 @@ function Layout() {
           <Route
             path="/checkout"
             element={
-              <AuthRoute>
-                <ProtectedRoute>
-                  <Checkout />
-                </ProtectedRoute>
-              </AuthRoute>
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
             }
           />
 

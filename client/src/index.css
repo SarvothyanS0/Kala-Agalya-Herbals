@@ -1,12 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-[#0a0802] text-gray-100 antialiased selection:bg-yellow-500 selection:text-black;
+    @apply bg-[#FDFBF7] text-[#2C2921] antialiased selection:bg-yellow-500 selection:text-black;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 }
+
+/* ── Continuous Horizontal Marquee Slider ────────────────────── */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
 
 /* ── Scroll Animations ─────────────────────────────────────────── */
 .scroll-animate {

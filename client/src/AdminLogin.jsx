@@ -118,7 +118,7 @@ export default function AdminLogin() {
           <div className="relative inline-block mb-6">
              <div className="absolute inset-0 bg-yellow-500 blur-xl opacity-20 rounded-full animate-pulse"></div>
              <div className="relative bg-gradient-to-br from-yellow-900 to-[#0d0b03] w-24 h-24 rounded-2xl flex items-center justify-center shadow-2xl border border-yellow-500/30 transform rotate-3 hover:rotate-6 transition-transform duration-500 p-4">
-                <img src="/images/icons/logo.png" alt="Kala Agalya Herbals" className="w-full h-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                <img src="/images/icons/logo.webp" alt="Kala Agalya Herbals" className="w-full h-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
              </div>
           </div>
           <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 tracking-wide mb-2">
