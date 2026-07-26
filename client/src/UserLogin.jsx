@@ -108,11 +108,15 @@ export default function UserLogin() {
           {/* Logo */}
           <div className="text-center mb-8">
             <Link to="/" className="inline-flex flex-col items-center gap-3 group" aria-label="Back to home">
-              <div className="relative">
-                <div className="absolute inset-0 bg-yellow-500/20 blur-xl rounded-full animate-pulse" />
-                <div className="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-yellow-900 to-[#0d0b03] flex items-center justify-center shadow-xl border border-yellow-500/30 group-hover:scale-105 transition-transform duration-400 p-3.5">
-                  <img src="/images/icons/logo.webp" alt="Kala Agalya Herbals" className="w-full h-auto" loading="eager" />
-                </div>
+              <div className="relative mb-1">
+                <img
+                  src="/images/icons/logo.webp"
+                  alt="Kala Agalya Herbals"
+                  className="h-16 w-auto group-hover:scale-110 transition-transform duration-400 drop-shadow-[0_0_12px_rgba(217,119,6,0.3)]"
+                  loading="eager"
+                  width="64"
+                  height="64"
+                />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-800 font-soria tracking-wide">
