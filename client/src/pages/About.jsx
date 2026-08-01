@@ -297,23 +297,23 @@ export default function About() {
       </section>
 
       {/* ══ CTA ══════════════════════════════════════════════ */}
-      <section className="py-16 sm:py-20 px-5 sm:px-8 bg-gradient-to-br from-[#1C180E] via-[#2D2312] to-[#14110A] text-white text-center border-t border-yellow-500/20 relative overflow-hidden shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(217,119,6,0.18)_0%,_transparent_75%)] pointer-events-none" />
+      <section className="py-16 sm:py-20 px-5 sm:px-8 bg-[#FDFBF7] text-[#1C1A16] text-center border-t border-yellow-500/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(217,119,6,0.05)_0%,_transparent_75%)] pointer-events-none" />
         <div className="relative z-10 max-w-2xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 font-soria scroll-animate text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-400">
-            Ready to Experience the Difference?
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 font-soria scroll-animate text-[#1C1A16]">
+            Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">Experience the Difference?</span>
           </h2>
-          <p className="text-amber-100/80 mb-8 font-inter">Join thousands transforming their hair with Kala Agalya Herbals.</p>
+          <p className="text-[#6C685F] mb-8 font-inter">Join thousands transforming their hair with Kala Agalya Herbals.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a href="/#product">
-              <button className="px-8 py-3.5 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:shadow-[0_0_20px_rgba(234,179,8,0.4)] hover:scale-105 transition-all duration-300 shadow-gold font-grotesk border border-yellow-300/40">
+              <button className="px-8 py-3.5 rounded-xl font-bold text-black bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 hover:scale-105 transition-all duration-300 shadow-gold font-grotesk">
                 Shop Now →
               </button>
             </a>
             <a
               href="https://wa.me/917338758727?text=Hi%20Kala%20Agalya%20Herbals,%20I%20would%20like%20to%20know%20more%20about%20your%20products."
               target="_blank" rel="noreferrer"
-              className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-[#25D366] bg-[#25D366]/10 border border-[#25D366]/40 hover:bg-[#25D366]/20 transition-all duration-300 font-grotesk shadow-sm"
+              className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-[#128C7E] bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all duration-300 font-grotesk shadow-sm"
             >
               <FaWhatsapp /> Chat on WhatsApp
             </a>

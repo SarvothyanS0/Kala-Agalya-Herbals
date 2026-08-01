@@ -69,23 +69,27 @@ export default function Footer() {
         </svg>
       </button>
 
+      {/* ── Trust Badges Banner Section ──────────────────── */}
+      <section className="bg-[#FDFBF7] py-10 border-t border-yellow-500/10 relative z-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+            {footerContent.trust.map((badge, i) => (
+              <span key={i} className="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-yellow-500/30 bg-yellow-500/10 text-yellow-900 tracking-wider uppercase shadow-sm hover:border-yellow-500 hover:scale-105 transition-all duration-300">
+                ✓ {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Main Footer ───────────────────────────────────── */}
-      <footer className="relative bg-[#0c0a04] text-gray-300 pt-20 pb-8 overflow-hidden border-t border-yellow-900/30">
+      <footer className="relative bg-[#0c0a04] text-gray-300 pt-16 pb-8 overflow-hidden border-t border-yellow-900/30">
 
         {/* Background ambiance */}
         <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-yellow-900/8 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-amber-900/8 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-
-          {/* Trust badges row */}
-          <div className="flex flex-wrap justify-center gap-3.5 mb-16 pb-12 border-b border-yellow-500/15">
-            {footerContent.trust.map((badge, i) => (
-              <span key={i} className="px-5 py-2 rounded-full text-xs font-bold border border-yellow-500/40 bg-gradient-to-r from-yellow-500/15 via-amber-500/15 to-yellow-500/10 text-yellow-300 tracking-wider uppercase shadow-[0_2px_12px_rgba(234,179,8,0.15)] hover:border-yellow-400 hover:scale-105 transition-all duration-300">
-                ✓ {badge}
-              </span>
-            ))}
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
 

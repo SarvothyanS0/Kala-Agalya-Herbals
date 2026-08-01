@@ -942,21 +942,20 @@ export default function Landing() {
       </section>
 
       {/* ══ FOOTER CTA ═══════════════════════════════════════════ */}
-      <section className="bg-gradient-to-br from-[#1C180E] via-[#2A2111] to-[#16120A] border-t border-yellow-500/20 text-white py-20 px-5 text-center relative overflow-hidden shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(217,119,6,0.15)_0%,_transparent_70%)] pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20 bg-gradient-to-b from-yellow-400 to-transparent" />
+      <section className="bg-[#FDFBF7] border-t border-yellow-500/10 text-[#1C1A16] py-20 px-5 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(217,119,6,0.05)_0%,_transparent_70%)] pointer-events-none" />
         <div className="relative z-10 max-w-3xl mx-auto">
-          <span className="inline-block px-5 py-2 rounded-full border border-yellow-500/40 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 text-xs font-grotesk font-extrabold uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+          <span className="inline-block px-5 py-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-yellow-800 text-xs font-grotesk font-extrabold uppercase tracking-widest mb-6 shadow-sm">
             ⚡ Limited Stock Available
           </span>
-          <h2 className="scroll-animate text-3xl md:text-5xl font-extrabold mb-5 font-soria leading-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-400">
-            Ready to Transform<br />Your Hair Naturally?
+          <h2 className="scroll-animate text-3xl md:text-5xl font-extrabold mb-5 font-soria leading-tight text-[#1C1A16]">
+            Ready to Transform<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">Your Hair Naturally?</span>
           </h2>
-          <p className="text-amber-100/80 mb-10 text-base max-w-xl mx-auto font-inter leading-relaxed">
+          <p className="text-[#6C685F] mb-10 text-base max-w-xl mx-auto font-inter leading-relaxed">
             Join thousands of satisfied customers who have switched to Kala Agalya Herbals Organic Hair Oil.
           </p>
           <a href="#product">
-            <button className="relative overflow-hidden px-10 py-4 rounded-full font-bold text-base bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 text-black hover:shadow-[0_0_25px_rgba(234,179,8,0.5)] hover:scale-105 transition-all duration-300 shadow-gold border border-yellow-300/50 font-grotesk tracking-wider group">
+            <button className="relative overflow-hidden px-10 py-4 rounded-full font-bold text-base bg-gradient-to-r from-yellow-500 to-amber-600 text-black hover:from-yellow-400 hover:to-amber-500 shadow-gold hover:shadow-gold-lg hover:scale-105 transition-all duration-300 font-grotesk tracking-wider group">
               <span className="relative z-10">Get Your Bottle Today →</span>
               <div className="absolute -inset-full h-full w-1/2 -skew-x-12 bg-white/30 opacity-0 group-hover:opacity-100 group-hover:left-full transition-all duration-600" />
             </button>
