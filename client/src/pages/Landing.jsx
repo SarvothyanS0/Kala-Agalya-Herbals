@@ -894,19 +894,23 @@ export default function Landing() {
             {whyCards.map((item, i) => (
               <div
                 key={i}
-                className={`scroll-animate scroll-delay-${(i % 2) + 1} group relative h-[260px] sm:h-[340px] md:h-[380px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover border border-yellow-500/10 bg-white`}
+                className={`scroll-animate scroll-delay-${(i % 2) + 1} group flex flex-col h-[270px] sm:h-[350px] md:h-[380px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover border border-yellow-500/10 bg-white transition-all duration-500`}
               >
-                <div className="absolute inset-0 h-3/4 overflow-hidden flex items-center justify-center bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] p-2 sm:p-4">
+                <div className="h-[58%] sm:h-[65%] w-full overflow-hidden flex items-center justify-center bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] p-3 sm:p-5 relative">
                   <img
                     src={`/images/${item.img}`}
                     alt={item.title}
-                    className="w-full h-full object-contain transform group-hover:scale-110 group-hover:-translate-y-3 transition-all duration-700 ease-spring filter brightness-95 group-hover:brightness-105 drop-shadow-[0_8px_20px_rgba(217,119,6,0.12)]"
+                    className="max-h-full max-w-full object-contain transform group-hover:scale-110 transition-transform duration-700 ease-spring filter brightness-95 group-hover:brightness-105 drop-shadow-[0_8px_20px_rgba(217,119,6,0.12)]"
                     loading="lazy"
                   />
                 </div>
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-white via-white/96 to-transparent pt-6 sm:pt-16 pb-3 sm:pb-7 px-3 sm:px-7 transform translate-y-2 sm:translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-sm sm:text-xl font-bold text-[#1C1A16] mb-1 sm:mb-2 group-hover:text-yellow-700 transition-colors font-grotesk">{item.title}</h3>
-                  <p className="text-[#6C685F] text-[11px] sm:text-sm leading-snug sm:leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 font-inter">{item.desc}</p>
+                <div className="flex-1 bg-white p-3 sm:p-5 border-t border-yellow-500/10 flex flex-col justify-center text-center">
+                  <h3 className="text-xs sm:text-lg md:text-xl font-extrabold text-[#1C1A16] mb-1 sm:mb-1.5 group-hover:text-yellow-700 transition-colors font-grotesk leading-tight">
+                    {item.title}
+                  </h3>
+                  <p className="text-[#6C685F] text-[10px] sm:text-xs md:text-sm leading-tight sm:leading-relaxed font-inter line-clamp-2">
+                    {item.desc}
+                  </p>
                 </div>
               </div>
             ))}
