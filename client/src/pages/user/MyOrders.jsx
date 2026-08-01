@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { useToast } from "./Alert";
-import { API_URL } from "./services/api";
-import { openInvoice } from "./services/invoiceGenerator";
+import { useToast } from "../../components/Alert";
+import { API_URL } from "../../services/api";
+import { openInvoice } from "../../services/invoiceGenerator";
 
 const STATUS_MAP = {
   "Pending":   { level: 1, label: "Placed",     icon: "⏳", color: "text-orange-400", border: "border-orange-500/40", bg: "bg-orange-500", bgLight: "bg-orange-500/10" },

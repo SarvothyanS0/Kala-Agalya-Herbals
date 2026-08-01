@@ -1,7 +1,7 @@
-import { API_URL, BASE_URL } from "./services/api";
+import { API_URL, BASE_URL } from "../../services/api";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useToast } from "./Alert";
+import { useToast } from "../../components/Alert";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");

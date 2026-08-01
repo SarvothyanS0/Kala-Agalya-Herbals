@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { useToast } from "./Alert";
+import { useToast } from "../../components/Alert";
 import { useState } from "react";
-import { API_URL } from "./services/api";
+import { API_URL } from "../../services/api";
 
 export default function Payment() {
   const cart = JSON.parse(localStorage.getItem("cart")) || [];

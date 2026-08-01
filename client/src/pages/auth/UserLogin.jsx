@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useToast } from "./Alert";
+import { useToast } from "../../components/Alert";
 import { GoogleLogin } from "@react-oauth/google";
-import { API_URL } from "./services/api";
+import { API_URL } from "../../services/api";
 import { Helmet } from "react-helmet-async";
 
 export default function UserLogin() {

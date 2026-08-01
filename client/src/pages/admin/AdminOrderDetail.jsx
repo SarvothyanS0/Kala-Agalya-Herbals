@@ -1,9 +1,9 @@
-import { API_URL, BASE_URL } from "./services/api";
+import { API_URL, BASE_URL } from "../../services/api";
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useToast } from "./Alert";
+import { useToast } from "../../components/Alert";
 import AdminLayout from "./AdminLayout";
-import Avatar from "./Avatar";
+import Avatar from "../../components/Avatar";
 
 export default function AdminOrderDetail() {
   const { id } = useParams();

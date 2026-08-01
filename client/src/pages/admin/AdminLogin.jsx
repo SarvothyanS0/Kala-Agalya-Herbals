@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "./Alert";
-import { API_URL } from "./services/api";
+import { useToast } from "../../components/Alert";
+import { API_URL } from "../../services/api";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");

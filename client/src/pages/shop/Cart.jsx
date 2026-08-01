@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { API_URL, BASE_URL } from "./services/api";
+import { API_URL, BASE_URL } from "../../services/api";
 import { Helmet } from "react-helmet-async";
 
 export default function Cart() {
@@ -58,6 +58,12 @@ export default function Cart() {
     document.dispatchEvent(new Event("cartUpdated"));
   };
 
+  const clearCart = () => {
+    localStorage.removeItem("cart");
+    setCart([]);
+    document.dispatchEvent(new Event("cartUpdated"));
+  };
+
   const removeItem  = (i) => persist(cart.filter((_, idx) => idx !== i));
   const increaseQty = (i) => { const c = [...cart]; c[i].quantity += 1; persist(c); };
   const decreaseQty = (i) => { const c = [...cart]; if (c[i].quantity > 1) { c[i].quantity -= 1; persist(c); } };
@@ -80,18 +86,30 @@ export default function Cart() {
 
         {/* Header */}
         <div className="mb-10" style={{ animation: "fadeInUp 0.4s ease-out both" }}>
-          <Link to="/#product" className="inline-flex items-center gap-2 text-[#9A9690] hover:text-yellow-700 transition-colors group text-sm font-inter mb-4">
-            <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Continue Shopping
-          </Link>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria">
-            Your Cart
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <Link to="/#product" className="inline-flex items-center gap-2 text-[#9A9690] hover:text-yellow-700 transition-colors group text-sm font-inter mb-4">
+                <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Continue Shopping
+              </Link>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria">
+                Your Cart
+                {cart.length > 0 && (
+                  <span className="ml-3 text-xl font-normal text-[#9A9690] font-inter">({cart.length} item{cart.length > 1 ? "s" : ""})</span>
+                )}
+              </h1>
+            </div>
             {cart.length > 0 && (
-              <span className="ml-3 text-xl font-normal text-[#9A9690] font-inter">({cart.length} item{cart.length > 1 ? "s" : ""})</span>
+              <button
+                onClick={clearCart}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-red-600 hover:text-red-700 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all font-grotesk"
+              >
+                Clear Cart
+              </button>
             )}
-          </h1>
+          </div>
         </div>
 
         {cart.length === 0 ? (

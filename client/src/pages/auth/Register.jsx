@@ -1,8 +1,8 @@
-import { API_URL, BASE_URL } from "./services/api";
+import { API_URL, BASE_URL } from "../../services/api";
 import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useToast } from "./Alert";
-import Avatar from "./Avatar";
+import { useToast } from "../../components/Alert";
+import Avatar from "../../components/Avatar";
 /**
  * Password policy rules — must stay in sync with server-side validatePassword.js
  */

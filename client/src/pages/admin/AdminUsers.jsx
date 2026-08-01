@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { useToast } from "./Alert";
+import { useState, useEffect, useCallback } from "react";
+import { useToast } from "../../components/Alert";
 import AdminLayout from "./AdminLayout";
-import Avatar from "./Avatar";
-import { API_URL } from "./services/api";
+import Avatar from "../../components/Avatar";
+import { API_URL } from "../../services/api";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);

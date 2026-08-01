@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
-import { useToast } from "./Alert";
-import { API_URL, BASE_URL } from "./services/api";
+import { useToast } from "../components/Alert";
+import { API_URL, BASE_URL } from "../services/api";
 
 /* ── Static data ──────────────────────────────────────────────── */
 const heroSlides = [
@@ -292,25 +292,25 @@ function ProductCard({ product, index, onAddToCart, onBuyNow }) {
   return (
     <div
       ref={ref}
-      className="group relative bg-white rounded-3xl overflow-hidden border border-yellow-500/10 shadow-card hover:shadow-card-hover hover:border-yellow-500/35 transition-all duration-500"
+      className="group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-yellow-500/10 shadow-card hover:shadow-card-hover hover:border-yellow-500/35 transition-all duration-500"
       style={{ animation: `fadeInUp 0.5s ease-out ${index * 0.12}s both`, transformStyle: "preserve-3d" }}
     >
       {/* Badges */}
       {product.savings && (
-        <div className="absolute top-4 right-4 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold z-20 shadow-lg font-grotesk tracking-wide">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-xs font-bold z-20 shadow-lg font-grotesk tracking-wide">
           {product.savings}
         </div>
       )}
       {product.ml === "200 ml" && (
-        <div className="absolute top-4 left-4 bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold z-20 shadow-md font-grotesk">
+        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-yellow-500 text-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-xs font-bold z-20 shadow-md font-grotesk">
           ★ Popular
         </div>
       )}
 
       {/* Image area */}
-      <div className="h-72 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] relative flex items-center justify-center p-8 overflow-hidden">
+      <div className="h-44 sm:h-64 lg:h-72 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] relative flex items-center justify-center p-3 sm:p-6 lg:p-8 overflow-hidden">
         <div className="absolute inset-0 bg-yellow-500/4 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="w-40 h-40 bg-yellow-500/8 rounded-full absolute blur-[50px] group-hover:bg-yellow-500/18 group-hover:scale-125 transition-all duration-700" />
+        <div className="w-24 h-24 sm:w-40 sm:h-40 bg-yellow-500/8 rounded-full absolute blur-[30px] sm:blur-[50px] group-hover:bg-yellow-500/18 group-hover:scale-125 transition-all duration-700" />
         <img
           src={product.img}
           alt={`Kala Agalya Herbals ${product.ml} herbal hair oil bottle`}
@@ -318,50 +318,50 @@ function ProductCard({ product, index, onAddToCart, onBuyNow }) {
           loading="lazy"
         />
         {/* Reveal CTA ribbon on hover */}
-        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-yellow-500/90 to-transparent py-3 px-6 translate-y-full group-hover:translate-y-0 transition-transform duration-400 ease-spring flex items-center justify-center gap-2">
-          <span className="text-black font-bold text-sm font-grotesk tracking-wide">Add to Cart →</span>
+        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-yellow-500/90 to-transparent py-2 sm:py-3 px-3 sm:px-6 translate-y-full group-hover:translate-y-0 transition-transform duration-400 ease-spring flex items-center justify-center gap-2">
+          <span className="text-black font-bold text-xs sm:text-sm font-grotesk tracking-wide">Add to Cart →</span>
         </div>
       </div>
 
       {/* Info */}
-      <div className="p-6 relative">
+      <div className="p-3 sm:p-5 lg:p-6 relative">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
 
-        <div className="text-center mb-4">
-          <h3 className="text-2xl font-black text-[#2C2921] mb-1 font-soria">{product.ml}</h3>
-          <p className="text-[#6C685F] text-xs line-clamp-2 font-inter">{product.description}</p>
+        <div className="text-center mb-2 sm:mb-4">
+          <h3 className="text-lg sm:text-2xl font-black text-[#2C2921] mb-1 font-soria">{product.ml}</h3>
+          <p className="text-[#6C685F] text-[11px] sm:text-xs line-clamp-2 font-inter">{product.description}</p>
         </div>
 
-        <div className="flex flex-col items-center gap-0.5 mb-5">
+        <div className="flex flex-col items-center gap-0.5 mb-3 sm:mb-5">
           {product.mrp && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-[#9A9690] line-through font-inter">MRP ₹{product.mrp}</span>
-              <span className="text-xs text-emerald-700 font-bold font-grotesk bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+              <span className="text-xs sm:text-sm text-[#9A9690] line-through font-inter">MRP ₹{product.mrp}</span>
+              <span className="text-[10px] sm:text-xs text-emerald-700 font-bold font-grotesk bg-emerald-500/10 px-1.5 sm:px-2 py-0.5 rounded-full border border-emerald-500/20">
                 Save ₹{product.mrp - product.price}
               </span>
             </div>
           )}
-          <div className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700 font-soria">
+          <div className="text-xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700 font-soria">
             ₹{product.price}
           </div>
         </div>
 
-        <div className="flex justify-center gap-2 mb-5">
+        <div className="flex justify-center gap-1 sm:gap-2 mb-3 sm:mb-5">
           {["🔒 Secure", "🌿 Organic", "🚚 Fast"].map(t => (
-            <span key={t} className="text-[10px] text-[#9A9690] px-2 py-0.5 rounded-full border border-[#e8e4dc] font-inter">{t}</span>
+            <span key={t} className="text-[9px] sm:text-[10px] text-[#9A9690] px-1.5 sm:px-2 py-0.5 rounded-full border border-[#e8e4dc] font-inter">{t}</span>
           ))}
         </div>
 
-        <div className="space-y-2.5 font-grotesk">
+        <div className="space-y-2 sm:space-y-2.5 font-grotesk">
           <button
             onClick={(e) => handleRipple(e, onAddToCart)}
-            className="ripple-container w-full py-3 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-[#F5F2EB] text-yellow-800 border border-yellow-500/25 hover:bg-yellow-500/12 hover:border-yellow-500/50 hover:shadow-md active:scale-98 relative overflow-hidden"
+            className="ripple-container w-full py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 bg-[#F5F2EB] text-yellow-800 border border-yellow-500/25 hover:bg-yellow-500/12 hover:border-yellow-500/50 hover:shadow-md active:scale-98 relative overflow-hidden"
           >
             Add to Cart
           </button>
           <button
             onClick={(e) => handleRipple(e, onBuyNow)}
-            className="ripple-container w-full py-3 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all duration-300 bg-gradient-to-r from-yellow-500 to-amber-600 text-black hover:from-yellow-400 hover:to-amber-500 shadow-[0_4px_15px_rgba(217,119,6,0.25)] hover:shadow-gold hover:-translate-y-0.5 active:scale-98 relative overflow-hidden"
+            className="ripple-container w-full py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 bg-gradient-to-r from-yellow-500 to-amber-600 text-black hover:from-yellow-400 hover:to-amber-500 shadow-[0_4px_15px_rgba(217,119,6,0.25)] hover:shadow-gold hover:-translate-y-0.5 active:scale-98 relative overflow-hidden"
           >
             Buy Now
           </button>
@@ -725,18 +725,18 @@ export default function Landing() {
           </div>
 
           {loadingProducts ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 max-w-5xl mx-auto">
               {skeletonSizes.map((ml) => (
-                <div key={ml} className="bg-white rounded-3xl p-6 border border-yellow-500/10 shadow-card">
-                  <div className="h-64 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] rounded-2xl mb-5 skeleton-shimmer" />
-                  <div className="h-6 bg-[#F5F2EB] rounded-md w-1/2 mx-auto mb-3 skeleton-shimmer" />
-                  <div className="h-4 bg-[#F5F2EB] rounded-md w-3/4 mx-auto mb-6 skeleton-shimmer" />
-                  <div className="h-10 bg-[#F5F2EB] rounded-xl skeleton-shimmer" />
+                <div key={ml} className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-6 border border-yellow-500/10 shadow-card">
+                  <div className="h-44 sm:h-64 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] rounded-xl sm:rounded-2xl mb-4 sm:mb-5 skeleton-shimmer" />
+                  <div className="h-5 sm:h-6 bg-[#F5F2EB] rounded-md w-1/2 mx-auto mb-2 sm:mb-3 skeleton-shimmer" />
+                  <div className="h-3 sm:h-4 bg-[#F5F2EB] rounded-md w-3/4 mx-auto mb-4 sm:mb-6 skeleton-shimmer" />
+                  <div className="h-8 sm:h-10 bg-[#F5F2EB] rounded-lg sm:rounded-xl skeleton-shimmer" />
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 max-w-5xl mx-auto">
               {products.map((product, idx) => (
                 <ProductCard
                   key={product.id}
@@ -890,13 +890,13 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:gap-8 max-w-5xl mx-auto">
             {whyCards.map((item, i) => (
               <div
                 key={i}
-                className={`scroll-animate scroll-delay-${(i % 2) + 1} group relative h-[380px] rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover border border-yellow-500/10 bg-white`}
+                className={`scroll-animate scroll-delay-${(i % 2) + 1} group relative h-[260px] sm:h-[340px] md:h-[380px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover border border-yellow-500/10 bg-white`}
               >
-                <div className="absolute inset-0 h-3/4 overflow-hidden flex items-center justify-center bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB]">
+                <div className="absolute inset-0 h-3/4 overflow-hidden flex items-center justify-center bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] p-2 sm:p-4">
                   <img
                     src={`/images/${item.img}`}
                     alt={item.title}
@@ -904,9 +904,9 @@ export default function Landing() {
                     loading="lazy"
                   />
                 </div>
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-white via-white/96 to-transparent pt-16 pb-7 px-7 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-xl font-bold text-[#1C1A16] mb-2 group-hover:text-yellow-700 transition-colors font-grotesk">{item.title}</h3>
-                  <p className="text-[#6C685F] text-sm leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 font-inter">{item.desc}</p>
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-white via-white/96 to-transparent pt-6 sm:pt-16 pb-3 sm:pb-7 px-3 sm:px-7 transform translate-y-2 sm:translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+                  <h3 className="text-sm sm:text-xl font-bold text-[#1C1A16] mb-1 sm:mb-2 group-hover:text-yellow-700 transition-colors font-grotesk">{item.title}</h3>
+                  <p className="text-[#6C685F] text-[11px] sm:text-sm leading-snug sm:leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 font-inter">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -938,23 +938,23 @@ export default function Landing() {
       </section>
 
       {/* ══ FOOTER CTA ═══════════════════════════════════════════ */}
-      <section className="bg-[#14120B] border-t border-yellow-500/10 text-white py-20 px-5 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(217,119,6,0.06)_0%,_transparent_70%)] pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20 bg-gradient-to-b from-yellow-500/50 to-transparent" />
+      <section className="bg-gradient-to-br from-[#1C180E] via-[#2A2111] to-[#16120A] border-t border-yellow-500/20 text-white py-20 px-5 text-center relative overflow-hidden shadow-2xl">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(217,119,6,0.15)_0%,_transparent_70%)] pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20 bg-gradient-to-b from-yellow-400 to-transparent" />
         <div className="relative z-10 max-w-3xl mx-auto">
-          <span className="inline-block px-4 py-1.5 rounded-full border border-yellow-500/25 text-yellow-400 text-xs font-grotesk uppercase tracking-widest mb-6">
-            Limited Stock Available
+          <span className="inline-block px-5 py-2 rounded-full border border-yellow-500/40 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 text-yellow-300 text-xs font-grotesk font-extrabold uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(234,179,8,0.2)]">
+            ⚡ Limited Stock Available
           </span>
-          <h2 className="scroll-animate text-3xl md:text-5xl font-bold mb-5 font-soria leading-tight">
+          <h2 className="scroll-animate text-3xl md:text-5xl font-extrabold mb-5 font-soria leading-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-400">
             Ready to Transform<br />Your Hair Naturally?
           </h2>
-          <p className="text-gray-400 mb-10 text-base max-w-xl mx-auto font-inter leading-relaxed">
-            Join thousands of satisfied customers who have switched to Kala Agalya Herbals Herbal Organic Hair Oil.
+          <p className="text-amber-100/80 mb-10 text-base max-w-xl mx-auto font-inter leading-relaxed">
+            Join thousands of satisfied customers who have switched to Kala Agalya Herbals Organic Hair Oil.
           </p>
           <a href="#product">
-            <button className="relative overflow-hidden px-10 py-4 rounded-full font-bold text-base bg-gradient-to-r from-yellow-500 to-amber-600 text-black hover:shadow-gold-lg hover:scale-105 transition-all duration-300 shadow-gold border border-yellow-400/40 font-grotesk tracking-wider group">
+            <button className="relative overflow-hidden px-10 py-4 rounded-full font-bold text-base bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 text-black hover:shadow-[0_0_25px_rgba(234,179,8,0.5)] hover:scale-105 transition-all duration-300 shadow-gold border border-yellow-300/50 font-grotesk tracking-wider group">
               <span className="relative z-10">Get Your Bottle Today →</span>
-              <div className="absolute -inset-full h-full w-1/2 -skew-x-12 bg-white/20 opacity-0 group-hover:opacity-100 group-hover:left-full transition-all duration-600" />
+              <div className="absolute -inset-full h-full w-1/2 -skew-x-12 bg-white/30 opacity-0 group-hover:opacity-100 group-hover:left-full transition-all duration-600" />
             </button>
           </a>
         </div>

@@ -28,6 +28,14 @@ export default function RefundPolicy() {
           </p>
         </div>
 
+        {/* Mandatory Requirement Alert */}
+        <div className="max-w-2xl mx-auto mb-10 p-4 bg-amber-500/10 border-l-4 border-yellow-600 rounded-r-2xl shadow-sm flex items-center gap-3">
+          <span className="text-2xl">📹</span>
+          <p className="text-sm sm:text-base font-bold text-yellow-900 font-sans">
+            Mandatory Requirement: Package opening video must be recorded continuously without cuts from parcel seal opening to claim any refund or replacement.
+          </p>
+        </div>
+
         {/* Highlight Cards - Top Section */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
             
@@ -44,7 +52,7 @@ export default function RefundPolicy() {
                         Refunds Applicable
                     </h3>
                     <ul className="space-y-4 font-sans">
-                        {["Damaged during transit", "Wrong product delivered", "Package is tampered", "Manufacturing defect", "Product leakage"].map((item, i) => (
+                        {["Damaged during transit (Opening video must)", "Wrong product delivered", "Package is tampered", "Manufacturing defect", "Product leakage", "Unboxing / Opening video provided"].map((item, i) => (
                             <li key={i} className="flex items-center gap-3 text-[#2C2921]">
                                 <span className="w-1.5 h-1.5 bg-yellow-600 rounded-full"></span>
                                 {item}
@@ -67,7 +75,7 @@ export default function RefundPolicy() {
                         Refunds Not Applicable
                     </h3>
                     <ul className="space-y-4 font-sans">
-                        {["Product is opened/used", "Seal is broken", "Change of mind", "Personal dislike", "Courier delays"].map((item, i) => (
+                        {["No clear package opening video", "Product is opened/used", "Seal is broken", "Change of mind", "Personal dislike", "Courier delays"].map((item, i) => (
                              <li key={i} className="flex items-center gap-3 text-[#6C685F]">
                                 <span className="w-1.5 h-1.5 bg-red-500/50 rounded-full"></span>
                                 {item}
@@ -102,7 +110,7 @@ export default function RefundPolicy() {
                     <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 w-14 h-14 bg-white border-2 border-yellow-500 rounded-full flex items-center justify-center z-10 text-xl font-bold text-yellow-600 shadow-sm order-1 font-soria">2</div>
                     <div className="flex-1 md:pl-12 order-2 pl-16 md:pl-0 font-sans">
                          <h3 className="text-xl font-bold text-yellow-600 mb-2 font-playfair">Step 2: Share Details</h3>
-                        <p className="text-[#6C685F]">Order ID, Photos, & Unboxing Video (for damage).</p>
+                        <p className="text-[#6C685F]">Order ID, Photos, & mandatory Opening Video (unboxing video must be unedited).</p>
                     </div>
                 </div>
 

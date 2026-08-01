@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { API_URL } from "./services/api";
-import { openInvoice } from "./services/invoiceGenerator";
+import { API_URL } from "../../services/api";
+import { openInvoice } from "../../services/invoiceGenerator";
 
 // ─── Success Page ─────────────────────────────────────────────────────────────
 export default function Success() {

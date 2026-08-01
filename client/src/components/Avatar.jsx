@@ -1,4 +1,4 @@
-import { API_URL, BASE_URL } from "./services/api";
+import { API_URL, BASE_URL } from "../services/api";
 import React from 'react';
 
 /**
