@@ -62,7 +62,7 @@ export default function Footer() {
       <button
         onClick={scrollToTop}
         aria-label="Back to top"
-        className={`fixed bottom-8 left-6 z-50 w-10 h-10 rounded-full bg-yellow-600 text-white flex items-center justify-center shadow-gold hover:bg-yellow-500 hover:scale-110 transition-all duration-300 scroll-top-btn ${showTop ? "visible" : ""}`}
+        className={`fixed bottom-8 left-6 z-50 w-10 h-10 rounded-full bg-[#52b788] text-white flex items-center justify-center shadow-md hover:bg-[#40916c] hover:scale-110 transition-all duration-300 scroll-top-btn ${showTop ? "visible" : ""}`}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
@@ -70,11 +70,11 @@ export default function Footer() {
       </button>
 
       {/* ── Trust Badges Banner Section ──────────────────── */}
-      <section className="bg-[#FDFBF7] py-10 border-t border-yellow-500/10 relative z-10">
+      <section className="bg-[#edf6ee] py-10 border-t border-[#d0e5d4] relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             {footerContent.trust.map((badge, i) => (
-              <span key={i} className="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-yellow-500/30 bg-yellow-500/10 text-yellow-900 tracking-wider uppercase shadow-sm hover:border-yellow-500 hover:scale-105 transition-all duration-300">
+              <span key={i} className="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold border border-[#b5dbbb] bg-[#dcf0e0] text-[#1e4620] tracking-wider uppercase shadow-sm hover:border-[#86c892] hover:bg-[#cee9d3] hover:scale-105 transition-all duration-300">
                 ✓ {badge}
               </span>
             ))}
@@ -83,11 +83,11 @@ export default function Footer() {
       </section>
 
       {/* ── Main Footer ───────────────────────────────────── */}
-      <footer className="relative bg-[#0c0a04] text-gray-300 pt-16 pb-8 overflow-hidden border-t border-yellow-900/30">
+      <footer className="relative bg-gradient-to-b from-[#eaf3ec] via-[#f1f7f2] to-[#e4efe6] text-[#2c4035] pt-16 pb-8 overflow-hidden border-t border-[#d2e4d6] shadow-inner">
 
         {/* Background ambiance */}
-        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-yellow-900/8 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-amber-900/8 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-emerald-200/35 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-amber-200/40 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
 
@@ -96,12 +96,12 @@ export default function Footer() {
             {/* Brand */}
             <div className="space-y-5">
               <Link to="/" onClick={scrollToTop} className="flex items-center gap-3 group w-fit" aria-label="Kala Agalya Herbals home">
-                <img src="/images/icons/logo.png" alt="Kala Agalya Herbals" className="h-10 w-auto drop-shadow-[0_0_10px_rgba(217,119,6,0.4)] group-hover:scale-110 transition-transform duration-300" width="40" height="40" loading="lazy" />
-                <h2 className="text-lg font-bold bg-gradient-to-r from-yellow-400 to-amber-300 bg-clip-text text-transparent font-soria">
+                <img src="/images/icons/logo.png" alt="Kala Agalya Herbals" className="h-10 w-auto drop-shadow-[0_2px_8px_rgba(45,106,79,0.25)] group-hover:scale-110 transition-transform duration-300" width="40" height="40" loading="lazy" />
+                <h2 className="text-lg font-bold bg-gradient-to-r from-[#1b4332] to-[#2d6a4f] bg-clip-text text-transparent font-soria">
                   Kala Agalya Herbals
                 </h2>
               </Link>
-              <p className="text-gray-400 leading-relaxed text-sm">{footerContent.about.description}</p>
+              <p className="text-[#4a6356] leading-relaxed text-sm">{footerContent.about.description}</p>
               <div className="flex gap-3">
                 {footerContent.socials.map((s, i) => (
                   <a
@@ -110,7 +110,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={s.name}
-                    className="w-9 h-9 rounded-full bg-yellow-900/25 flex items-center justify-center text-yellow-400 hover:bg-yellow-500 hover:text-black hover:-translate-y-1 hover:scale-110 transition-all duration-300 shadow-sm"
+                    className="w-9 h-9 rounded-full bg-[#d2e6d6] flex items-center justify-center text-[#1b4332] hover:bg-[#b7dbc0] hover:text-[#0d2818] hover:-translate-y-1 hover:scale-110 transition-all duration-300 shadow-sm border border-[#bddeaf]"
                   >
                     <s.Icon size={16} />
                   </a>
@@ -120,9 +120,9 @@ export default function Footer() {
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-white font-semibold text-base mb-5 relative inline-block font-grotesk">
+              <h3 className="text-[#1b4332] font-semibold text-base mb-5 relative inline-block font-grotesk">
                 Quick Links
-                <span className="absolute -bottom-1.5 left-0 w-1/2 h-[1.5px] bg-yellow-500 rounded-full" />
+                <span className="absolute -bottom-1.5 left-0 w-1/2 h-[2px] bg-[#52b788] rounded-full" />
               </h3>
               <ul className="space-y-2.5">
                 {footerContent.quickLinks.map((link, i) => (
@@ -130,12 +130,12 @@ export default function Footer() {
                     <Link
                       to={link.path}
                       onClick={scrollToTop}
-                      className="flex items-center gap-2 group text-sm text-gray-400 hover:text-yellow-400 transition-colors duration-200"
+                      className="flex items-center gap-2 group text-sm text-[#4a6356] hover:text-[#1b4332] font-medium transition-colors duration-200"
                     >
-                      <span className="w-1 h-1 rounded-full bg-yellow-600/50 group-hover:bg-yellow-400 transition-colors flex-shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#74c69d] group-hover:bg-[#1b4332] transition-colors flex-shrink-0" />
                       <span className="relative overflow-hidden">
                         {link.name}
-                        <span className="absolute bottom-0 left-0 w-full h-[1px] bg-yellow-400 -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
+                        <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#2d6a4f] -translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
                       </span>
                     </Link>
                   </li>
@@ -145,9 +145,9 @@ export default function Footer() {
 
             {/* Contact */}
             <div className="lg:col-span-2">
-              <h3 className="text-white font-semibold text-base mb-5 relative inline-block font-grotesk">
+              <h3 className="text-[#1b4332] font-semibold text-base mb-5 relative inline-block font-grotesk">
                 Get In Touch
-                <span className="absolute -bottom-1.5 left-0 w-1/2 h-[1.5px] bg-yellow-500 rounded-full" />
+                <span className="absolute -bottom-1.5 left-0 w-1/2 h-[2px] bg-[#52b788] rounded-full" />
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
@@ -162,15 +162,15 @@ export default function Footer() {
                     text: footerContent.contact.phone
                   }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-3 p-4 rounded-2xl bg-white/4 border border-white/7 hover:border-yellow-500/25 hover:bg-white/6 transition-all duration-300 group">
-                    <div className="p-2 rounded-xl bg-yellow-500/10 text-yellow-400 group-hover:bg-yellow-500/20 transition-colors flex-shrink-0">
+                  <div key={i} className="flex items-start gap-3 p-4 rounded-2xl bg-white/70 backdrop-blur-sm border border-[#cbe3d1] hover:border-[#74c69d] hover:bg-white/90 transition-all duration-300 group shadow-sm">
+                    <div className="p-2 rounded-xl bg-[#d8ebd9] text-[#1b4332] group-hover:bg-[#b7dbc0] transition-colors flex-shrink-0">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         {item.icon}
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-white font-medium text-sm mb-1 font-grotesk">{item.title}</h4>
-                      <p className="text-xs text-gray-400 leading-relaxed">{item.text}</p>
+                      <h4 className="text-[#1b4332] font-semibold text-sm mb-1 font-grotesk">{item.title}</h4>
+                      <p className="text-xs text-[#4a6356] leading-relaxed">{item.text}</p>
                     </div>
                   </div>
                 ))}
@@ -179,10 +179,10 @@ export default function Footer() {
           </div>
 
           {/* Bottom bar */}
-          <div className="border-t border-white/6 pt-7 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+          <div className="border-t border-[#cbe3d1] pt-7 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#5c786a] font-medium">
             <p>{footerContent.copyright}</p>
             <p className="flex items-center gap-1.5">
-              Made with <span className="text-red-400 animate-pulse">♥</span> in Chennai, India 🇮🇳
+              Made with <span className="text-red-500 animate-pulse">♥</span> in Chennai, India 🇮🇳
             </p>
           </div>
         </div>
