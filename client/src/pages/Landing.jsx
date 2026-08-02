@@ -292,7 +292,7 @@ function ProductCard({ product, index, onAddToCart, onBuyNow }) {
   return (
     <div
       ref={ref}
-      className="group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-yellow-500/10 shadow-card hover:shadow-card-hover hover:border-yellow-500/35 transition-all duration-500"
+      className="group relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-yellow-500/10 shadow-card hover:shadow-card-hover hover:border-yellow-500/35 transition-all duration-500 flex flex-col h-full"
       style={{ animation: `fadeInUp 0.5s ease-out ${index * 0.12}s both`, transformStyle: "preserve-3d" }}
     >
       {/* Badges */}
@@ -308,7 +308,7 @@ function ProductCard({ product, index, onAddToCart, onBuyNow }) {
       )}
 
       {/* Image area */}
-      <div className="h-44 sm:h-64 lg:h-72 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] relative flex items-center justify-center p-3 sm:p-6 lg:p-8 overflow-hidden">
+      <div className="h-44 sm:h-64 lg:h-72 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] relative flex items-center justify-center p-3 sm:p-6 lg:p-8 overflow-hidden shrink-0">
         <div className="absolute inset-0 bg-yellow-500/4 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="w-24 h-24 sm:w-40 sm:h-40 bg-yellow-500/8 rounded-full absolute blur-[30px] sm:blur-[50px] group-hover:bg-yellow-500/18 group-hover:scale-125 transition-all duration-700" />
         <img
@@ -324,35 +324,41 @@ function ProductCard({ product, index, onAddToCart, onBuyNow }) {
       </div>
 
       {/* Info */}
-      <div className="p-3 sm:p-5 lg:p-6 relative">
+      <div className="p-3 sm:p-5 lg:p-6 relative flex flex-col flex-1 justify-between">
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
 
-        <div className="text-center mb-2 sm:mb-4">
-          <h3 className="text-lg sm:text-2xl font-black text-[#2C2921] mb-1 font-soria">{product.ml}</h3>
-          <p className="text-[#6C685F] text-[11px] sm:text-xs line-clamp-2 font-inter">{product.description}</p>
+        {/* Title & Description */}
+        <div className="text-center mb-2 sm:mb-4 min-h-[54px] sm:min-h-[64px] flex flex-col justify-start">
+          <h3 className="text-base sm:text-2xl font-black text-[#2C2921] mb-1 font-soria line-clamp-1">{product.ml}</h3>
+          <p className="text-[#6C685F] text-[11px] sm:text-xs line-clamp-2 font-inter leading-tight sm:leading-normal">{product.description}</p>
         </div>
 
-        <div className="flex flex-col items-center gap-0.5 mb-3 sm:mb-5">
-          {product.mrp && (
-            <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
-              <span className="text-xs sm:text-sm text-[#9A9690] line-through font-inter">MRP ₹{product.mrp}</span>
-              <span className="text-[10px] sm:text-xs text-emerald-700 font-bold font-grotesk bg-emerald-500/10 px-1.5 sm:px-2 py-0.5 rounded-full border border-emerald-500/20">
-                Save ₹{product.mrp - product.price}
-              </span>
-            </div>
-          )}
+        {/* Price Area */}
+        <div className="flex flex-col items-center justify-end min-h-[44px] sm:min-h-[56px] mb-3 sm:mb-5">
+          <div className="h-5 sm:h-6 flex items-center justify-center">
+            {product.mrp ? (
+              <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+                <span className="text-xs sm:text-sm text-[#9A9690] line-through font-inter">MRP ₹{product.mrp}</span>
+                <span className="text-[10px] sm:text-xs text-emerald-700 font-bold font-grotesk bg-emerald-500/10 px-1.5 sm:px-2 py-0.5 rounded-full border border-emerald-500/20">
+                  Save ₹{product.mrp - product.price}
+                </span>
+              </div>
+            ) : null}
+          </div>
           <div className="text-xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700 font-soria">
             ₹{product.price}
           </div>
         </div>
 
-        <div className="flex justify-center gap-1 sm:gap-2 mb-3 sm:mb-5">
+        {/* Badges */}
+        <div className="flex justify-center gap-1 sm:gap-2 mb-3 sm:mb-5 shrink-0">
           {["🔒 Secure", "🌿 Organic", "🚚 Fast"].map(t => (
             <span key={t} className="text-[9px] sm:text-[10px] text-[#9A9690] px-1.5 sm:px-2 py-0.5 rounded-full border border-[#e8e4dc] font-inter">{t}</span>
           ))}
         </div>
 
-        <div className="space-y-2 sm:space-y-2.5 font-grotesk">
+        {/* Action Buttons */}
+        <div className="mt-auto space-y-2 sm:space-y-2.5 font-grotesk shrink-0">
           <button
             onClick={(e) => handleRipple(e, onAddToCart)}
             className="ripple-container w-full py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 bg-[#F5F2EB] text-yellow-800 border border-yellow-500/25 hover:bg-yellow-500/12 hover:border-yellow-500/50 hover:shadow-md active:scale-98 relative overflow-hidden"
