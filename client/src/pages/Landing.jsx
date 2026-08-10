@@ -50,44 +50,7 @@ function resolveImg(img) {
   return `${BASE_URL.replace(/\/api$/, "")}${img.startsWith("/") ? img : `/${img}`}`;
 }
 
-const defaultDandruffReviews = [
-  {
-    _id: "d1",
-    name: "Kavitha R.",
-    rating: 5,
-    comment: "Struggled with severe dry scalp and flaky dandruff for months. Within 2 weeks of using this oil infused with Neem and Vetiver, my scalp is completely clear!",
-    image: "/images/neem.webp",
-    category: "dandruff",
-    createdAt: new Date().toISOString()
-  },
-  {
-    _id: "d2",
-    name: "Arun Kumar",
-    rating: 5,
-    comment: "The scalp cooling effect is amazing! It stopped itchiness on day one and reduced dandruff flakes dramatically.",
-    image: "/images/Home 4.webp",
-    category: "dandruff",
-    createdAt: new Date().toISOString()
-  },
-  {
-    _id: "d3",
-    name: "Meenakshi S.",
-    rating: 5,
-    comment: "100% natural formula that cured my chronic dandruff without harsh chemical shampoos. Extremely happy with results!",
-    image: "/images/vetiver.webp",
-    category: "dandruff",
-    createdAt: new Date().toISOString()
-  },
-  {
-    _id: "d4",
-    name: "Senthil Nathan",
-    rating: 5,
-    comment: "Best oil for dandruff control in South India! The combination of Rose Petals and Tanner's Cassia soothes redness and eliminates buildup.",
-    image: "/images/tanners-cassia.webp",
-    category: "dandruff",
-    createdAt: new Date().toISOString()
-  }
-];
+
 
 /* ── ReviewCard ──────────────────────────────────────────────── */
 function ReviewCard({ review, badgeText, onImageClick }) {
@@ -982,18 +945,26 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="pt-2">
-            <AutoManualScroll speed={1.3}>
-              {(dandruffReviews.length > 0 ? dandruffReviews : defaultDandruffReviews).map((review, i) => (
-                <ReviewCard
-                  key={review._id || i}
-                  review={review}
-                  badgeText="🌿 Dandruff Care"
-                  onImageClick={img => setSelectedZoomImg(img)}
-                />
-              ))}
-            </AutoManualScroll>
-          </div>
+          {dandruffReviews.length > 0 ? (
+            <div className="pt-2">
+              <AutoManualScroll speed={1.3}>
+                {dandruffReviews.map((review, i) => (
+                  <ReviewCard
+                    key={review._id || i}
+                    review={review}
+                    badgeText="🌿 Dandruff Care"
+                    onImageClick={img => setSelectedZoomImg(img)}
+                  />
+                ))}
+              </AutoManualScroll>
+            </div>
+          ) : (
+            <div className="py-12 px-6 text-center bg-white/70 rounded-3xl border border-emerald-500/15 max-w-xl mx-auto shadow-sm">
+              <div className="text-4xl mb-3">🌿</div>
+              <h4 className="text-lg font-bold text-[#1C1A16] font-grotesk mb-1">No Dandruff Customer Reviews Yet</h4>
+              <p className="text-sm text-[#5A635C] font-inter">Be the first to submit your Dandruff & Scalp Care experience above!</p>
+            </div>
+          )}
         </div>
       </section>
 
