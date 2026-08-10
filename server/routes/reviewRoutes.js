@@ -33,6 +33,7 @@ const adminAuth = require("../middleware/adminAuth");
 
 // Routes
 // Public
+router.get("/category/:category", reviewController.getReviewsByCategory);
 router.get("/:productId", reviewController.getProductReviews);
 router.post("/", upload.single("image"), reviewController.addReview);
 

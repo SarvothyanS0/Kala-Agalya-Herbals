@@ -1,10 +1,34 @@
+const mongoose = require("mongoose");
 const Review = require("../models/Review");
 const Product = require("../models/Product");
 
-// Get all reviews for a product
+// Get all reviews for a product or category
 exports.getProductReviews = async (req, res) => {
   try {
-    const reviews = await Review.find({ product: req.params.productId }).sort({ createdAt: -1 });
+    const { productId } = req.params;
+    let query = {};
+    if (productId === "dandruff" || productId === "hair_oil") {
+      query = { category: productId };
+    } else if (mongoose.Types.ObjectId.isValid(productId)) {
+      query = { product: productId };
+    } else if (productId === "all") {
+      query = {};
+    } else {
+      query = { category: productId };
+    }
+
+    const reviews = await Review.find(query).sort({ createdAt: -1 });
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+// Get reviews by category
+exports.getReviewsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const reviews = await Review.find({ category }).sort({ createdAt: -1 });
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
@@ -14,7 +38,7 @@ exports.getProductReviews = async (req, res) => {
 // Add a new review
 exports.addReview = async (req, res) => {
   try {
-    const { productId, name, rating, comment } = req.body;
+    const { productId, category, name, rating, comment } = req.body;
     let image = "";
 
     if (req.file) {
@@ -22,13 +46,19 @@ exports.addReview = async (req, res) => {
       image = `data:${req.file.mimetype};base64,${b64}`;
     }
 
-    const review = new Review({
-      product: productId,
+    const reviewData = {
       name,
-      rating,
+      rating: Number(rating) || 5,
       comment,
-      image
-    });
+      image,
+      category: category === "dandruff" ? "dandruff" : "hair_oil"
+    };
+
+    if (productId && mongoose.Types.ObjectId.isValid(productId)) {
+      reviewData.product = productId;
+    }
+
+    const review = new Review(reviewData);
 
     await review.save();
     res.status(201).json({ message: "Review added successfully", review });

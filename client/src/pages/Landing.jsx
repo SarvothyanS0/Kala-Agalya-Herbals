@@ -50,28 +50,81 @@ function resolveImg(img) {
   return `${BASE_URL.replace(/\/api$/, "")}${img.startsWith("/") ? img : `/${img}`}`;
 }
 
+const defaultDandruffReviews = [
+  {
+    _id: "d1",
+    name: "Kavitha R.",
+    rating: 5,
+    comment: "Struggled with severe dry scalp and flaky dandruff for months. Within 2 weeks of using this oil infused with Neem and Vetiver, my scalp is completely clear!",
+    image: "/images/neem.webp",
+    category: "dandruff",
+    createdAt: new Date().toISOString()
+  },
+  {
+    _id: "d2",
+    name: "Arun Kumar",
+    rating: 5,
+    comment: "The scalp cooling effect is amazing! It stopped itchiness on day one and reduced dandruff flakes dramatically.",
+    image: "/images/Home 4.webp",
+    category: "dandruff",
+    createdAt: new Date().toISOString()
+  },
+  {
+    _id: "d3",
+    name: "Meenakshi S.",
+    rating: 5,
+    comment: "100% natural formula that cured my chronic dandruff without harsh chemical shampoos. Extremely happy with results!",
+    image: "/images/vetiver.webp",
+    category: "dandruff",
+    createdAt: new Date().toISOString()
+  },
+  {
+    _id: "d4",
+    name: "Senthil Nathan",
+    rating: 5,
+    comment: "Best oil for dandruff control in South India! The combination of Rose Petals and Tanner's Cassia soothes redness and eliminates buildup.",
+    image: "/images/tanners-cassia.webp",
+    category: "dandruff",
+    createdAt: new Date().toISOString()
+  }
+];
+
 /* ── ReviewCard ──────────────────────────────────────────────── */
-function ReviewCard({ review }) {
+function ReviewCard({ review, badgeText, onImageClick }) {
   const imgSrc = resolveImg(review.image);
+  const isDandruff = review.category === "dandruff" || (badgeText && badgeText.includes("Dandruff"));
   return (
-    <div className="w-[320px] sm:w-[360px] shrink-0 bg-white p-6 rounded-3xl border border-yellow-500/12 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-400 flex flex-col justify-between group">
+    <div className={`w-[320px] sm:w-[360px] shrink-0 bg-white p-6 rounded-3xl border shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-400 flex flex-col justify-between group ${isDandruff ? "border-emerald-500/25" : "border-yellow-500/12"}`}>
       <div>
         {imgSrc && (
-          <div className="w-full h-44 mb-4 rounded-2xl overflow-hidden bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/10 flex items-center justify-center p-2">
+          <div
+            onClick={() => onImageClick && onImageClick(imgSrc, review)}
+            className="w-full h-44 mb-4 rounded-2xl overflow-hidden bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/10 flex items-center justify-center p-2 cursor-pointer relative group/img"
+          >
             <img
               src={imgSrc}
               alt={`${review.name}'s result photo`}
-              className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+              className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-500"
               loading="lazy"
               onError={e => { e.currentTarget.style.display = 'none'; }}
             />
+            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-1 rounded-2xl backdrop-blur-xs">
+              🔍 Click to Zoom Photo
+            </div>
           </div>
         )}
-        <div className="flex items-center gap-1 text-yellow-500 text-sm mb-3">
-          {Array.from({ length: 5 }).map((_, idx) => (
-            <span key={idx}>{idx < (review.rating || 5) ? "★" : "☆"}</span>
-          ))}
-          <span className="ml-1 text-xs text-[#9A9690] font-inter font-semibold">({review.rating || 5}.0)</span>
+        <div className="flex items-center justify-between gap-1 mb-3">
+          <div className="flex items-center gap-1 text-yellow-500 text-sm">
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <span key={idx}>{idx < (review.rating || 5) ? "★" : "☆"}</span>
+            ))}
+            <span className="ml-1 text-xs text-[#9A9690] font-inter font-semibold">({review.rating || 5}.0)</span>
+          </div>
+          {badgeText && (
+            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk uppercase border ${isDandruff ? "bg-emerald-50 text-emerald-800 border-emerald-300" : "bg-amber-50 text-amber-800 border-amber-300"}`}>
+              {badgeText}
+            </span>
+          )}
         </div>
         <p className="text-[#4A473E] text-sm leading-relaxed line-clamp-4 font-inter mb-4">
           &ldquo;{review.comment}&rdquo;
@@ -79,7 +132,7 @@ function ReviewCard({ review }) {
       </div>
       <div className="pt-4 border-t border-yellow-500/10 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-600 to-amber-700 text-white font-bold text-xs flex items-center justify-center font-grotesk shadow-sm">
+          <div className={`w-8 h-8 rounded-full text-white font-bold text-xs flex items-center justify-center font-grotesk shadow-sm ${isDandruff ? "bg-gradient-to-br from-emerald-600 to-teal-800" : "bg-gradient-to-br from-yellow-600 to-amber-700"}`}>
             {review.name ? review.name[0].toUpperCase() : "U"}
           </div>
           <div>
@@ -385,10 +438,12 @@ export default function Landing() {
   const [dbProduct,      setDbProduct]      = useState(null);
   const [products,       setProducts]       = useState([]);
   const [reviews,        setReviews]        = useState([]);
+  const [dandruffReviews,setDandruffReviews]= useState([]);
   const [loadingProducts,setLoadingProducts] = useState(true);
-  const [reviewForm,     setReviewForm]     = useState({ name: "", rating: 5, comment: "" });
+  const [reviewForm,     setReviewForm]     = useState({ name: "", rating: 5, comment: "", category: "hair_oil" });
   const [reviewImage,    setReviewImage]    = useState(null);
   const [isSubmitting,   setIsSubmitting]   = useState(false);
+  const [selectedZoomImg,setSelectedZoomImg]= useState(null);
   const [mousePos,       setMousePos]       = useState({ x: 0, y: 0 });
 
   const heroRef = useRef(null);
@@ -455,6 +510,17 @@ export default function Landing() {
       .then(d => { if (Array.isArray(d)) setReviews(d); })
       .catch(() => {});
   }, []);
+
+  const fetchDandruffReviews = useCallback(() => {
+    fetch(`${API_URL}/reviews/category/dandruff`)
+      .then(r => r.json())
+      .then(d => { if (Array.isArray(d)) setDandruffReviews(d); })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetchDandruffReviews();
+  }, [fetchDandruffReviews]);
 
   useEffect(() => {
     fetch(`${API_URL}/products`)
@@ -536,7 +602,8 @@ export default function Landing() {
     setIsSubmitting(true);
 
     const fd = new FormData();
-    fd.append("productId", dbProduct._id);
+    if (dbProduct) fd.append("productId", dbProduct._id);
+    fd.append("category", reviewForm.category || "hair_oil");
     fd.append("name", reviewForm.name);
     fd.append("rating", reviewForm.rating);
     fd.append("comment", reviewForm.comment);
@@ -546,9 +613,10 @@ export default function Landing() {
       const data = await res.json();
       if (res.ok) {
         addToast("Review submitted! Thank you 🌿", "success");
-        setReviewForm({ name: "", rating: 5, comment: "" });
+        setReviewForm({ name: "", rating: 5, comment: "", category: "hair_oil" });
         setReviewImage(null);
-        fetchReviews(dbProduct._id);
+        if (dbProduct) fetchReviews(dbProduct._id);
+        fetchDandruffReviews();
         const fi = document.getElementById("review-img-input");
         if (fi) fi.value = "";
       } else addToast(data.message || "Failed to submit", "error");
@@ -809,19 +877,16 @@ export default function Landing() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="review-rating" className="block text-sm text-[#6C685F] mb-1.5 font-medium">Rating</label>
+                      <label htmlFor="review-category" className="block text-sm text-[#6C685F] mb-1.5 font-medium">Review Category</label>
                       <div className="relative">
                         <select
-                          id="review-rating"
-                          className="input-premium appearance-none pr-10 cursor-pointer"
-                          value={reviewForm.rating}
-                          onChange={e => setReviewForm({ ...reviewForm, rating: Number(e.target.value) })}
+                          id="review-category"
+                          className="input-premium appearance-none pr-10 cursor-pointer font-grotesk font-semibold"
+                          value={reviewForm.category || "hair_oil"}
+                          onChange={e => setReviewForm({ ...reviewForm, category: e.target.value })}
                         >
-                          <option value="5">★★★★★ — Excellent</option>
-                          <option value="4">★★★★☆ — Good</option>
-                          <option value="3">★★★☆☆ — Average</option>
-                          <option value="2">★★☆☆☆ — Fair</option>
-                          <option value="1">★☆☆☆☆ — Poor</option>
+                          <option value="hair_oil">✨ Hair Growth & Nourishment Oil</option>
+                          <option value="dandruff">🌿 Dandruff & Scalp Relief Treatment</option>
                         </select>
                         <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center" aria-hidden="true">
                           <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -830,11 +895,31 @@ export default function Landing() {
                     </div>
                   </div>
                   <div>
+                    <label htmlFor="review-rating" className="block text-sm text-[#6C685F] mb-1.5 font-medium">Rating</label>
+                    <div className="relative">
+                      <select
+                        id="review-rating"
+                        className="input-premium appearance-none pr-10 cursor-pointer"
+                        value={reviewForm.rating}
+                        onChange={e => setReviewForm({ ...reviewForm, rating: Number(e.target.value) })}
+                      >
+                        <option value="5">★★★★★ — Excellent</option>
+                        <option value="4">★★★★☆ — Good</option>
+                        <option value="3">★★★☆☆ — Average</option>
+                        <option value="2">★★☆☆☆ — Fair</option>
+                        <option value="1">★☆☆☆☆ — Poor</option>
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center" aria-hidden="true">
+                        <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
                     <label htmlFor="review-comment" className="block text-sm text-[#6C685F] mb-1.5 font-medium">Your Review</label>
                     <textarea
                       id="review-comment"
                       required
-                      placeholder="How has the oil helped your hair?"
+                      placeholder="How has our herbal oil helped your hair or scalp?"
                       className="input-premium h-28 resize-none"
                       value={reviewForm.comment}
                       onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })}
@@ -867,7 +952,7 @@ export default function Landing() {
             <div className="pt-4 border-t border-yellow-500/8">
               <AutoManualScroll speed={1.5}>
                 {reviews.map((review, i) => (
-                  <ReviewCard key={review._id || i} review={review} />
+                  <ReviewCard key={review._id || i} review={review} badgeText="✨ Hair Care" onImageClick={img => setSelectedZoomImg(img)} />
                 ))}
               </AutoManualScroll>
             </div>
@@ -880,6 +965,59 @@ export default function Landing() {
           )}
         </div>
       </section>
+
+      {/* ══ DANDRUFF REVIEW IMAGE HORIZONTAL SCROLL SECTION ════════════ */}
+      <section id="dandruff-reviews" className="py-20 bg-gradient-to-b from-[#FDFBF7] to-[#F3F9F5] border-t border-emerald-500/15 relative overflow-hidden" aria-labelledby="dandruff-reviews-heading">
+        <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-12 scroll-animate">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-500/30 text-emerald-800 text-xs font-grotesk font-extrabold uppercase tracking-widest mb-3 bg-emerald-500/10">
+              🌱 100% Naturopathy Scalp Relief
+            </span>
+            <h2 id="dandruff-reviews-heading" className="text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria mb-3">
+              Dandruff Scalp Care <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-800">Results & Reviews</span>
+            </h2>
+            <p className="text-[#5A635C] text-base font-inter">
+              Browse real customer result photos & scalp care feedback after using our specialized herbal Neem & Vetiver anti-dandruff formulation.
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <AutoManualScroll speed={1.3}>
+              {(dandruffReviews.length > 0 ? dandruffReviews : defaultDandruffReviews).map((review, i) => (
+                <ReviewCard
+                  key={review._id || i}
+                  review={review}
+                  badgeText="🌿 Dandruff Care"
+                  onImageClick={img => setSelectedZoomImg(img)}
+                />
+              ))}
+            </AutoManualScroll>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Image Lightbox Zoom Modal ── */}
+      {selectedZoomImg && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+          onClick={() => setSelectedZoomImg(null)}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] bg-white rounded-3xl p-3 border border-white/20 shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setSelectedZoomImg(null)}
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 text-white font-extrabold flex items-center justify-center hover:bg-black transition-colors"
+            >
+              ✕
+            </button>
+            <img
+              src={selectedZoomImg}
+              alt="Enlarged review photo"
+              className="max-h-[82vh] max-w-full object-contain rounded-2xl mx-auto"
+            />
+          </div>
+        </div>
+      )}
 
       {/* ══ WHY THIS HAIR OIL ════════════════════════════════════ */}
       <section className="py-24 relative bg-[#FDFBF7]" aria-labelledby="why-heading">

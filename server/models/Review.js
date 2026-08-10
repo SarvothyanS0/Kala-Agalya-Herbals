@@ -4,7 +4,12 @@ const reviewSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
-    required: true
+    required: false
+  },
+  category: {
+    type: String,
+    enum: ["hair_oil", "dandruff"],
+    default: "hair_oil"
   },
   name: {
     type: String,
@@ -34,5 +39,6 @@ const reviewSchema = new mongoose.Schema({
 
 reviewSchema.index({ createdAt: -1 });
 reviewSchema.index({ product: 1 });
+reviewSchema.index({ category: 1 });
 
 module.exports = mongoose.model("Review", reviewSchema);
