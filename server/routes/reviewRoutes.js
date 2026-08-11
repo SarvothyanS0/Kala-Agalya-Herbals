@@ -41,6 +41,8 @@ const uploadSingleImage = (req, res, next) => {
 // Routes
 // Public
 router.get("/category/:category", reviewController.getReviewsByCategory);
+router.get("/dandruff", (req, res, next) => { req.params.category = "dandruff"; next(); }, reviewController.getReviewsByCategory);
+router.get("/hair_oil", (req, res, next) => { req.params.category = "hair_oil"; next(); }, reviewController.getReviewsByCategory);
 router.get("/:productId", reviewController.getProductReviews);
 router.post("/", uploadSingleImage, reviewController.addReview);
 

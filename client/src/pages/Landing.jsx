@@ -513,6 +513,10 @@ export default function Landing() {
 
   const fetchDandruffReviews = useCallback(() => {
     fetch(`${API_URL}/reviews/category/dandruff`)
+      .then(res => {
+        if (!res.ok) return fetch(`${API_URL}/reviews/dandruff`);
+        return res;
+      })
       .then(r => r.json())
       .then(d => { if (Array.isArray(d)) setDandruffReviews(d); })
       .catch(() => {});
