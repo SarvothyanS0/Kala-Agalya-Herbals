@@ -945,26 +945,29 @@ export default function Landing() {
             </p>
           </div>
 
-          {dandruffReviews.length > 0 ? (
-            <div className="pt-2">
-              <AutoManualScroll speed={1.3}>
-                {dandruffReviews.map((review, i) => (
-                  <ReviewCard
-                    key={review._id || i}
-                    review={review}
-                    badgeText="🌿 Dandruff Care"
-                    onImageClick={img => setSelectedZoomImg(img)}
-                  />
-                ))}
-              </AutoManualScroll>
-            </div>
-          ) : (
-            <div className="py-12 px-6 text-center bg-white/70 rounded-3xl border border-emerald-500/15 max-w-xl mx-auto shadow-sm">
-              <div className="text-4xl mb-3">🌿</div>
-              <h4 className="text-lg font-bold text-[#1C1A16] font-grotesk mb-1">No Dandruff Customer Reviews Yet</h4>
-              <p className="text-sm text-[#5A635C] font-inter">Be the first to submit your Dandruff & Scalp Care experience above!</p>
-            </div>
-          )}
+          {(() => {
+            const matchedDbReviews = reviews.filter(r => r.comment && /dandruff|scalp|flake|itch|neem|vetiver/i.test(r.comment));
+            const displayList = dandruffReviews.length > 0
+              ? dandruffReviews
+              : matchedDbReviews.length > 0
+                ? matchedDbReviews
+                : defaultDandruffReviews;
+
+            return (
+              <div className="pt-2">
+                <AutoManualScroll speed={1.3}>
+                  {displayList.map((review, i) => (
+                    <ReviewCard
+                      key={review._id || i}
+                      review={review}
+                      badgeText="🌿 Dandruff Care"
+                      onImageClick={img => setSelectedZoomImg(img)}
+                    />
+                  ))}
+                </AutoManualScroll>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
