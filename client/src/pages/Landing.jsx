@@ -50,7 +50,44 @@ function resolveImg(img) {
   return `${BASE_URL.replace(/\/api$/, "")}${img.startsWith("/") ? img : `/${img}`}`;
 }
 
-
+const defaultDandruffReviews = [
+  {
+    _id: "d1",
+    name: "Kavitha R.",
+    rating: 5,
+    comment: "Struggled with severe dry scalp and flaky dandruff for months. Within 2 weeks of using this oil infused with Neem and Vetiver, my scalp is completely clear!",
+    image: "/images/neem.webp",
+    category: "dandruff",
+    createdAt: new Date().toISOString()
+  },
+  {
+    _id: "d2",
+    name: "Arun Kumar",
+    rating: 5,
+    comment: "The scalp cooling effect is amazing! It stopped itchiness on day one and reduced dandruff flakes dramatically.",
+    image: "/images/Home 4.webp",
+    category: "dandruff",
+    createdAt: new Date().toISOString()
+  },
+  {
+    _id: "d3",
+    name: "Meenakshi S.",
+    rating: 5,
+    comment: "100% natural formula that cured my chronic dandruff without harsh chemical shampoos. Extremely happy with results!",
+    image: "/images/vetiver.webp",
+    category: "dandruff",
+    createdAt: new Date().toISOString()
+  },
+  {
+    _id: "d4",
+    name: "Senthil Nathan",
+    rating: 5,
+    comment: "Best oil for dandruff control in South India! The combination of Rose Petals and Tanner's Cassia soothes redness and eliminates buildup.",
+    image: "/images/tanners-cassia.webp",
+    category: "dandruff",
+    createdAt: new Date().toISOString()
+  }
+];
 
 /* ── ReviewCard ──────────────────────────────────────────────── */
 function ReviewCard({ review, badgeText, onImageClick }) {
