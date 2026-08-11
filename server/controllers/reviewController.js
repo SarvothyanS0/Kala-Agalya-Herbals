@@ -11,7 +11,7 @@ exports.getProductReviews = async (req, res) => {
     if (productId === "dandruff" || productId === "hair_oil") {
       query = { category: productId };
     } else if (mongoose.Types.ObjectId.isValid(productId)) {
-      query = { product: productId };
+      query = { product: productId, category: { $ne: "dandruff" } };
     } else if (productId === "all") {
       query = {};
     } else {
@@ -45,6 +45,8 @@ exports.addReview = async (req, res) => {
       return res.status(400).json({ success: false, message: "Customer name and comment are required" });
     }
 
+    const isDandruff = category === "dandruff";
+
     let image = "";
     if (req.file && req.file.buffer) {
       try {
@@ -67,11 +69,13 @@ exports.addReview = async (req, res) => {
     }
 
     let prodId = null;
-    if (productId && mongoose.Types.ObjectId.isValid(productId)) {
-      prodId = productId;
-    } else {
-      const firstProd = await Product.findOne().lean();
-      if (firstProd) prodId = firstProd._id;
+    if (!isDandruff) {
+      if (productId && mongoose.Types.ObjectId.isValid(productId)) {
+        prodId = productId;
+      } else {
+        const firstProd = await Product.findOne().lean();
+        if (firstProd) prodId = firstProd._id;
+      }
     }
 
     const reviewData = {
@@ -79,7 +83,7 @@ exports.addReview = async (req, res) => {
       rating: Math.min(5, Math.max(1, Number(rating) || 5)),
       comment: comment.trim(),
       image,
-      category: category === "dandruff" ? "dandruff" : "hair_oil"
+      category: isDandruff ? "dandruff" : "hair_oil"
     };
 
     if (prodId) {
