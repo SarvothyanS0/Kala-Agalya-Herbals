@@ -439,6 +439,7 @@ export default function Landing() {
   const [products,       setProducts]       = useState([]);
   const [reviews,        setReviews]        = useState([]);
   const [dandruffReviews,setDandruffReviews]= useState([]);
+  const [banners,        setBanners]        = useState([]);
   const [loadingProducts,setLoadingProducts] = useState(true);
   const [reviewForm,     setReviewForm]     = useState({ name: "", rating: 5, comment: "", category: "hair_oil" });
   const [reviewImage,    setReviewImage]    = useState(null);
@@ -522,9 +523,17 @@ export default function Landing() {
       .catch(() => {});
   }, []);
 
+  const fetchBanners = useCallback(() => {
+    fetch(`${API_URL}/banners`)
+      .then(r => r.json())
+      .then(d => { if (d.success && Array.isArray(d.banners)) setBanners(d.banners); })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     fetchDandruffReviews();
-  }, [fetchDandruffReviews]);
+    fetchBanners();
+  }, [fetchDandruffReviews, fetchBanners]);
 
   useEffect(() => {
     fetch(`${API_URL}/products`)
@@ -781,6 +790,105 @@ export default function Landing() {
           <StatCounter value="20000+" label="Happy Customers" />
           <StatCounter value="18+"   label="Rare Herbs" />
           <StatCounter value="4.9"   label="Star Rating" />
+        </div>
+      </section>
+
+      {/* ══ SPECIAL WEBSITE LAUNCHING OFFER BANNER SECTION ════════════ */}
+      <section id="launch-offer" className="py-16 bg-gradient-to-b from-white via-[#FDFBF7] to-white relative overflow-hidden" aria-labelledby="offer-heading">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-10 scroll-animate">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-yellow-500/30 text-yellow-900 text-xs font-grotesk font-black uppercase tracking-widest mb-3 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 shadow-xs">
+              🔥 Limited Time Website Exclusive Deal
+            </span>
+            <h2 id="offer-heading" className="text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria">
+              Website Launching <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700">Special Offer</span>
+            </h2>
+            <p className="text-[#6C685F] text-base font-inter mt-2">
+              Claim our promotional launch discount package before stock runs out!
+            </p>
+          </div>
+
+          {banners.length > 0 ? (
+            <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
+              {banners.map((b, i) => {
+                const bImg = resolveImg(b.image);
+                return (
+                  <div
+                    key={b._id || i}
+                    className="group relative bg-white rounded-3xl p-4 sm:p-6 border border-yellow-500/25 shadow-2xl hover:shadow-gold-lg transition-all duration-500 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6"
+                  >
+                    <div
+                      onClick={() => setSelectedZoomImg(bImg)}
+                      className="relative w-full md:w-3/5 h-[280px] sm:h-[360px] rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/15 flex items-center justify-center p-3 cursor-pointer group/img"
+                    >
+                      <img
+                        src={bImg}
+                        alt={b.title}
+                        className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-700 filter drop-shadow-xl"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-2 backdrop-blur-xs rounded-2xl">
+                        🔍 Click to Zoom Poster
+                      </div>
+                    </div>
+
+                    <div className="w-full md:w-2/5 text-center md:text-left space-y-4 font-inter">
+                      <span className="px-3.5 py-1 rounded-full bg-amber-500/15 text-amber-900 text-[11px] font-black uppercase font-grotesk tracking-widest inline-block border border-amber-500/30">
+                        ⚡ Active Deal
+                      </span>
+                      <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1C1A16] font-soria leading-tight">{b.title}</h3>
+                      <p className="text-[#6C685F] text-sm leading-relaxed font-inter">{b.subtitle}</p>
+                      
+                      <div className="pt-2">
+                        <a
+                          href="#product"
+                          className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-extrabold text-black bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 shadow-gold hover:shadow-gold-lg transition-all transform hover:-translate-y-0.5 font-grotesk uppercase tracking-wider text-xs w-full sm:w-auto"
+                        >
+                          <span>Claim Offer Now 🛒</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* Default Launching Offer Poster Fallback */
+            <div className="max-w-4xl mx-auto bg-white rounded-3xl p-5 sm:p-8 border border-yellow-500/25 shadow-card hover:shadow-gold-lg transition-all duration-500 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+              <div
+                onClick={() => setSelectedZoomImg("/images/Home 2.webp")}
+                className="relative w-full md:w-3/5 h-[300px] sm:h-[380px] rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/15 flex items-center justify-center p-3 cursor-pointer group/img"
+              >
+                <div className="text-center p-6 space-y-4">
+                  <div className="w-16 h-16 bg-yellow-500/20 text-yellow-800 rounded-full flex items-center justify-center mx-auto text-3xl font-bold font-soria">🎁</div>
+                  <h4 className="text-2xl font-extrabold text-[#1C1A16] font-soria">200ml Website Launch Offer</h4>
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="text-xl line-through text-red-500 font-bold">₹649</span>
+                    <span className="text-4xl font-black text-emerald-700 font-soria">₹499</span>
+                  </div>
+                  <p className="text-xs text-[#6C685F] font-inter">Hair Fall Reduce • Hair Growth • Dandruff Clear • Shiny Hair</p>
+                </div>
+              </div>
+
+              <div className="w-full md:w-2/5 text-center md:text-left space-y-4 font-inter">
+                <span className="px-3.5 py-1 rounded-full bg-amber-500/15 text-amber-900 text-[11px] font-black uppercase font-grotesk tracking-widest inline-block border border-amber-500/30">
+                  🏷️ Launch Discount
+                </span>
+                <h3 className="text-3xl font-extrabold text-[#1C1A16] font-soria leading-tight">200ml Bottle Special Offer</h3>
+                <p className="text-[#6C685F] text-sm leading-relaxed">
+                  Get our most popular 200ml herbal hair oil bottle for just <strong>₹499</strong> (Save ₹150 instantly during launching period).
+                </p>
+                
+                <div className="pt-2">
+                  <a
+                    href="#product"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-extrabold text-black bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 shadow-gold hover:shadow-gold-lg transition-all transform hover:-translate-y-0.5 font-grotesk uppercase tracking-wider text-xs w-full"
+                  >
+                    <span>Order 200ml at ₹499 🛍️</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
