@@ -25,10 +25,10 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // Security: Sanitize inputs to prevent NoSQL injection
 app.use(mongoSanitize());
 
-// Security: Global rate limiter — 100 requests per 15 minutes per IP
+// Security: Global rate limiter — 1000 requests per 15 minutes per IP
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 1000,
   message: { success: false, message: "Too many requests, please try again later." },
   standardHeaders: true,
   legacyHeaders: false,

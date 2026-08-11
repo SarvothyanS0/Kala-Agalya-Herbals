@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const sharp = require("sharp");
 const Review = require("../models/Review");
 const Product = require("../models/Product");
 
@@ -17,7 +18,7 @@ exports.getProductReviews = async (req, res) => {
       query = { category: productId };
     }
 
-    const reviews = await Review.find(query).sort({ createdAt: -1 });
+    const reviews = await Review.find(query).sort({ createdAt: -1 }).lean();
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
@@ -28,7 +29,7 @@ exports.getProductReviews = async (req, res) => {
 exports.getReviewsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const reviews = await Review.find({ category }).sort({ createdAt: -1 });
+    const reviews = await Review.find({ category }).sort({ createdAt: -1 }).lean();
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
@@ -47,10 +48,21 @@ exports.addReview = async (req, res) => {
     let image = "";
     if (req.file && req.file.buffer) {
       try {
-        const b64 = Buffer.from(req.file.buffer).toString("base64");
-        image = `data:${req.file.mimetype || 'image/jpeg'};base64,${b64}`;
+        // Compress image down to max 600x600 WebP for ultra-fast loading & small DB size (~25KB)
+        const webpBuffer = await sharp(req.file.buffer)
+          .resize(600, 600, { fit: "inside", withoutEnlargement: true })
+          .webp({ quality: 75 })
+          .toBuffer();
+        const b64 = webpBuffer.toString("base64");
+        image = `data:image/webp;base64,${b64}`;
       } catch (imgErr) {
-        console.error("Error converting uploaded image buffer:", imgErr);
+        console.error("Sharp compression error, falling back to raw buffer:", imgErr);
+        try {
+          const b64 = Buffer.from(req.file.buffer).toString("base64");
+          image = `data:${req.file.mimetype || 'image/jpeg'};base64,${b64}`;
+        } catch (rawErr) {
+          console.error("Raw buffer conversion error:", rawErr);
+        }
       }
     }
 
@@ -58,7 +70,7 @@ exports.addReview = async (req, res) => {
     if (productId && mongoose.Types.ObjectId.isValid(productId)) {
       prodId = productId;
     } else {
-      const firstProd = await Product.findOne();
+      const firstProd = await Product.findOne().lean();
       if (firstProd) prodId = firstProd._id;
     }
 
