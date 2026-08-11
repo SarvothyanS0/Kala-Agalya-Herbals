@@ -39,31 +39,48 @@ exports.getReviewsByCategory = async (req, res) => {
 exports.addReview = async (req, res) => {
   try {
     const { productId, category, name, rating, comment } = req.body;
-    let image = "";
 
-    if (req.file) {
-      const b64 = Buffer.from(req.file.buffer).toString("base64");
-      image = `data:${req.file.mimetype};base64,${b64}`;
+    if (!name || !name.trim() || !comment || !comment.trim()) {
+      return res.status(400).json({ success: false, message: "Customer name and comment are required" });
+    }
+
+    let image = "";
+    if (req.file && req.file.buffer) {
+      try {
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        image = `data:${req.file.mimetype || 'image/jpeg'};base64,${b64}`;
+      } catch (imgErr) {
+        console.error("Error converting uploaded image buffer:", imgErr);
+      }
+    }
+
+    let prodId = null;
+    if (productId && mongoose.Types.ObjectId.isValid(productId)) {
+      prodId = productId;
+    } else {
+      const firstProd = await Product.findOne();
+      if (firstProd) prodId = firstProd._id;
     }
 
     const reviewData = {
-      name,
-      rating: Number(rating) || 5,
-      comment,
+      name: name.trim(),
+      rating: Math.min(5, Math.max(1, Number(rating) || 5)),
+      comment: comment.trim(),
       image,
       category: category === "dandruff" ? "dandruff" : "hair_oil"
     };
 
-    if (productId && mongoose.Types.ObjectId.isValid(productId)) {
-      reviewData.product = productId;
+    if (prodId) {
+      reviewData.product = prodId;
     }
 
     const review = new Review(reviewData);
-
     await review.save();
+
     res.status(201).json({ success: true, message: "Review added successfully", review });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error", error: error.message });
+    console.error("addReview controller error:", error);
+    res.status(500).json({ success: false, message: "Failed to add review", error: error.message });
   }
 };
 

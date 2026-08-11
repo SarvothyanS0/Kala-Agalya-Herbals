@@ -561,11 +561,10 @@ export default function Landing() {
   /* ── Submit Review ───────────────────────────────────────── */
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    if (!dbProduct) { addToast("Product loading, please wait", "warning"); return; }
     setIsSubmitting(true);
 
     const fd = new FormData();
-    if (dbProduct) fd.append("productId", dbProduct._id);
+    if (dbProduct && dbProduct._id) fd.append("productId", dbProduct._id);
     fd.append("category", reviewForm.category || "hair_oil");
     fd.append("name", reviewForm.name);
     fd.append("rating", reviewForm.rating);
@@ -574,11 +573,11 @@ export default function Landing() {
     try {
       const res  = await fetch(`${API_URL}/reviews`, { method: "POST", body: fd });
       const data = await res.json();
-      if (res.ok) {
+      if (res.ok || data.success) {
         addToast("Review submitted! Thank you 🌿", "success");
         setReviewForm({ name: "", rating: 5, comment: "", category: "hair_oil" });
         setReviewImage(null);
-        if (dbProduct) fetchReviews(dbProduct._id);
+        if (dbProduct && dbProduct._id) fetchReviews(dbProduct._id);
         fetchDandruffReviews();
         const fi = document.getElementById("review-img-input");
         if (fi) fi.value = "";

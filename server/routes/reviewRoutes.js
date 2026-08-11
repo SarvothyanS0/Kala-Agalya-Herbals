@@ -31,11 +31,22 @@ const upload = multer({
 
 const adminAuth = require("../middleware/adminAuth");
 
+// Upload error handler wrapper
+const uploadSingleImage = (req, res, next) => {
+  upload.single("image")(req, res, (err) => {
+    if (err) {
+      console.error("Multer image upload error:", err.message);
+      return res.status(400).json({ success: false, message: err.message || "File upload failed" });
+    }
+    next();
+  });
+};
+
 // Routes
 // Public
 router.get("/category/:category", reviewController.getReviewsByCategory);
 router.get("/:productId", reviewController.getProductReviews);
-router.post("/", upload.single("image"), reviewController.addReview);
+router.post("/", uploadSingleImage, reviewController.addReview);
 
 // Admin
 router.get("/", adminAuth, reviewController.getAllReviews);
