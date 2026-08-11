@@ -8,6 +8,17 @@ export default function AdminReviews() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "hair_oil",
+    rating: 5,
+    comment: ""
+  });
+  const [reviewImage, setReviewImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+
   const navigate = useNavigate();
   const { addToast } = useToast();
 
@@ -39,6 +50,66 @@ export default function AdminReviews() {
     }
     fetchReviews();
   }, [navigate, fetchReviews]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setReviewImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({ name: "", category: "hair_oil", rating: 5, comment: "" });
+    setReviewImage(null);
+    setImagePreview(null);
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.comment.trim()) {
+      addToast("Please enter customer name and review text", "warning");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const token = localStorage.getItem("adminToken");
+    const fd = new FormData();
+    fd.append("name", formData.name);
+    fd.append("category", formData.category);
+    fd.append("rating", formData.rating);
+    fd.append("comment", formData.comment);
+    if (reviewImage) {
+      fd.append("image", reviewImage);
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/reviews`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: fd
+      });
+
+      const data = await response.json();
+      if (response.ok || data.success) {
+        addToast(`Review uploaded successfully to ${formData.category === "dandruff" ? "Dandruff" : "Hair Oil"} section! 🌟`, "success");
+        setShowAddModal(false);
+        resetForm();
+        fetchReviews();
+      } else {
+        addToast(data.message || "Failed to upload review", "error");
+      }
+    } catch (error) {
+      console.error("Error uploading review:", error);
+      addToast("Failed to upload review", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleDelete = async (id, category = "") => {
     const sectionName = category === "dandruff" ? "Dandruff Review" : "Review";
@@ -80,10 +151,16 @@ export default function AdminReviews() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">Review Moderation</h1>
-          <p className="text-[#6C685F] text-sm font-inter">Monitor and manage customer feedback for Hair Oil & Dandruff Care</p>
+          <p className="text-[#6C685F] text-sm font-inter">Monitor, upload, and manage customer feedback for Hair Oil & Dandruff Care</p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => { resetForm(); setShowAddModal(true); }}
+            className="px-5 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-bold font-grotesk text-xs uppercase tracking-wider rounded-2xl shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5 transition-all flex items-center gap-2"
+          >
+            <span>➕ Upload New Review</span>
+          </button>
           <div className="bg-white px-4 py-2.5 rounded-2xl border border-yellow-500/12 flex items-center gap-3 shadow-xs">
             <div className="bg-yellow-500/15 p-2 rounded-xl text-yellow-800 font-bold text-xs font-grotesk">Total</div>
             <div>
@@ -135,6 +212,7 @@ export default function AdminReviews() {
         </button>
       </div>
 
+      {/* Reviews Grid/List */}
       <div className="space-y-6">
         {loading ? (
           <div className="py-32 text-center">
@@ -144,8 +222,14 @@ export default function AdminReviews() {
         ) : filteredReviews.length === 0 ? (
           <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-yellow-500/30">
             <svg className="w-16 h-16 text-yellow-600/30 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-            <p className="text-[#1C1A16] text-lg font-bold font-grotesk mb-1">No feedback received in this section</p>
-            <p className="text-[#6C685F] text-sm font-inter">Customer reviews will appear here once submitted.</p>
+            <p className="text-[#1C1A16] text-lg font-bold font-grotesk mb-1">No feedback in this section yet</p>
+            <p className="text-[#6C685F] text-sm font-inter mb-4">Click below to upload reviews for Hair Oil or Dandruff Care.</p>
+            <button
+              onClick={() => { resetForm(); setShowAddModal(true); }}
+              className="px-6 py-2.5 bg-yellow-500 text-black font-bold font-grotesk text-xs uppercase tracking-wider rounded-xl hover:bg-yellow-400 transition-colors"
+            >
+              Upload Review Now
+            </button>
           </div>
         ) : (
           filteredReviews.map((review) => {
@@ -212,6 +296,121 @@ export default function AdminReviews() {
           })
         )}
       </div>
+
+      {/* ── Upload Review Modal ── */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-yellow-500/20 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-yellow-500/12 pb-4 mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-[#1C1A16] font-soria">Upload Customer Review</h3>
+                <p className="text-[#6C685F] text-xs font-inter mt-0.5">Publish a review to Hair Oil or Dandruff section</p>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="w-9 h-9 rounded-full bg-yellow-500/10 text-yellow-800 font-bold flex items-center justify-center hover:bg-yellow-500/20 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleFormSubmit} className="space-y-5 font-inter text-sm">
+              <div>
+                <label className="block text-[#4A473E] font-bold font-grotesk text-xs uppercase mb-1.5">Review Section / Category *</label>
+                <select
+                  value={formData.category}
+                  onChange={e => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl font-grotesk font-semibold text-[#1C1A16] focus:outline-none focus:border-yellow-500"
+                >
+                  <option value="hair_oil">✨ Hair Growth & Hair Oil Section</option>
+                  <option value="dandruff">🌿 Dandruff Scalp Care Section</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[#4A473E] font-bold font-grotesk text-xs uppercase mb-1.5">Customer Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Priya S."
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-[#1C1A16] focus:outline-none focus:border-yellow-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[#4A473E] font-bold font-grotesk text-xs uppercase mb-1.5">Rating *</label>
+                  <select
+                    value={formData.rating}
+                    onChange={e => setFormData({ ...formData, rating: Number(e.target.value) })}
+                    className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl font-semibold text-[#1C1A16] focus:outline-none focus:border-yellow-500"
+                  >
+                    <option value="5">★★★★★ (5 Stars - Excellent)</option>
+                    <option value="4">★★★★☆ (4 Stars - Good)</option>
+                    <option value="3">★★★☆☆ (3 Stars - Average)</option>
+                    <option value="2">★★☆☆☆ (2 Stars - Fair)</option>
+                    <option value="1">★☆☆☆☆ (1 Star - Poor)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[#4A473E] font-bold font-grotesk text-xs uppercase mb-1.5">Customer Feedback / Review *</label>
+                <textarea
+                  required
+                  rows={4}
+                  placeholder="Enter customer review comment..."
+                  value={formData.comment}
+                  onChange={e => setFormData({ ...formData, comment: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-[#1C1A16] focus:outline-none focus:border-yellow-500 resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[#4A473E] font-bold font-grotesk text-xs uppercase mb-1.5">Upload Result Photo / Attachment</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="block w-full text-xs text-[#6C685F] file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-yellow-500/15 file:text-yellow-800 hover:file:bg-yellow-500/25 file:transition-colors cursor-pointer"
+                />
+
+                {imagePreview && (
+                  <div className="mt-3 relative w-32 h-32 rounded-2xl border border-yellow-500/20 overflow-hidden bg-[#FDFBF7] p-1">
+                    <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
+                    <button
+                      type="button"
+                      onClick={() => { setReviewImage(null); setImagePreview(null); }}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 text-[10px] font-bold flex items-center justify-center"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-4 border-t border-yellow-500/12 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="px-5 py-2.5 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider text-[#6C685F] border border-yellow-500/20 hover:bg-yellow-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-6 py-2.5 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-bold font-grotesk text-xs uppercase tracking-wider rounded-xl shadow-gold hover:shadow-gold-lg transition-all disabled:opacity-50"
+                >
+                  {isSubmitting ? "Uploading..." : "Upload & Publish"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

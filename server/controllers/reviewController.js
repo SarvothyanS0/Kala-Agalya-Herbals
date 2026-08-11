@@ -61,9 +61,9 @@ exports.addReview = async (req, res) => {
     const review = new Review(reviewData);
 
     await review.save();
-    res.status(201).json({ message: "Review added successfully", review });
+    res.status(201).json({ success: true, message: "Review added successfully", review });
   } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+    res.status(500).json({ success: false, message: "Server Error", error: error.message });
   }
 };
 
