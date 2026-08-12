@@ -110,7 +110,7 @@ export default function AdminProducts() {
         body: fd
       });
       const data = await res.json();
-      if (res.ok || data.success) {
+      if (data.success) {
         addToast("Offer banner uploaded & published to home page! 🚀", "success");
         setShowBannerModal(false);
         setBannerFile(null);
@@ -703,6 +703,165 @@ export default function AdminProducts() {
                   className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold hover:from-yellow-400 hover:to-amber-500 transition-all text-xs uppercase tracking-wider shadow-gold"
                 >
                   {editingProduct ? "Save Changes" : "Create Product"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Upload Offer Banner Modal */}
+      {showBannerModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 z-[60] animate-fadeIn overflow-y-auto">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full my-auto border border-yellow-500/20 relative overflow-hidden">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white/95 backdrop-blur border-b border-yellow-500/12 px-6 py-4 flex justify-between items-center z-10">
+              <div>
+                <span className="px-2.5 py-0.5 rounded-full bg-yellow-500/15 text-yellow-800 text-[10px] font-extrabold font-grotesk uppercase tracking-wider inline-block mb-1">
+                  🔥 Homepage Offer Poster
+                </span>
+                <h2 className="text-xl font-bold text-[#1C1A16] font-grotesk tracking-wide">
+                  Upload Promotional Banner
+                </h2>
+              </div>
+              <button
+                onClick={() => {
+                  setShowBannerModal(false);
+                  setBannerFile(null);
+                  setBannerPreview(null);
+                }}
+                className="text-[#9A9690] hover:text-red-600 transition-colors p-2"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleBannerSubmit} className="p-6 sm:p-8 space-y-5 font-inter">
+              <div>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
+                  Banner Title
+                </label>
+                <input
+                  type="text"
+                  value={bannerFormData.title}
+                  onChange={(e) => setBannerFormData({ ...bannerFormData, title: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
+                  placeholder="e.g. Website Launching Offer"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
+                  Subtitle / Description
+                </label>
+                <input
+                  type="text"
+                  value={bannerFormData.subtitle}
+                  onChange={(e) => setBannerFormData({ ...bannerFormData, subtitle: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
+                  placeholder="e.g. 200ml Launch Deal - Save Big!"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
+                  Target Section Link URL
+                </label>
+                <input
+                  type="text"
+                  value={bannerFormData.linkUrl}
+                  onChange={(e) => setBannerFormData({ ...bannerFormData, linkUrl: e.target.value })}
+                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
+                  placeholder="e.g. #product"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
+                  Banner Image Poster *
+                </label>
+
+                <div className="space-y-3">
+                  <div className="relative border-2 border-dashed border-yellow-500/30 hover:border-yellow-500/60 rounded-2xl p-5 text-center bg-[#FDFBF7] transition-all group">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBannerFileChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
+                      <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-700 group-hover:scale-110 transition-transform">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <p className="text-xs font-bold text-[#1C1A16] font-grotesk">
+                        {bannerFile ? bannerFile.name : "Click or drag & drop banner image here"}
+                      </p>
+                      <p className="text-[11px] text-[#6C685F] font-inter">
+                        Supports JPG, PNG, WEBP (Max 15MB)
+                      </p>
+                    </div>
+                  </div>
+
+                  {bannerPreview && (
+                    <div className="relative rounded-2xl border border-yellow-500/20 overflow-hidden bg-[#FDFBF7] p-3">
+                      <span className="block text-[10px] font-bold text-yellow-800 uppercase tracking-widest font-grotesk mb-2">
+                        Image Preview:
+                      </span>
+                      <div className="h-44 flex items-center justify-center bg-black/5 rounded-xl p-2 relative overflow-hidden">
+                        <img
+                          src={bannerPreview}
+                          alt="Banner Preview"
+                          className="max-h-full max-w-full object-contain rounded-lg shadow-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setBannerFile(null);
+                            setBannerPreview(null);
+                          }}
+                          className="absolute top-2 right-2 px-3 py-1 bg-red-600 text-white rounded-lg text-xs font-bold font-grotesk shadow-md hover:bg-red-700 transition-colors"
+                        >
+                          Remove File
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 font-grotesk">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowBannerModal(false);
+                    setBannerFile(null);
+                    setBannerPreview(null);
+                  }}
+                  className="flex-1 px-4 py-3 bg-[#F5F2EB] text-[#6C685F] border border-yellow-500/20 rounded-xl font-bold hover:bg-yellow-500/10 transition-colors text-xs uppercase tracking-wider"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingBanner}
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold hover:from-yellow-400 hover:to-amber-500 transition-all text-xs uppercase tracking-wider shadow-gold flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isSubmittingBanner ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <span>🚀 Publish Banner</span>
+                  )}
                 </button>
               </div>
             </form>
