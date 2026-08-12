@@ -288,15 +288,19 @@ export default function AdminProducts() {
       ) : (
         <>
           {/* Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">Product & Banner Management</h1>
-              <p className="text-[#6C685F] text-sm font-inter">Manage herbal oil inventory & upload homepage promotional offer banners</p>
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria whitespace-nowrap">
+                Product & Banner Management
+              </h1>
+              <p className="text-[#6C685F] text-xs sm:text-sm font-inter">
+                Manage herbal oil inventory & upload homepage promotional offer banners
+              </p>
             </div>
-            <div className="flex flex-wrap gap-3 w-full sm:w-auto">
+            <div className="flex flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
               <button
                 onClick={() => setShowBannerModal(true)}
-                className="px-5 py-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold font-grotesk rounded-xl shadow-gold hover:shadow-gold-lg transition-all flex items-center gap-2 uppercase tracking-wider text-xs"
+                className="flex-1 sm:flex-initial px-5 py-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold font-grotesk rounded-xl shadow-gold hover:shadow-gold-lg transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs whitespace-nowrap"
               >
                 <span>🔥 Upload Offer Banner</span>
               </button>
@@ -305,7 +309,7 @@ export default function AdminProducts() {
                   resetForm();
                   setShowModal(true);
                 }}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-extrabold font-grotesk rounded-xl shadow-gold hover:shadow-gold-lg transition-all flex items-center gap-2 uppercase tracking-wider text-xs"
+                className="flex-1 sm:flex-initial px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-extrabold font-grotesk rounded-xl shadow-gold hover:shadow-gold-lg transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs whitespace-nowrap"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

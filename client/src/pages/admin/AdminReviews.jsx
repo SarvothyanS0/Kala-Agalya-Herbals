@@ -148,19 +148,15 @@ export default function AdminReviews() {
 
   return (
     <AdminLayout>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">Review Moderation</h1>
-          <p className="text-[#6C685F] text-sm font-inter">Monitor, upload, and manage customer feedback for Hair Oil & Dandruff Care</p>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria whitespace-nowrap">Review Moderation</h1>
+          <p className="text-[#6C685F] text-xs sm:text-sm font-inter">Monitor, upload, and manage customer feedback for Hair Oil & Dandruff Care</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => { resetForm(); setShowAddModal(true); }}
-            className="px-5 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-bold font-grotesk text-xs uppercase tracking-wider rounded-2xl shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5 transition-all flex items-center gap-2"
-          >
-            <span>➕ Upload New Review</span>
-          </button>
+        {/* Stats: Total Reviews next to Dandruff Reviews */}
+        <div className="flex items-center gap-3 shrink-0">
           <div className="bg-white px-4 py-2.5 rounded-2xl border border-yellow-500/12 flex items-center gap-3 shadow-xs">
             <div className="bg-yellow-500/15 p-2 rounded-xl text-yellow-800 font-bold text-xs font-grotesk">Total</div>
             <div>
@@ -168,6 +164,7 @@ export default function AdminReviews() {
               <p className="text-xl font-black text-[#1C1A16] leading-none font-soria">{reviews.length}</p>
             </div>
           </div>
+
           <div className="bg-white px-4 py-2.5 rounded-2xl border border-emerald-500/20 flex items-center gap-3 shadow-xs">
             <div className="bg-emerald-500/15 p-2 rounded-xl text-emerald-800 font-bold text-xs font-grotesk">🌱 Dandruff</div>
             <div>
@@ -178,37 +175,46 @@ export default function AdminReviews() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2 mb-6 border-b border-yellow-500/12 pb-3">
+      {/* Tabs & Upload Button Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-yellow-500/12 pb-3">
+        <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1 sm:pb-0">
+          <button
+            onClick={() => setActiveTab("all")}
+            className={`px-5 py-2.5 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider transition-all whitespace-nowrap ${
+              activeTab === "all"
+                ? "bg-yellow-500 text-black shadow-sm"
+                : "bg-white text-[#6C685F] hover:bg-yellow-50 border border-yellow-500/10"
+            }`}
+          >
+            All Feedback ({reviews.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("hair_oil")}
+            className={`px-5 py-2.5 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider transition-all whitespace-nowrap ${
+              activeTab === "hair_oil"
+                ? "bg-amber-600 text-white shadow-sm"
+                : "bg-white text-[#6C685F] hover:bg-yellow-50 border border-yellow-500/10"
+            }`}
+          >
+            Hair Oil Reviews ({hairOilCount})
+          </button>
+          <button
+            onClick={() => setActiveTab("dandruff")}
+            className={`px-5 py-2.5 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider transition-all whitespace-nowrap ${
+              activeTab === "dandruff"
+                ? "bg-emerald-700 text-white shadow-sm"
+                : "bg-white text-[#6C685F] hover:bg-emerald-50 border border-emerald-500/20"
+            }`}
+          >
+            🌿 Dandruff Section Reviews ({dandruffCount})
+          </button>
+        </div>
+
         <button
-          onClick={() => setActiveTab("all")}
-          className={`px-5 py-2.5 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider transition-all ${
-            activeTab === "all"
-              ? "bg-yellow-500 text-black shadow-sm"
-              : "bg-white text-[#6C685F] hover:bg-yellow-50 border border-yellow-500/10"
-          }`}
+          onClick={() => { resetForm(); setShowAddModal(true); }}
+          className="px-5 py-2.5 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-extrabold font-grotesk text-xs uppercase tracking-wider rounded-xl shadow-gold hover:shadow-gold-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
         >
-          All Feedback ({reviews.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("hair_oil")}
-          className={`px-5 py-2.5 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider transition-all ${
-            activeTab === "hair_oil"
-              ? "bg-amber-600 text-white shadow-sm"
-              : "bg-white text-[#6C685F] hover:bg-yellow-50 border border-yellow-500/10"
-          }`}
-        >
-          Hair Oil Reviews ({hairOilCount})
-        </button>
-        <button
-          onClick={() => setActiveTab("dandruff")}
-          className={`px-5 py-2.5 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider transition-all ${
-            activeTab === "dandruff"
-              ? "bg-emerald-700 text-white shadow-sm"
-              : "bg-white text-[#6C685F] hover:bg-emerald-50 border border-emerald-500/20"
-          }`}
-        >
-          🌿 Dandruff Section Reviews ({dandruffCount})
+          <span>➕ Upload New Review</span>
         </button>
       </div>
 
