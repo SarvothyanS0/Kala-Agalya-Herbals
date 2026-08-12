@@ -1,6 +1,6 @@
-import { API_URL, BASE_URL } from "../../services/api";
+import { API_URL } from "../../services/api";
 import { useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "../../components/Alert";
 import AdminLayout from "./AdminLayout";
 

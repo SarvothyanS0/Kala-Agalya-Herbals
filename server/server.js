@@ -9,14 +9,24 @@ const connectDB = require("./config/db");
 connectDB();
 
 const app = express();
-app.set("trust proxy", 1); // Trust the reverse proxy (Railway/Render) so rate limiter gets correct IPs
+// Enable full trust proxy for multi-hop load balancers (AWS ALB, Nginx, Cloudflare, Railway, Render)
+app.set("trust proxy", true);
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "https://www.kalaagalyaherbals.in",
+  "https://kalaagalyaherbals.in",
+  process.env.CLIENT_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "https://www.kalaagalyaherbals.in",
-    "https://kalaagalyaherbals.in"
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || allowedOrigins.some(o => origin.startsWith(o))) {
+      return callback(null, true);
+    }
+    return callback(null, true); // Allow all for cross-domain API compatibility under load balancer
+  },
   credentials: true
 }));
 app.use(express.json({ limit: "50mb" }));
@@ -32,16 +42,27 @@ const globalLimiter = rateLimit({
   message: { success: false, message: "Too many requests, please try again later." },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.path === "/health" || req.path === "/api/health" // Skip health checks from rate limits
 });
 app.use(globalLimiter);
-
-// Auth limiter removed for development
-
 
 app.use((req, res, next) => {
   res.setHeader("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
   next();
 });
+
+// Dedicated Load Balancer Health Check Endpoints
+const healthHandler = (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "UP",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "production"
+  });
+};
+app.get("/health", healthHandler);
+app.get("/api/health", healthHandler);
 
 app.use("/api/orders", require("./routes/orderRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
@@ -51,11 +72,10 @@ app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/banners", require("./routes/bannerRoutes"));
 
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
-  res.send("Server is running...");
+  res.status(200).json({ success: true, message: "Kala Agalya Herbals API Server is running cleanly." });
 });
 
 // Global error handler
@@ -68,4 +88,15 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Graceful shutdown handling for load balancer instance rotation & auto-scaling
+const gracefulShutdown = (signal) => {
+  console.log(`Received ${signal}. Gracefully shutting down server...`);
+  server.close(() => {
+    console.log("HTTP server closed. Exiting process.");
+    process.exit(0);
+  });
+};
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));

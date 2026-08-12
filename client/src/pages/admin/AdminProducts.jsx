@@ -1,6 +1,6 @@
 import { API_URL, BASE_URL } from "../../services/api";
 import { useState, useEffect, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "../../components/Alert";
 import AdminLayout from "./AdminLayout";
 
@@ -28,8 +28,8 @@ export default function AdminProducts() {
   const [showBannerModal, setShowBannerModal] = useState(false);
   const [isSubmittingBanner, setIsSubmittingBanner] = useState(false);
   const [bannerFormData, setBannerFormData] = useState({
-    title: "Website Launching Offer",
-    subtitle: "200ml Launch Deal - Save Big!",
+    title: "",
+    subtitle: "",
     linkUrl: "#product"
   });
   const [bannerFile, setBannerFile] = useState(null);
@@ -115,7 +115,7 @@ export default function AdminProducts() {
         setShowBannerModal(false);
         setBannerFile(null);
         setBannerPreview(null);
-        setBannerFormData({ title: "Website Launching Offer", subtitle: "200ml Launch Deal - Save Big!", linkUrl: "#product" });
+        setBannerFormData({ title: "", subtitle: "", linkUrl: "#product" });
         fetchBanners();
       } else {
         addToast(data.message || "Failed to upload banner", "error");
