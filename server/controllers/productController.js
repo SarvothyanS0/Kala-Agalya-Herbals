@@ -1,10 +1,19 @@
 const Product = require("../models/Product");
 const sharp = require("sharp");
+const cache = require("../utils/cache");
 
-// Get all products
+const CACHE_KEY = "all_products";
+const CACHE_TTL = 300; // 5 minutes
+
+// Get all products (cached)
 exports.getAllProducts = async (req, res) => {
   try {
+    const cached = cache.get(CACHE_KEY);
+    if (cached) {
+      return res.json({ success: true, products: cached });
+    }
     const products = await Product.find().sort({ createdAt: -1 }).lean();
+    cache.set(CACHE_KEY, products, CACHE_TTL);
     res.json({ success: true, products });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -27,8 +36,6 @@ exports.getProduct = async (req, res) => {
 // Create product
 exports.createProduct = async (req, res) => {
   try {
-    console.log("Create Product Body:", req.body);
-    console.log("Create Product Files:", req.files);
     const { name, description, sizes: sizesStr, category, isActive, gstPercentage } = req.body;
     let images = [];
 
@@ -41,7 +48,6 @@ exports.createProduct = async (req, res) => {
             return `data:image/webp;base64,${b64}`;
           } catch (err) {
             console.error("Error converting uploaded product image to WebP:", err);
-            // Fallback to original format if sharp fails
             const b64 = Buffer.from(file.buffer).toString("base64");
             return `data:${file.mimetype};base64,${b64}`;
           }
@@ -49,10 +55,7 @@ exports.createProduct = async (req, res) => {
       );
     }
 
-    // Sizes might come as a JSON string from FormData
     let sizes = typeof sizesStr === "string" ? JSON.parse(sizesStr) : sizesStr;
-    
-    // Clean sizes data
     if (Array.isArray(sizes)) {
       sizes = sizes.map(s => {
         const mrp = (s.mrp === "" || s.mrp === null || s.mrp === undefined) ? null : Number(s.mrp);
@@ -76,6 +79,10 @@ exports.createProduct = async (req, res) => {
     });
 
     await product.save();
+
+    // Invalidate cache so next request fetches fresh data
+    cache.invalidate(CACHE_KEY);
+
     res.status(201).json({ success: true, product });
   } catch (error) {
     if (error.name === "ValidationError") {
@@ -90,7 +97,6 @@ exports.createProduct = async (req, res) => {
 // Update product
 exports.updateProduct = async (req, res) => {
   try {
-    console.log("Update Product Body:", req.body);
     const { name, description, sizes: sizesStr, category, isActive, gstPercentage } = req.body;
     const updateData = { name, description, category, isActive: isActive === "true" || isActive === true, updatedAt: Date.now() };
 
@@ -107,7 +113,6 @@ exports.updateProduct = async (req, res) => {
             return `data:image/webp;base64,${b64}`;
           } catch (err) {
             console.error("Error converting uploaded product image to WebP:", err);
-            // Fallback to original format if sharp fails
             const b64 = Buffer.from(file.buffer).toString("base64");
             return `data:${file.mimetype};base64,${b64}`;
           }
@@ -135,11 +140,14 @@ exports.updateProduct = async (req, res) => {
       updateData,
       { new: true }
     );
-    
+
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-    
+
+    // Invalidate cache so next request fetches fresh data
+    cache.invalidate(CACHE_KEY);
+
     res.json({ success: true, product });
   } catch (error) {
     if (error.name === "ValidationError") {
@@ -155,11 +163,14 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
-    
+
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-    
+
+    // Invalidate cache
+    cache.invalidate(CACHE_KEY);
+
     res.json({ success: true, message: "Product deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });

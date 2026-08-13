@@ -2,6 +2,7 @@ const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env"), override: true });
 const express = require("express");
 const cors = require("cors");
+const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const connectDB = require("./config/db");
@@ -11,6 +12,9 @@ connectDB();
 const app = express();
 // Enable full trust proxy for multi-hop load balancers (AWS ALB, Nginx, Cloudflare, Railway, Render)
 app.set("trust proxy", true);
+
+// Gzip compress all responses — reduces JSON size by ~70%
+app.use(compression());
 
 const allowedOrigins = [
   "http://localhost:3000",

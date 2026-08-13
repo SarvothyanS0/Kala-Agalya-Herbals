@@ -1,10 +1,19 @@
 const Banner = require("../models/Banner");
 const sharp = require("sharp");
+const cache = require("../utils/cache");
 
-// Get active banners for website
+const CACHE_KEY = "active_banners";
+const CACHE_TTL = 300; // 5 minutes
+
+// Get active banners for website (cached)
 exports.getBanners = async (req, res) => {
   try {
+    const cached = cache.get(CACHE_KEY);
+    if (cached) {
+      return res.json({ success: true, banners: cached });
+    }
     const banners = await Banner.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+    cache.set(CACHE_KEY, banners, CACHE_TTL);
     res.json({ success: true, banners });
   } catch (error) {
     console.error("Error fetching active banners:", error);
@@ -12,7 +21,7 @@ exports.getBanners = async (req, res) => {
   }
 };
 
-// Get all banners for Admin
+// Get all banners for Admin (not cached — admin needs fresh data)
 exports.getAllBannersAdmin = async (req, res) => {
   try {
     const banners = await Banner.find().sort({ createdAt: -1 }).lean();
@@ -34,7 +43,6 @@ exports.addBanner = async (req, res) => {
 
     let image = "";
     try {
-      // Compress banner image using sharp for fast loading & compact storage
       const webpBuffer = await sharp(req.file.buffer)
         .resize(1200, 1200, { fit: "inside", withoutEnlargement: true })
         .webp({ quality: 80 })
@@ -56,6 +64,9 @@ exports.addBanner = async (req, res) => {
     });
 
     await banner.save();
+
+    // Invalidate cache so website shows new banner immediately
+    cache.invalidate(CACHE_KEY);
 
     res.status(201).json({
       success: true,
@@ -79,6 +90,9 @@ exports.toggleBanner = async (req, res) => {
     banner.isActive = !banner.isActive;
     await banner.save();
 
+    // Invalidate cache so the website reflects the toggle immediately
+    cache.invalidate(CACHE_KEY);
+
     res.json({ success: true, message: `Banner ${banner.isActive ? "activated" : "deactivated"} successfully`, banner });
   } catch (error) {
     console.error("Error toggling banner:", error);
@@ -95,6 +109,10 @@ exports.deleteBanner = async (req, res) => {
     }
 
     await banner.deleteOne();
+
+    // Invalidate cache
+    cache.invalidate(CACHE_KEY);
+
     res.json({ success: true, message: "Offer banner deleted successfully" });
   } catch (error) {
     console.error("Error deleting banner:", error);

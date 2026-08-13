@@ -2,11 +2,25 @@ const mongoose = require("mongoose");
 const sharp = require("sharp");
 const Review = require("../models/Review");
 const Product = require("../models/Product");
+const cache = require("../utils/cache");
 
-// Get all reviews for a product or category
+const CACHE_TTL = 300; // 5 minutes
+
+function reviewCacheKey(productId) {
+  return `reviews_${productId}`;
+}
+
+// Get all reviews for a product or category (cached)
 exports.getProductReviews = async (req, res) => {
   try {
     const { productId } = req.params;
+    const key = reviewCacheKey(productId);
+
+    const cached = cache.get(key);
+    if (cached) {
+      return res.json(cached);
+    }
+
     let query = {};
     if (productId === "dandruff" || productId === "hair_oil") {
       query = { category: productId };
@@ -19,17 +33,26 @@ exports.getProductReviews = async (req, res) => {
     }
 
     const reviews = await Review.find(query).sort({ createdAt: -1 }).lean();
+    cache.set(key, reviews, CACHE_TTL);
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
-// Get reviews by category
+// Get reviews by category (cached)
 exports.getReviewsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
+    const key = reviewCacheKey(category);
+
+    const cached = cache.get(key);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const reviews = await Review.find({ category }).sort({ createdAt: -1 }).lean();
+    cache.set(key, reviews, CACHE_TTL);
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
@@ -50,7 +73,6 @@ exports.addReview = async (req, res) => {
     let image = "";
     if (req.file && req.file.buffer) {
       try {
-        // Compress image down to max 600x600 WebP for ultra-fast loading & small DB size (~25KB)
         const webpBuffer = await sharp(req.file.buffer)
           .resize(600, 600, { fit: "inside", withoutEnlargement: true })
           .webp({ quality: 75 })
@@ -93,6 +115,9 @@ exports.addReview = async (req, res) => {
     const review = new Review(reviewData);
     await review.save();
 
+    // Invalidate all review caches after adding a new review
+    cache.invalidatePrefix("reviews_");
+
     res.status(201).json({ success: true, message: "Review added successfully", review });
   } catch (error) {
     console.error("addReview controller error:", error);
@@ -100,7 +125,7 @@ exports.addReview = async (req, res) => {
   }
 };
 
-// Get all reviews (for Admin)
+// Get all reviews for Admin (not cached — admin always needs fresh data)
 exports.getAllReviews = async (req, res) => {
   try {
     const reviews = await Review.find()
@@ -113,7 +138,7 @@ exports.getAllReviews = async (req, res) => {
   }
 };
 
-// Delete review (for Admin)
+// Delete review (Admin)
 exports.deleteReview = async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);
@@ -122,6 +147,10 @@ exports.deleteReview = async (req, res) => {
     }
 
     await review.deleteOne();
+
+    // Invalidate all review caches
+    cache.invalidatePrefix("reviews_");
+
     res.json({ success: true, message: "Review deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server Error", error: error.message });

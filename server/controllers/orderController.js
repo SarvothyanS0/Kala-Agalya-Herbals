@@ -1,6 +1,9 @@
 const Order = require("../models/Order");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
+const cache = require("../utils/cache");
+
+const PHONEPE_TOKEN_CACHE_KEY = "phonepe_auth_token";
 
 /**
  * Standard Order Creation (from Checkout)
@@ -22,11 +25,15 @@ exports.createOrder = async (req, res) => {
  * Get PhonePe V2 Auth Token
  */
 async function getPhonePeToken() {
+  // Return cached token if still valid (cache for 25 minutes, token usually valid 30 min)
+  const cached = cache.get(PHONEPE_TOKEN_CACHE_KEY);
+  if (cached) return cached;
+
   const clientId = process.env.PHONEPE_CLIENT_ID;
   const clientSecret = process.env.PHONEPE_CLIENT_SECRET;
   const isProd = process.env.PHONEPE_ENV === "PRODUCTION";
-  
-  const authUrl = isProd 
+
+  const authUrl = isProd
     ? "https://api.phonepe.com/apis/identity-manager/v1/oauth/token"
     : "https://api-preprod.phonepe.com/apis/pg-sandbox/identity-manager/v1/oauth/token";
 
@@ -40,11 +47,14 @@ async function getPhonePeToken() {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: params
   });
-  
+
   const data = await response.json();
   if (!response.ok || !data.access_token) {
     throw new Error(`PhonePe Auth failed: ${JSON.stringify(data)}`);
   }
+
+  // Cache token for 25 minutes
+  cache.set(PHONEPE_TOKEN_CACHE_KEY, data.access_token, 25 * 60);
   return data.access_token;
 }
 
@@ -228,12 +238,10 @@ exports.getOrderById = async (req, res) => {
 exports.getUserOrders = async (req, res) => {
   try {
     const email = req.user?.email;
-    console.log("[getUserOrders] Fetching orders for email:", email);
     if (!email) {
       return res.status(400).json({ success: false, message: "User email not found in token" });
     }
     const orders = await Order.find({ "customer.email": email }).sort({ createdAt: -1 });
-    console.log("[getUserOrders] Found", orders.length, "orders");
     res.json({ success: true, orders });
   } catch (err) {
     console.error("[getUserOrders] ERROR:", err);
