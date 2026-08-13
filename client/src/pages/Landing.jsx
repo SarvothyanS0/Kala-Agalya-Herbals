@@ -3,6 +3,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useToast } from "../components/Alert";
 import { API_URL, BASE_URL } from "../services/api";
+import ImageWithSkeleton from "../components/ImageWithSkeleton";
 
 /* ── Static data ──────────────────────────────────────────────── */
 const heroSlides = [
@@ -101,10 +102,11 @@ function ReviewCard({ review, badgeText, onImageClick }) {
             onClick={() => onImageClick && onImageClick(imgSrc, review)}
             className="w-full h-44 mb-4 rounded-2xl overflow-hidden bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/10 flex items-center justify-center p-2 cursor-pointer relative group/img"
           >
-            <img
+            <ImageWithSkeleton
               src={imgSrc}
               alt={`${review.name}'s result photo`}
               className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-500"
+              containerClassName="w-full h-full"
               loading="lazy"
               onError={e => { e.currentTarget.style.display = 'none'; }}
             />
@@ -155,10 +157,11 @@ function IngredientCard({ item }) {
   return (
     <div className="w-[180px] sm:w-[220px] shrink-0 bg-white p-5 rounded-2xl border border-yellow-500/10 hover:border-yellow-500/35 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-400 group text-center">
       <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-3 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] rounded-2xl p-2 border border-yellow-500/8 flex items-center justify-center group-hover:scale-110 transition-transform duration-400">
-        <img
+        <ImageWithSkeleton
           src={item.img}
           alt={item.name}
           className="max-h-full max-w-full object-contain filter drop-shadow-md"
+          containerClassName="w-full h-full"
           loading="lazy"
         />
       </div>
@@ -364,10 +367,11 @@ function ProductCard({ product, index, onAddToCart, onBuyNow }) {
       <div className="h-44 sm:h-64 lg:h-72 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] relative flex items-center justify-center p-3 sm:p-6 lg:p-8 overflow-hidden shrink-0">
         <div className="absolute inset-0 bg-yellow-500/4 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="w-24 h-24 sm:w-40 sm:h-40 bg-yellow-500/8 rounded-full absolute blur-[30px] sm:blur-[50px] group-hover:bg-yellow-500/18 group-hover:scale-125 transition-all duration-700" />
-        <img
+        <ImageWithSkeleton
           src={product.img}
           alt={`Kala Agalya Herbals ${product.ml} herbal hair oil bottle`}
           className="relative z-10 h-full w-auto object-contain group-hover:scale-110 transition-transform duration-700 ease-spring drop-shadow-[0_12px_30px_rgba(217,119,6,0.22)]"
+          containerClassName="w-full h-full z-10"
           loading="lazy"
         />
         {/* Reveal CTA ribbon on hover */}
@@ -745,10 +749,11 @@ export default function Landing() {
                   className="relative z-10 animate-float"
                   style={{ transform: `translate(${mousePos.x * 0.4}px, ${mousePos.y * 0.3}px) rotate(${mousePos.x * 0.03}deg)`, transition: "transform 0.1s ease-out" }}
                 >
-                  <img
+                  <ImageWithSkeleton
                     src={slide.image}
                     alt={slide.alt}
                     className="max-h-[340px] md:max-h-[520px] w-auto object-contain drop-shadow-[0_0_60px_rgba(217,119,6,0.55)] filter brightness-105"
+                    containerClassName="h-[340px] md:h-[520px] w-auto"
                     loading={i === 0 ? "eager" : "lazy"}
                     width="400" height="520"
                   />
@@ -821,10 +826,11 @@ export default function Landing() {
                       onClick={() => setSelectedZoomImg(bImg)}
                       className="relative w-full md:w-3/5 h-[280px] sm:h-[360px] rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/15 flex items-center justify-center p-3 cursor-pointer group/img"
                     >
-                      <img
+                      <ImageWithSkeleton
                         src={bImg}
                         alt={b.title}
                         className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-700 filter drop-shadow-xl"
+                        containerClassName="w-full h-full"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-2 backdrop-blur-xs rounded-2xl">
                         🔍 Click to Zoom Poster
@@ -1095,10 +1101,11 @@ export default function Landing() {
             >
               ✕
             </button>
-            <img
+            <ImageWithSkeleton
               src={selectedZoomImg}
               alt="Enlarged review photo"
               className="max-h-[82vh] max-w-full object-contain rounded-2xl mx-auto"
+              containerClassName="w-full h-full max-h-[82vh]"
             />
           </div>
         </div>
@@ -1126,10 +1133,11 @@ export default function Landing() {
                 className={`scroll-animate scroll-delay-${(i % 2) + 1} group flex flex-col h-[270px] sm:h-[350px] md:h-[380px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-card hover:shadow-card-hover border border-yellow-500/10 bg-white transition-all duration-500`}
               >
                 <div className="h-[58%] sm:h-[65%] w-full overflow-hidden flex items-center justify-center bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] p-3 sm:p-5 relative">
-                  <img
+                  <ImageWithSkeleton
                     src={`/images/${item.img}`}
                     alt={item.title}
                     className="max-h-full max-w-full object-contain transform group-hover:scale-110 transition-transform duration-700 ease-spring filter brightness-95 group-hover:brightness-105 drop-shadow-[0_8px_20px_rgba(217,119,6,0.12)]"
+                    containerClassName="w-full h-full"
                     loading="lazy"
                   />
                 </div>
