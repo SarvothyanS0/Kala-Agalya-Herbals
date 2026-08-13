@@ -139,7 +139,7 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 relative min-h-screen">
+      <main className="flex-1 relative min-h-screen min-w-0 overflow-x-hidden">
         {/* Mobile Header */}
         <div className="lg:hidden h-16 bg-white/95 border-b border-yellow-500/15 flex items-center justify-between px-4 sticky top-0 z-40 backdrop-blur-md">
           <div className="flex items-center gap-2">

@@ -309,7 +309,7 @@ export default function AdminReports() {
               <svg className="w-5 h-5 text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
               Total Product Sales Detail
             </h2>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto custom-admin-table-scroll w-full">
               <table className="w-full text-left font-inter">
                 <thead className="bg-[#FDFBF7] border-b border-yellow-500/12">
                   <tr>
@@ -362,12 +362,12 @@ export default function AdminReports() {
           </div>
 
           {/* Table */}
-          <div className="bg-white border border-yellow-500/12 rounded-3xl shadow-card overflow-hidden relative">
+          <div className="bg-white border border-yellow-500/12 rounded-3xl shadow-card relative" style={{overflow: 'hidden'}}>
             <div className="px-6 sm:px-8 py-5 bg-[#FDFBF7] border-b border-yellow-500/12">
               <h2 className="text-xs font-bold text-yellow-800 uppercase tracking-widest font-grotesk">Detailed Order History</h2>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full font-inter">
+            <div className="overflow-x-auto custom-admin-table-scroll w-full">
+              <table className="w-full font-inter min-w-[900px]">
                 <thead className="bg-[#FDFBF7] border-b border-yellow-500/10">
                   <tr>
                   {["Order ID", "Customer", "Amount", "Dispatched", "Payment Status", "Order Status", "Date"].map((head) => (
