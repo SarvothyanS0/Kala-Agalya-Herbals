@@ -113,10 +113,10 @@ export default function AdminOrders() {
           </div>
         ) : (
           <div className="overflow-x-auto custom-admin-table-scroll w-full">
-            <table className="w-full min-w-[1050px]">
+            <table className="w-full min-w-[1200px]">
               <thead className="bg-[#FDFBF7] border-b border-yellow-500/12">
                 <tr>
-                  {["Order ID", "Customer Name", "Contact", "Amount", "Payment", "Status", "Fast Action", "Date", "Details"].map((head) => (
+                  {["Order ID", "Customer Name", "Contact", "Amount", "Payment", "Payment Date", "Status", "Fast Action", "Order Date", "Details"].map((head) => (
                     <th key={head} className={`px-6 py-4 text-left text-xs font-bold text-yellow-800 uppercase tracking-widest whitespace-nowrap font-grotesk ${head === 'Fast Action' ? 'text-center' : ''}`}>
                       {head}
                     </th>
@@ -148,6 +148,21 @@ export default function AdminOrders() {
                         >
                           {order.paymentStatus}
                         </span>
+                      </td>
+                      {/* Payment Date — shown when PAID */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {order.paymentStatus === "PAID" ? (
+                          <div className="text-xs">
+                            <div className="font-bold text-emerald-700">
+                              {new Date(order.updatedAt || order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                            </div>
+                            <div className="text-[10px] text-[#9A9690] mt-0.5">
+                              {new Date(order.updatedAt || order.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-[#C5C2BB] font-inter italic">—</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
@@ -185,7 +200,8 @@ export default function AdminOrders() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-xs text-[#9A9690] whitespace-nowrap border-l border-yellow-500/10">
-                        {new Date(order.createdAt).toLocaleDateString()}
+                        <div className="font-medium">{new Date(order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                        <div className="text-[10px] mt-0.5">{new Date(order.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         <Link
@@ -199,7 +215,7 @@ export default function AdminOrders() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="9" className="px-6 py-20 text-center text-[#6C685F]">
+                    <td colSpan="10" className="px-6 py-20 text-center text-[#6C685F]">
                       <div className="flex flex-col items-center">
                         <svg className="w-16 h-16 text-yellow-600/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
                         <p className="text-xl font-bold text-[#1C1A16] font-grotesk mb-1">No Orders Found</p>

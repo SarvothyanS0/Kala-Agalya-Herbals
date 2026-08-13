@@ -78,6 +78,7 @@ export default function AdminReports() {
       "Total Amount",
       "Payment Status",
       "Order Status",
+      "Dispatched",
       "Order Date",
     ];
 
@@ -106,7 +107,8 @@ export default function AdminReports() {
         order.totalAmount || 0,
         order.paymentStatus || "N/A",
         order.orderStatus || "N/A",
-        order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A",
+        ["Shipped", "Delivered"].includes(order.orderStatus) ? "Yes" : "No",
+        order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN") : "N/A",
       ];
     });
 
@@ -368,9 +370,9 @@ export default function AdminReports() {
               <table className="w-full font-inter">
                 <thead className="bg-[#FDFBF7] border-b border-yellow-500/10">
                   <tr>
-                    {["Order ID", "Customer", "Amount", "Status", "Date"].map((head) => (
-                      <th key={head} className="px-6 sm:px-8 py-4 text-left text-xs font-bold text-yellow-800 uppercase tracking-widest whitespace-nowrap font-grotesk">{head}</th>
-                    ))}
+                  {["Order ID", "Customer", "Amount", "Dispatched", "Payment Status", "Order Status", "Date"].map((head) => (
+                    <th key={head} className="px-6 sm:px-8 py-4 text-left text-xs font-bold text-yellow-800 uppercase tracking-widest whitespace-nowrap font-grotesk">{head}</th>
+                  ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-yellow-500/10">
@@ -383,20 +385,59 @@ export default function AdminReports() {
                       <td className="px-6 sm:px-8 py-4 text-sm font-bold text-[#1C1A16] font-soria whitespace-nowrap">
                         ₹{(order.totalAmount || 0).toFixed(0)}
                       </td>
+
+                      {/* Dispatched Column */}
+                      <td className="px-6 sm:px-8 py-4 whitespace-nowrap">
+                        {["Shipped", "Delivered"].includes(order.orderStatus) ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold font-grotesk uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                            Dispatched
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold font-grotesk uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+                            Not Dispatched
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Payment Status Column */}
+                      <td className="px-6 sm:px-8 py-4 whitespace-nowrap">
+                        {order.paymentStatus === "PAID" ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold font-grotesk uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                            Paid
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold font-grotesk uppercase tracking-wider bg-red-50 text-red-800 border border-red-200">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>
+                            Pending
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Order Status Column */}
                       <td className="px-6 sm:px-8 py-4 whitespace-nowrap font-grotesk">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${order.orderStatus === "Delivered"
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                            order.orderStatus === "Delivered"
                               ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                               : order.orderStatus === "Cancelled"
-                                ? "bg-red-50 text-red-800 border-red-200"
-                                : "bg-blue-50 text-blue-800 border-blue-200"
-                            }`}
+                              ? "bg-red-50 text-red-800 border-red-200"
+                              : order.orderStatus === "Shipped"
+                              ? "bg-purple-50 text-purple-800 border-purple-200"
+                              : order.orderStatus === "Packed"
+                              ? "bg-blue-50 text-blue-800 border-blue-200"
+                              : "bg-amber-50 text-amber-800 border-amber-200"
+                          }`}
                         >
                           {order.orderStatus}
                         </span>
                       </td>
+
                       <td className="px-6 sm:px-8 py-4 text-xs text-[#9A9690] whitespace-nowrap">
-                        {new Date(order.createdAt).toLocaleDateString()}
+                        <div className="font-medium">{new Date(order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                        <div className="text-[10px] mt-0.5">{new Date(order.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</div>
                       </td>
                     </tr>
                   ))}
