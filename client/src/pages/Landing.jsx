@@ -786,17 +786,19 @@ export default function Landing() {
       </section>
 
       {/* ══ STATS ════════════════════════════════════════════════ */}
-      <section
-        className="scroll-animate scroll-scale bg-white py-6 relative -mt-8 mx-4 md:mx-auto max-w-5xl rounded-3xl shadow-card z-20 border border-yellow-500/10"
-        aria-label="Brand statistics"
-      >
-        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-yellow-500/10">
-          <StatCounter value="100%"  label="Natural Ingredients" />
-          <StatCounter value="20000+" label="Happy Customers" />
-          <StatCounter value="18+"   label="Rare Herbs" />
-          <StatCounter value="4.9"   label="Star Rating" />
-        </div>
-      </section>
+      <div className="bg-white w-full">
+        <section
+          className="scroll-animate scroll-scale bg-white py-6 relative -mt-8 mx-4 md:mx-auto max-w-5xl rounded-3xl shadow-card z-20 border border-yellow-500/10"
+          aria-label="Brand statistics"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-yellow-500/10">
+            <StatCounter value="100%"  label="Natural Ingredients" />
+            <StatCounter value="20000+" label="Happy Customers" />
+            <StatCounter value="18+"   label="Rare Herbs" />
+            <StatCounter value="4.9"   label="Star Rating" />
+          </div>
+        </section>
+      </div>
 
       {/* ══ SPECIAL WEBSITE LAUNCHING OFFER BANNER SECTION ════════════ */}
       {banners.length > 0 && (
