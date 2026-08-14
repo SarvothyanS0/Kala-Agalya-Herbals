@@ -7,6 +7,8 @@ export default function ImageWithSkeleton({
   containerClassName = "",
   skeletonClassName = "",
   loading = "lazy",
+  fetchpriority,
+  decoding = "async",
   onLoad,
   onError,
   ...props
@@ -39,6 +41,8 @@ export default function ImageWithSkeleton({
         src={src}
         alt={alt}
         loading={loading}
+        decoding={decoding}
+        fetchPriority={fetchpriority}
         onLoad={handleLoad}
         onError={handleError}
         className={`${className} transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}

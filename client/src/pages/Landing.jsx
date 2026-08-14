@@ -372,7 +372,9 @@ function ProductCard({ product, index, onAddToCart, onBuyNow }) {
           alt={`Kala Agalya Herbals ${product.ml} herbal hair oil bottle`}
           className="relative z-10 h-full w-auto object-contain group-hover:scale-110 transition-transform duration-700 ease-spring drop-shadow-[0_12px_30px_rgba(217,119,6,0.22)]"
           containerClassName="w-full h-full z-10"
-          loading="lazy"
+          loading={index === 0 ? "eager" : "lazy"}
+          fetchpriority={index === 0 ? "high" : "auto"}
+          decoding={index === 0 ? "sync" : "async"}
         />
         {/* Reveal CTA ribbon on hover */}
         <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-yellow-500/90 to-transparent py-2 sm:py-3 px-3 sm:px-6 translate-y-full group-hover:translate-y-0 transition-transform duration-400 ease-spring flex items-center justify-center gap-2">
@@ -566,6 +568,8 @@ export default function Landing() {
               })
             );
           setProducts(parsed);
+          // Preload product images immediately so they are cache-warm when the user scrolls
+          parsed.forEach(p => { if (p.img) { const img = new Image(); img.src = p.img; } });
         } else {
           setProducts([
             { id: "100", ml: "100 ml", name: "Kala Agalya Herbal Oil", price: 199, mrp: 249, savings: "Save ₹50", description: "Starter pack for daily scalp nourishment", img: "/images/Home 1.webp" },

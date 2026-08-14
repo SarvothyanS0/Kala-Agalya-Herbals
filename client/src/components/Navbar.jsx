@@ -100,13 +100,9 @@ export default function Navbar() {
               width="40" height="40"
               loading="eager"
             />
-            {/* Brand text — hide on phones narrower than 375px to prevent wrap */}
-            <span className="hidden xs:block sm:block text-sm sm:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-700 to-amber-600 font-soria leading-tight whitespace-nowrap">
-              Kala Agalya<br className="hidden sm:hidden" /> Herbals
-            </span>
-            {/* Ultra-compact version shown only below xs */}
-            <span className="block xs:hidden text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-700 to-amber-600 font-soria whitespace-nowrap">
-              KA Herbals
+            {/* Brand text — always show full name, shrink font on very small screens */}
+            <span className="block text-[11px] xs:text-sm sm:text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-700 to-amber-600 font-soria leading-tight whitespace-nowrap">
+              Kala Agalya Herbals
             </span>
           </Link>
 
