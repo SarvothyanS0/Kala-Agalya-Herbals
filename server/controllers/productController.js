@@ -43,7 +43,11 @@ exports.createProduct = async (req, res) => {
       images = await Promise.all(
         req.files.map(async (file) => {
           try {
-            const webpBuffer = await sharp(file.buffer).webp({ quality: 80 }).toBuffer();
+            // Resize to max 600px and compress hard — keeps data URIs small enough for mobile
+            const webpBuffer = await sharp(file.buffer)
+              .resize({ width: 600, height: 600, fit: "inside", withoutEnlargement: true })
+              .webp({ quality: 60 })
+              .toBuffer();
             const b64 = webpBuffer.toString("base64");
             return `data:image/webp;base64,${b64}`;
           } catch (err) {
@@ -108,7 +112,11 @@ exports.updateProduct = async (req, res) => {
       updateData.images = await Promise.all(
         req.files.map(async (file) => {
           try {
-            const webpBuffer = await sharp(file.buffer).webp({ quality: 80 }).toBuffer();
+            // Resize to max 600px and compress hard — keeps data URIs small enough for mobile
+            const webpBuffer = await sharp(file.buffer)
+              .resize({ width: 600, height: 600, fit: "inside", withoutEnlargement: true })
+              .webp({ quality: 60 })
+              .toBuffer();
             const b64 = webpBuffer.toString("base64");
             return `data:image/webp;base64,${b64}`;
           } catch (err) {
