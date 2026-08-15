@@ -3,6 +3,23 @@ import { Link, useNavigate } from "react-router-dom";
 import AdminLayout from "./AdminLayout";
 import { API_URL } from "../../services/api";
 
+function StatCard({ label, value, icon, badge, badgeColor, borderColor }) {
+  return (
+    <div className={"relative group p-5 rounded-xl bg-white border transition-all duration-300 hover:-translate-y-0.5 shadow-sm hover:shadow-md overflow-hidden " + (borderColor || "border-yellow-500/15 hover:border-yellow-500/40")}>
+      <div className="flex justify-between items-start mb-3">
+        <div className="w-10 h-10 rounded-lg bg-[#FDFBF7] border border-yellow-500/15 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+          {icon}
+        </div>
+        <span className={"text-[9px] font-bold px-2 py-0.5 rounded-md border font-grotesk uppercase tracking-wider " + badgeColor}>
+          {badge}
+        </span>
+      </div>
+      <h3 className="text-2xl font-black text-[#1C1A16] mb-0.5 font-soria group-hover:text-yellow-700 transition-colors">{value}</h3>
+      <p className="text-[10px] text-[#6C685F] font-bold tracking-wider uppercase font-grotesk">{label}</p>
+    </div>
+  );
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalOrders: 0,
@@ -21,10 +38,10 @@ export default function AdminDashboard() {
   const fetchAllDashboardData = useCallback(async () => {
     try {
       const token = localStorage.getItem("adminToken");
-      const headers = { "Authorization": `Bearer ${token}` };
+      const headers = { "Authorization": "Bearer " + token };
       const [statsRes, chartRes] = await Promise.all([
-        fetch(`${API_URL}/admin/orders/dashboard/stats`, { headers }),
-        fetch(`${API_URL}/admin/orders/dashboard/sales-chart?period=${period}`, { headers })
+        fetch(API_URL + "/admin/orders/dashboard/stats", { headers }),
+        fetch(API_URL + "/admin/orders/dashboard/sales-chart?period=" + period, { headers })
       ]);
       const statsData = await statsRes.json();
       const chartData = await chartRes.json();
@@ -43,21 +60,6 @@ export default function AdminDashboard() {
     fetchAllDashboardData();
   }, [navigate, fetchAllDashboardData]);
 
-  const StatCard = ({ label, value, icon, badge, badgeColor, accent }) => (
-    <div className={`relative group p-5 rounded-xl bg-white border hover:border-yellow-500/40 transition-all duration-300 hover:-translate-y-0.5 shadow-sm hover:shadow-md overflow-hidden ${accent || "border-yellow-500/15"}`}>
-      <div className="flex justify-between items-start mb-3">
-        <div className="w-10 h-10 rounded-lg bg-[#FDFBF7] border border-yellow-500/15 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-          {icon}
-        </div>
-        <span className={"text-[9px] font-bold px-2 py-0.5 rounded-md border font-grotesk uppercase tracking-wider " + badgeColor}>
-          {badge}
-        </span>
-      </div>
-      <h3 className="text-2xl font-black text-[#1C1A16] mb-0.5 font-soria group-hover:text-yellow-700 transition-colors">{value}</h3>
-      <p className="text-[10px] text-[#6C685F] font-bold tracking-wider uppercase font-grotesk">{label}</p>
-    </div>
-  );
-
   return (
     <AdminLayout>
       {loading ? (
@@ -73,7 +75,7 @@ export default function AdminDashboard() {
               <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">
                 Welcome back, <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">{localStorage.getItem("adminName") || "Admin"}</span>
               </h2>
-              <p className="text-[#6C685F] text-sm font-inter">{"Here's what's happening with your store today."}</p>
+              <p className="text-[#6C685F] text-sm font-inter">Here is what is happening with your store today.</p>
             </div>
             <span className="px-4 py-1.5 bg-emerald-50 rounded-lg border border-emerald-200 text-emerald-800 text-xs font-bold font-grotesk flex items-center gap-2 uppercase tracking-wider">
               <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -81,7 +83,7 @@ export default function AdminDashboard() {
             </span>
           </div>
 
-          {/* Row 1 — 4 overall stats */}
+          {/* Row 1: 4 All-Time Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <StatCard
               label="Total Orders"
@@ -89,63 +91,66 @@ export default function AdminDashboard() {
               icon="📦"
               badge="All Time"
               badgeColor="bg-yellow-500/10 border-yellow-500/20 text-yellow-800"
+              borderColor="border-yellow-500/15 hover:border-yellow-500/40"
             />
             <StatCard
               label="Paid Revenue"
-              value={"₹" + (stats.totalSales || 0).toFixed(0)}
+              value={"Rs." + (stats.totalSales || 0).toFixed(0)}
               icon="💰"
               badge="Paid Only"
               badgeColor="bg-emerald-50 border-emerald-200 text-emerald-800"
+              borderColor="border-emerald-200/50 hover:border-emerald-300"
             />
             <StatCard
               label="Pending Orders"
               value={stats.pendingOrders}
               icon="⏳"
-              badge="All Pending"
+              badge="Payment Pending"
               badgeColor="bg-orange-50 border-orange-200 text-orange-800"
-              accent="border-orange-200/60"
+              borderColor="border-orange-200/50 hover:border-orange-300"
             />
             <StatCard
               label="Paid Orders"
               value={stats.paidOrders}
               icon="✅"
-              badge="All Paid"
+              badge="Fully Paid"
               badgeColor="bg-emerald-50 border-emerald-200 text-emerald-800"
-              accent="border-emerald-200/60"
+              borderColor="border-emerald-200/50 hover:border-emerald-300"
             />
           </div>
 
-          {/* Row 2 — 3 today stats */}
+          {/* Row 2: 3 Today Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-7">
             <StatCard
-              label="Today's Orders"
+              label="Today Orders"
               value={stats.todayOrders}
               icon="📅"
               badge="Today"
               badgeColor="bg-blue-50 border-blue-200 text-blue-800"
-              accent="border-blue-200/60"
+              borderColor="border-blue-200/50 hover:border-blue-300"
             />
             <StatCard
               label="Today Pending"
               value={stats.todayPendingOrders}
               icon="🕐"
-              badge="Today"
+              badge="Today Pending"
               badgeColor="bg-orange-50 border-orange-200 text-orange-800"
-              accent="border-orange-200/60"
+              borderColor="border-orange-200/50 hover:border-orange-300"
             />
             <StatCard
               label="Today Paid"
               value={stats.todayPaidOrders}
               icon="🎉"
-              badge="Today"
+              badge="Today Paid"
               badgeColor="bg-emerald-50 border-emerald-200 text-emerald-800"
-              accent="border-emerald-200/60"
+              borderColor="border-emerald-200/50 hover:border-emerald-300"
             />
           </div>
 
           {/* Charts + Quick Actions */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-yellow-500/12 shadow-sm relative overflow-hidden">
+            {/* Sales Chart */}
+            <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-yellow-500/12 shadow-sm">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-[#1C1A16] font-grotesk flex items-center gap-2">
@@ -155,21 +160,23 @@ export default function AdminDashboard() {
                   <p className="text-xs text-[#6C685F] font-inter mt-0.5">Track revenue performance over time</p>
                 </div>
                 <div className="flex gap-1 p-1 bg-[#F5F2EB] rounded-lg border border-yellow-500/15 w-full sm:w-auto">
-                  {["Daily", "Monthly"].map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => setPeriod(p.toLowerCase())}
-                      className={"flex-1 sm:flex-none px-4 py-1.5 rounded-md text-xs font-bold font-grotesk uppercase tracking-wider transition-all " + (period === p.toLowerCase() ? "bg-gradient-to-r from-yellow-500 to-amber-600 text-black shadow-xs" : "text-[#6C685F] hover:text-[#1C1A16]")}
-                    >
-                      {p}
-                    </button>
-                  ))}
+                  {["Daily", "Monthly"].map(function(p) {
+                    return (
+                      <button
+                        key={p}
+                        onClick={function() { setPeriod(p.toLowerCase()); }}
+                        className={"flex-1 sm:flex-none px-4 py-1.5 rounded-md text-xs font-bold font-grotesk uppercase tracking-wider transition-all " + (period === p.toLowerCase() ? "bg-gradient-to-r from-yellow-500 to-amber-600 text-black shadow-xs" : "text-[#6C685F] hover:text-[#1C1A16]")}
+                      >
+                        {p}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               <div className="h-56 flex items-end justify-between gap-2 sm:gap-3 px-2 border-b border-yellow-500/10 pb-2">
-                {salesData.length > 0 ? salesData.map((item, index) => {
-                  const maxSales = Math.max(...salesData.map((d) => d.totalSales));
-                  const height = (item.totalSales / maxSales) * 100;
+                {salesData.length > 0 ? salesData.map(function(item, index) {
+                  var maxSales = Math.max.apply(null, salesData.map(function(d) { return d.totalSales; }));
+                  var height = (item.totalSales / maxSales) * 100;
                   return (
                     <div key={index} className="flex-1 flex flex-col items-center group h-full justify-end">
                       <div className="w-full relative h-full flex items-end justify-center">
@@ -178,7 +185,7 @@ export default function AdminDashboard() {
                           style={{ height: Math.max(height, 4) + "%" }}
                         >
                           <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-[#1C1A16] text-amber-300 text-[11px] font-bold py-1 px-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg border border-yellow-500/20 pointer-events-none z-20 font-grotesk">
-                            {"₹" + item.totalSales}
+                            Rs.{item.totalSales}
                           </div>
                         </div>
                       </div>
@@ -197,6 +204,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* Quick Actions */}
             <div className="bg-white rounded-xl p-6 border border-yellow-500/12 shadow-sm flex flex-col">
               <div className="mb-5">
                 <h3 className="text-lg font-bold text-[#1C1A16] mb-0.5 font-grotesk">Quick Actions</h3>
