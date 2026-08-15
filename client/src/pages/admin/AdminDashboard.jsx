@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AdminLayout from "./AdminLayout";
 import { API_URL } from "../../services/api";
@@ -59,6 +59,36 @@ export default function AdminDashboard() {
     if (!token) { navigate("/admin/login"); return; }
     fetchAllDashboardData();
   }, [navigate, fetchAllDashboardData]);
+
+  // Auto-refresh today stats at exactly IST midnight (12:00 AM India time)
+  useEffect(() => {
+    const getMsUntilISTMidnight = () => {
+      const now = new Date();
+      const istOffset = 5.5 * 60 * 60 * 1000; // UTC+5:30
+      const istNow = new Date(now.getTime() + istOffset);
+      // Next midnight in IST = next UTC day start shifted by IST offset
+      const nextISTMidnight = new Date(Date.UTC(
+        istNow.getUTCFullYear(),
+        istNow.getUTCMonth(),
+        istNow.getUTCDate() + 1,
+        0, 0, 0, 0
+      ));
+      const nextMidnightUTC = nextISTMidnight.getTime() - istOffset;
+      return nextMidnightUTC - now.getTime();
+    };
+
+    let dailyTimer;
+    const midnightTimeout = setTimeout(() => {
+      fetchAllDashboardData(); // reset today counts at IST midnight
+      // then re-fetch every 24h
+      dailyTimer = setInterval(fetchAllDashboardData, 24 * 60 * 60 * 1000);
+    }, getMsUntilISTMidnight());
+
+    return () => {
+      clearTimeout(midnightTimeout);
+      if (dailyTimer) clearInterval(dailyTimer);
+    };
+  }, [fetchAllDashboardData]);
 
   return (
     <AdminLayout>

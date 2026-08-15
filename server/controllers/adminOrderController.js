@@ -76,9 +76,9 @@ exports.getDashboardStats = async (req, res) => {
         { $group: { _id: null, total: { $sum: "$totalAmount" } } }
       ]),
       Order.countDocuments({ createdAt: { $gte: todayStart } }),
-      Order.countDocuments({ orderStatus: "Pending" }),
+      Order.countDocuments({ paymentStatus: "PENDING" }),
       Order.countDocuments({ paymentStatus: "PAID" }),
-      Order.countDocuments({ orderStatus: "Pending", createdAt: { $gte: todayStart } }),
+      Order.countDocuments({ paymentStatus: "PENDING", createdAt: { $gte: todayStart } }),
       Order.countDocuments({ paymentStatus: "PAID", createdAt: { $gte: todayStart } })
     ]);
 
