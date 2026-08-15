@@ -5,6 +5,8 @@ import { useToast } from "../../components/Alert";
 import AdminLayout from "./AdminLayout";
 
 export default function AdminReports() {
+  const [mode, setMode] = useState("single"); // "single" | "range"
+  const [singleDate, setSingleDate] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [report, setReport] = useState(null);
@@ -18,19 +20,45 @@ export default function AdminReports() {
       navigate("/admin/login");
       return;
     }
-
-    // Set default dates (last 30 days)
-    const today = new Date();
-    const thirtyDaysAgo = new Date(today);
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-
-    setEndDate(today.toISOString().split("T")[0]);
+    const today = new Date().toISOString().split("T")[0];
+    setSingleDate(today);
+    setEndDate(today);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     setStartDate(thirtyDaysAgo.toISOString().split("T")[0]);
   }, [navigate]);
 
+  const applyPreset = (preset) => {
+    const today = new Date();
+    const fmt = (d) => d.toISOString().split("T")[0];
+    if (preset === "today") {
+      setMode("single");
+      setSingleDate(fmt(today));
+    } else if (preset === "yesterday") {
+      const y = new Date(today);
+      y.setDate(y.getDate() - 1);
+      setMode("single");
+      setSingleDate(fmt(y));
+    } else if (preset === "last7") {
+      const s = new Date(today);
+      s.setDate(s.getDate() - 6);
+      setMode("range");
+      setStartDate(fmt(s));
+      setEndDate(fmt(today));
+    } else if (preset === "thisMonth") {
+      const s = new Date(today.getFullYear(), today.getMonth(), 1);
+      setMode("range");
+      setStartDate(fmt(s));
+      setEndDate(fmt(today));
+    }
+  };
+
   const fetchReport = async () => {
-    if (!startDate || !endDate) {
-      addToast("Please select both start and end dates", "error");
+    const effectiveStart = mode === "single" ? singleDate : startDate;
+    const effectiveEnd = mode === "single" ? singleDate : endDate;
+
+    if (!effectiveStart || !effectiveEnd) {
+      addToast("Please select a date", "error");
       return;
     }
 
@@ -38,12 +66,8 @@ export default function AdminReports() {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(
-        `${API_URL}/admin/orders/reports/data?startDate=${startDate}&endDate=${endDate}`,
-        {
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        }
+        `${API_URL}/admin/orders/reports/data?startDate=${effectiveStart}&endDate=${effectiveEnd}`,
+        { headers: { "Authorization": `Bearer ${token}` } }
       );
       const data = await response.json();
       if (data.success) {
@@ -65,36 +89,20 @@ export default function AdminReports() {
       return;
     }
 
-    // Create CSV content
     const headers = [
-      "Order ID",
-      "Customer Name",
-      "Phone",
-      "Address",
-      "District",
-      "State",
-      "Pincode",
-      "Products",
-      "Total Amount",
-      "Payment Status",
-      "Order Status",
-      "Dispatched",
-      "Order Date",
+      "Order ID", "Customer Name", "Phone", "Address", "District",
+      "State", "Pincode", "Products", "Total Amount",
+      "Payment Status", "Order Status", "Dispatched", "Order Date",
     ];
 
     const rows = report.orders.map((order) => {
       const products = order.items
-        ? order.items
-            .map((item) => `${item.name || "Unknown Product"} (${item.size || "N/A"}) x${item.quantity || 0}`)
-            .join("; ")
+        ? order.items.map((item) => `${item.name || "Unknown Product"} (${item.size || "N/A"}) x${item.quantity || 0}`).join("; ")
         : "";
-
       const door = order.customer?.address?.door || "";
       const street = order.customer?.address?.street || "";
       const landmark = order.customer?.address?.landmark || "";
-      const addressParts = [door, street, landmark].filter(Boolean);
-      const address = addressParts.join(", ") || "N/A";
-
+      const address = [door, street, landmark].filter(Boolean).join(", ") || "N/A";
       return [
         order.orderId || order._id,
         order.customer?.name || "N/A",
@@ -112,20 +120,18 @@ export default function AdminReports() {
       ];
     });
 
-    // Convert to CSV
     const csvContent = [
       headers.join(","),
-      ...rows.map((row) =>
-        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
-      ),
+      ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")),
     ].join("\n");
 
-    // Create blob and download
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
+    const effectiveStart = mode === "single" ? singleDate : startDate;
+    const effectiveEnd = mode === "single" ? singleDate : endDate;
     link.setAttribute("href", url);
-    link.setAttribute("download", `orders_${startDate}_to_${endDate}.csv`);
+    link.setAttribute("download", `orders_${effectiveStart}_to_${effectiveEnd}.csv`);
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
@@ -140,32 +146,79 @@ export default function AdminReports() {
         <p className="text-[#6C685F] text-sm font-inter">Generate detailed reports and track performance metrics</p>
       </div>
 
-      {/* Date Range Selector */}
+      {/* Date Selector */}
       <div className="bg-white rounded-3xl border border-yellow-500/12 shadow-card p-6 sm:p-8 mb-8 relative overflow-hidden">
-        <h2 className="text-xl font-bold text-[#1C1A16] mb-6 flex items-center gap-2 font-grotesk">
+        <h2 className="text-xl font-bold text-[#1C1A16] mb-5 flex items-center gap-2 font-grotesk">
           <svg className="w-5 h-5 text-yellow-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
           Select Report Period
         </h2>
+
+        {/* Quick Presets */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {[
+            { label: "Today", preset: "today" },
+            { label: "Yesterday", preset: "yesterday" },
+            { label: "Last 7 Days", preset: "last7" },
+            { label: "This Month", preset: "thisMonth" },
+          ].map(({ label, preset }) => (
+            <button
+              key={preset}
+              onClick={() => applyPreset(preset)}
+              className="px-4 py-1.5 rounded-xl text-xs font-bold font-grotesk uppercase tracking-wider border border-yellow-500/25 bg-yellow-500/8 text-yellow-800 hover:bg-yellow-500/20 hover:border-yellow-500/50 transition-all"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Mode Toggle */}
+        <div className="flex gap-1 p-1 bg-[#F5F2EB] rounded-xl border border-yellow-500/15 w-fit mb-6">
+          {[["single", "Single Day"], ["range", "Date Range"]].map(([val, lbl]) => (
+            <button
+              key={val}
+              onClick={() => setMode(val)}
+              className={"px-5 py-2 rounded-lg text-xs font-bold font-grotesk uppercase tracking-wider transition-all " + (mode === val ? "bg-gradient-to-r from-yellow-500 to-amber-600 text-black shadow-xs" : "text-[#6C685F] hover:text-[#1C1A16]")}
+            >
+              {lbl}
+            </button>
+          ))}
+        </div>
+
+        {/* Date Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-inter">
-          <div>
-            <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Start Date</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="input-premium py-2.5 text-xs"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">End Date</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="input-premium py-2.5 text-xs"
-            />
-          </div>
-          <div className="flex items-end gap-3 font-grotesk">
+          {mode === "single" ? (
+            <div>
+              <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Select Date</label>
+              <input
+                type="date"
+                value={singleDate}
+                onChange={(e) => setSingleDate(e.target.value)}
+                className="input-premium py-2.5 text-xs"
+              />
+            </div>
+          ) : (
+            <>
+              <div>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Start Date</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="input-premium py-2.5 text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">End Date</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="input-premium py-2.5 text-xs"
+                />
+              </div>
+            </>
+          )}
+          <div className={"flex items-end gap-3 font-grotesk " + (mode === "single" ? "md:col-start-2" : "")}>
             <button
               onClick={fetchReport}
               disabled={loading}

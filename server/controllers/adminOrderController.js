@@ -51,22 +51,25 @@ exports.getDashboardStats = async (req, res) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const [totalOrders, totalSales, todayOrders, pendingOrders] = await Promise.all([
+    const [totalOrders, paidSalesAgg, todayOrders, pendingOrders, paidOrders] = await Promise.all([
       Order.countDocuments(),
       Order.aggregate([
+        { $match: { paymentStatus: "PAID" } },
         { $group: { _id: null, total: { $sum: "$totalAmount" } } }
       ]),
       Order.countDocuments({ createdAt: { $gte: today } }),
-      Order.countDocuments({ orderStatus: "Pending" })
+      Order.countDocuments({ orderStatus: "Pending" }),
+      Order.countDocuments({ paymentStatus: "PAID" })
     ]);
 
     res.json({
       success: true,
       stats: {
         totalOrders,
-        totalSales: totalSales[0]?.total || 0,
+        totalSales: paidSalesAgg[0]?.total || 0,
         todayOrders,
-        pendingOrders
+        pendingOrders,
+        paidOrders
       }
     });
   } catch (error) {
@@ -118,10 +121,11 @@ exports.getReports = async (req, res) => {
     
     const query = {};
     if (startDate && endDate) {
-      query.createdAt = {
-        $gte: new Date(startDate),
-        $lte: new Date(endDate)
-      };
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      query.createdAt = { $gte: start, $lte: end };
     }
     
     const orders = await Order.find(query).sort({ createdAt: -1 });

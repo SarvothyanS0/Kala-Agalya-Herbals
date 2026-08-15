@@ -44,11 +44,11 @@ const INDIAN_STATES = [
 
 // Shipping rate logic
 const SOUTH_INDIA_75 = ["Andhra Pradesh", "Telangana", "Kerala", "Karnataka"];
-const TAMIL_NADU = "Tamil Nadu";
+const TAMIL_NADU_30 = ["Tamil Nadu", "Puducherry"];
 
 function getShippingInfo(state) {
   if (!state) return { amount: 0, label: "Select a state to see shipping", free: false, pending: true };
-  if (state === TAMIL_NADU) return { amount: 30, label: "₹30", free: false, pending: false };
+  if (TAMIL_NADU_30.includes(state)) return { amount: 30, label: "₹30", free: false, pending: false };
   if (SOUTH_INDIA_75.includes(state)) return { amount: 75, label: "₹75", free: false, pending: false };
   return { amount: 165, label: "₹165", free: false, pending: false };
 }
