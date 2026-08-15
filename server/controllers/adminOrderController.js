@@ -48,18 +48,38 @@ exports.updateOrderStatus = async (req, res) => {
 // Get dashboard statistics
 exports.getDashboardStats = async (req, res) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Use IST (UTC+5:30) for "today" boundary
+    const now = new Date();
+    const istOffset = 5.5 * 60 * 60 * 1000; // 5h 30m in ms
+    const istNow = new Date(now.getTime() + istOffset);
+    const todayIST = new Date(Date.UTC(
+      istNow.getUTCFullYear(),
+      istNow.getUTCMonth(),
+      istNow.getUTCDate(),
+      0, 0, 0, 0
+    ));
+    // Convert IST midnight back to UTC for DB query
+    const todayStart = new Date(todayIST.getTime() - istOffset);
 
-    const [totalOrders, paidSalesAgg, todayOrders, pendingOrders, paidOrders] = await Promise.all([
+    const [
+      totalOrders,
+      paidSalesAgg,
+      todayOrders,
+      pendingOrders,
+      paidOrders,
+      todayPendingOrders,
+      todayPaidOrders
+    ] = await Promise.all([
       Order.countDocuments(),
       Order.aggregate([
         { $match: { paymentStatus: "PAID" } },
         { $group: { _id: null, total: { $sum: "$totalAmount" } } }
       ]),
-      Order.countDocuments({ createdAt: { $gte: today } }),
+      Order.countDocuments({ createdAt: { $gte: todayStart } }),
       Order.countDocuments({ orderStatus: "Pending" }),
-      Order.countDocuments({ paymentStatus: "PAID" })
+      Order.countDocuments({ paymentStatus: "PAID" }),
+      Order.countDocuments({ orderStatus: "Pending", createdAt: { $gte: todayStart } }),
+      Order.countDocuments({ paymentStatus: "PAID", createdAt: { $gte: todayStart } })
     ]);
 
     res.json({
@@ -69,13 +89,16 @@ exports.getDashboardStats = async (req, res) => {
         totalSales: paidSalesAgg[0]?.total || 0,
         todayOrders,
         pendingOrders,
-        paidOrders
+        paidOrders,
+        todayPendingOrders,
+        todayPaidOrders
       }
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 // Get sales chart data
 exports.getSalesChartData = async (req, res) => {
