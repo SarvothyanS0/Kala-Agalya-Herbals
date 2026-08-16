@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { createOrder } from "../../services/api";
 
@@ -309,7 +309,7 @@ export default function Checkout() {
                       <p className="text-[#4A473E] font-medium">{item.name} ({item.size})</p>
                       <p className="text-[#7C786E] italic">x {item.quantity}</p>
                     </div>
-                    <span className="text-yellow-600 font-bold font-soria">â‚¹{item.price * item.quantity}</span>
+                    <span className="text-yellow-600 font-bold font-soria">₹{item.price * item.quantity}</span>
                   </div>
                 ))}
               </div>
@@ -317,7 +317,7 @@ export default function Checkout() {
               {/* Original Price */}
               <div className="flex justify-between items-center py-3 border-t border-yellow-500/10">
                 <span className="text-sm text-[#7C786E]">Original Price</span>
-                <span className="text-sm font-bold text-[#2C2921]">â‚¹{subtotal.toFixed(2)}</span>
+                <span className="text-sm font-bold text-[#2C2921]">₹{subtotal.toFixed(2)}</span>
               </div>
 
               {/* GST Row â€” label only, 18% included in price */}
@@ -344,13 +344,13 @@ export default function Checkout() {
               {/* Crossed Total */}
               <div className="flex justify-between items-center py-2 mt-2">
                 <span className="text-sm text-[#7C786E]">Total Amount</span>
-                <span className="text-sm text-[#7C786E] line-through">â‚¹{crossedTotal.toFixed(2)}</span>
+                <span className="text-sm text-[#7C786E] line-through">₹{crossedTotal.toFixed(2)}</span>
               </div>
 
               {/* Final Amount */}
               <div className="flex justify-between items-center mt-1 mb-8 pt-3 border-t-2 border-yellow-600/50 font-soria">
                 <span className="text-xl font-bold text-yellow-700">Final Amount</span>
-                <span className="text-3xl font-bold text-yellow-600 drop-shadow-[0_0_10px_rgba(234,179,8,0.1)]">â‚¹{finalAmount.toFixed(2)}</span>
+                <span className="text-3xl font-bold text-yellow-600 drop-shadow-[0_0_10px_rgba(234,179,8,0.1)]">₹{finalAmount.toFixed(2)}</span>
               </div>
 
               {/* Shipping note */}
