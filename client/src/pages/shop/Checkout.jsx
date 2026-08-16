@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { createOrder } from "../../services/api";
 
@@ -44,11 +44,13 @@ const INDIAN_STATES = [
 
 // Shipping rate logic
 const SOUTH_INDIA_75 = ["Andhra Pradesh", "Telangana", "Kerala", "Karnataka"];
-const TAMIL_NADU_30 = ["Tamil Nadu", "Puducherry"];
+const TAMIL_NADU = ["Tamil Nadu"];
+const PUDUCHERRY = ["Puducherry"];
 
 function getShippingInfo(state) {
   if (!state) return { amount: 0, label: "Select a state to see shipping", free: false, pending: true };
-  if (TAMIL_NADU_30.includes(state)) return { amount: 30, label: "₹30", free: false, pending: false };
+  if (TAMIL_NADU.includes(state)) return { amount: 30, label: "₹30", free: false, pending: false };
+  if (PUDUCHERRY.includes(state)) return { amount: 40, label: "₹40", free: false, pending: false };
   if (SOUTH_INDIA_75.includes(state)) return { amount: 75, label: "₹75", free: false, pending: false };
   return { amount: 165, label: "₹165", free: false, pending: false };
 }
@@ -307,7 +309,7 @@ export default function Checkout() {
                       <p className="text-[#4A473E] font-medium">{item.name} ({item.size})</p>
                       <p className="text-[#7C786E] italic">x {item.quantity}</p>
                     </div>
-                    <span className="text-yellow-600 font-bold font-soria">₹{item.price * item.quantity}</span>
+                    <span className="text-yellow-600 font-bold font-soria">â‚¹{item.price * item.quantity}</span>
                   </div>
                 ))}
               </div>
@@ -315,10 +317,10 @@ export default function Checkout() {
               {/* Original Price */}
               <div className="flex justify-between items-center py-3 border-t border-yellow-500/10">
                 <span className="text-sm text-[#7C786E]">Original Price</span>
-                <span className="text-sm font-bold text-[#2C2921]">₹{subtotal.toFixed(2)}</span>
+                <span className="text-sm font-bold text-[#2C2921]">â‚¹{subtotal.toFixed(2)}</span>
               </div>
 
-              {/* GST Row — label only, 18% included in price */}
+              {/* GST Row â€” label only, 18% included in price */}
               <div className="flex justify-between items-center py-2 border-yellow-500/10">
                 <span className="text-sm text-[#7C786E]">GST</span>
                 <span className="text-sm font-bold text-amber-600">18%</span>
@@ -342,26 +344,29 @@ export default function Checkout() {
               {/* Crossed Total */}
               <div className="flex justify-between items-center py-2 mt-2">
                 <span className="text-sm text-[#7C786E]">Total Amount</span>
-                <span className="text-sm text-[#7C786E] line-through">₹{crossedTotal.toFixed(2)}</span>
+                <span className="text-sm text-[#7C786E] line-through">â‚¹{crossedTotal.toFixed(2)}</span>
               </div>
 
               {/* Final Amount */}
               <div className="flex justify-between items-center mt-1 mb-8 pt-3 border-t-2 border-yellow-600/50 font-soria">
                 <span className="text-xl font-bold text-yellow-700">Final Amount</span>
-                <span className="text-3xl font-bold text-yellow-600 drop-shadow-[0_0_10px_rgba(234,179,8,0.1)]">₹{finalAmount.toFixed(2)}</span>
+                <span className="text-3xl font-bold text-yellow-600 drop-shadow-[0_0_10px_rgba(234,179,8,0.1)]">â‚¹{finalAmount.toFixed(2)}</span>
               </div>
 
               {/* Shipping note */}
               {form.state && (
                 <div className="mb-6 px-4 py-3 rounded-xl text-xs font-medium bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                  {form.state === TAMIL_NADU
-                    ? `📦 Delivery to Tamil Nadu: ₹30`
-                    : SOUTH_INDIA_75.includes(form.state)
-                      ? `📦 Standard delivery to ${form.state}: ₹75`
-                      : `📦 Delivery to ${form.state}: ₹165`
+                  {TAMIL_NADU.includes(form.state)
+                    ? `🚚 Delivery to Tamil Nadu: ₹30`
+                    : PUDUCHERRY.includes(form.state)
+                      ? `🚚 Delivery to Puducherry: ₹40`
+                      : SOUTH_INDIA_75.includes(form.state)
+                        ? `🚚 Standard delivery to ${form.state}: ₹75`
+                        : `🚚 Delivery to ${form.state}: ₹165`
                   }
                 </div>
               )}
+
 
               <button
                 type="submit"
