@@ -406,7 +406,20 @@ export default function AdminOrders() {
 
                       {/* 8. Separate Column: Packed Toggle */}
                       <td className="px-3.5 py-4 text-center whitespace-nowrap">
-                        <label className="relative inline-flex items-center cursor-pointer group justify-center" title="Toggle Packed State">
+                        <label 
+                          className={`relative inline-flex items-center justify-center ${
+                            order.orderStatus === "Shipped" || order.orderStatus === "Delivered" || order.orderStatus === "Cancelled" 
+                              ? "cursor-not-allowed opacity-40" 
+                              : "cursor-pointer"
+                          }`}
+                          title={
+                            order.orderStatus === "Shipped" || order.orderStatus === "Delivered" 
+                              ? "Already dispatched / delivered" 
+                              : order.orderStatus === "Cancelled" 
+                                ? "Order cancelled" 
+                                : "Toggle Packed state"
+                          }
+                        >
                           <input
                             type="checkbox"
                             className="sr-only peer"
@@ -414,27 +427,55 @@ export default function AdminOrders() {
                             onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Packed" : "Pending")}
                             disabled={order.orderStatus === "Shipped" || order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
                           />
-                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 peer-disabled:opacity-40 shadow-xs"></div>
+                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 shadow-xs"></div>
                         </label>
                       </td>
 
-                      {/* 9. Separate Column: Dispatch Toggle */}
+                      {/* 9. Separate Column: Dispatch Toggle (Accessible ONLY after Packed) */}
                       <td className="px-3.5 py-4 text-center whitespace-nowrap">
-                        <label className="relative inline-flex items-center cursor-pointer group justify-center" title="Toggle Dispatch State">
+                        <label 
+                          className={`relative inline-flex items-center justify-center ${
+                            (order.orderStatus !== "Packed" && order.orderStatus !== "Shipped") || order.orderStatus === "Delivered" || order.orderStatus === "Cancelled" 
+                              ? "cursor-not-allowed opacity-35" 
+                              : "cursor-pointer"
+                          }`}
+                          title={
+                            order.orderStatus === "Pending" 
+                              ? "Must pack the order first to dispatch" 
+                              : order.orderStatus === "Delivered" 
+                                ? "Already delivered" 
+                                : order.orderStatus === "Cancelled"
+                                  ? "Order cancelled"
+                                  : "Toggle Dispatch state"
+                          }
+                        >
                           <input
                             type="checkbox"
                             className="sr-only peer"
                             checked={order.orderStatus === "Shipped" || order.orderStatus === "Delivered"}
-                            onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Shipped" : "Pending")}
-                            disabled={order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
+                            onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Shipped" : "Packed")}
+                            disabled={(order.orderStatus !== "Packed" && order.orderStatus !== "Shipped") || order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
                           />
-                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-yellow-600 peer-disabled:opacity-40 shadow-xs"></div>
+                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-yellow-600 shadow-xs"></div>
                         </label>
                       </td>
 
-                      {/* 10. Separate Column: Delivered Toggle */}
+                      {/* 10. Separate Column: Delivered Toggle (Accessible ONLY after Dispatch) */}
                       <td className="px-3.5 py-4 text-center whitespace-nowrap">
-                        <label className="relative inline-flex items-center cursor-pointer group justify-center" title="Toggle Delivered State">
+                        <label 
+                          className={`relative inline-flex items-center justify-center ${
+                            (order.orderStatus !== "Shipped" && order.orderStatus !== "Delivered") || order.orderStatus === "Cancelled" 
+                              ? "cursor-not-allowed opacity-35" 
+                              : "cursor-pointer"
+                          }`}
+                          title={
+                            order.orderStatus === "Pending" || order.orderStatus === "Packed" 
+                              ? "Must dispatch order first to mark as delivered" 
+                              : order.orderStatus === "Cancelled"
+                                ? "Order cancelled"
+                                : "Toggle Delivered state"
+                          }
+                        >
                           <input
                             type="checkbox"
                             className="sr-only peer"
@@ -442,7 +483,7 @@ export default function AdminOrders() {
                             onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Delivered" : "Shipped")}
                             disabled={(order.orderStatus !== "Shipped" && order.orderStatus !== "Delivered") || order.orderStatus === "Cancelled"}
                           />
-                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 peer-disabled:opacity-40 shadow-xs"></div>
+                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 shadow-xs"></div>
                         </label>
                       </td>
 
