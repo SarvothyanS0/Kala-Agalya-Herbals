@@ -56,6 +56,7 @@ export default function AdminOrders() {
 
   const filteredOrders = orders.filter((order) => {
     if (filter === "all") return true;
+    if (filter === "PAID") return order.paymentStatus === "PAID";
     return order.orderStatus === filter;
   });
 
@@ -88,6 +89,7 @@ export default function AdminOrders() {
 
       {/* Filters */}
       <div className="bg-white rounded-2xl border border-yellow-500/12 p-2 mb-8 flex flex-wrap gap-2 shadow-xs">
+        {/* Order-status filter tabs */}
         {["all", "Pending", "Packed", "Shipped", "Delivered"].map((status) => (
           <button
             key={status}
@@ -102,6 +104,24 @@ export default function AdminOrders() {
             </span>
           </button>
         ))}
+
+        {/* Divider */}
+        <div className="w-px bg-yellow-500/20 self-stretch mx-1" />
+
+        {/* Payment-status filter tab — Paid */}
+        <button
+          onClick={() => setFilter("PAID")}
+          className={`px-5 py-2.5 rounded-xl font-bold font-grotesk transition-all duration-300 text-xs uppercase tracking-wider flex items-center gap-1.5 ${
+            filter === "PAID"
+              ? "text-white bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md"
+              : "text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100"
+          }`}
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+          </svg>
+          Paid ({orders.filter(o => o.paymentStatus === "PAID").length})
+        </button>
       </div>
 
       {/* Orders Table */}
@@ -149,15 +169,15 @@ export default function AdminOrders() {
                           {order.paymentStatus}
                         </span>
                       </td>
-                      {/* Payment Date — shown when PAID */}
+                      {/* Payment Date — shown only when PAID, uses dedicated paymentDate field */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         {order.paymentStatus === "PAID" ? (
                           <div className="text-xs">
                             <div className="font-bold text-emerald-700">
-                              {new Date(order.updatedAt || order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                              {new Date(order.paymentDate || order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                             </div>
                             <div className="text-[10px] text-[#9A9690] mt-0.5">
-                              {new Date(order.updatedAt || order.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                              {new Date(order.paymentDate || order.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
                             </div>
                           </div>
                         ) : (
@@ -175,6 +195,23 @@ export default function AdminOrders() {
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         <div className="flex flex-col items-center gap-2">
+
+                          {/* Packed Toggle */}
+                          <label className="relative inline-flex items-center cursor-pointer group">
+                            <input
+                              type="checkbox"
+                              className="sr-only peer"
+                              checked={order.orderStatus === "Packed" || order.orderStatus === "Shipped" || order.orderStatus === "Delivered"}
+                              onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Packed" : "Pending")}
+                              disabled={order.orderStatus === "Shipped" || order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500 peer-disabled:opacity-50"></div>
+                            <span className="ml-2 text-[10px] font-bold text-[#6C685F] uppercase tracking-wider font-grotesk w-16 text-center">
+                              Packed
+                            </span>
+                          </label>
+
+                          {/* Dispatched Toggle */}
                           <label className="relative inline-flex items-center cursor-pointer group">
                             <input
                               type="checkbox"
@@ -186,6 +223,21 @@ export default function AdminOrders() {
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600 peer-disabled:opacity-50"></div>
                             <span className="ml-2 text-[10px] font-bold text-[#6C685F] uppercase tracking-wider font-grotesk w-16 text-center">
                               Dispatched
+                            </span>
+                          </label>
+
+                          {/* Delivered Toggle */}
+                          <label className="relative inline-flex items-center cursor-pointer group">
+                            <input
+                              type="checkbox"
+                              className="sr-only peer"
+                              checked={order.orderStatus === "Delivered"}
+                              onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Delivered" : "Shipped")}
+                              disabled={order.orderStatus !== "Shipped" && order.orderStatus !== "Delivered" || order.orderStatus === "Cancelled"}
+                            />
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500 peer-disabled:opacity-50"></div>
+                            <span className="ml-2 text-[10px] font-bold text-[#6C685F] uppercase tracking-wider font-grotesk w-16 text-center">
+                              Delivered
                             </span>
                           </label>
 

@@ -199,6 +199,7 @@ exports.checkStatus = async (req, res) => {
           const orderId = merchantOrderId.startsWith("T") ? merchantOrderId.slice(1) : merchantOrderId;
           await Order.findByIdAndUpdate(orderId, {
             paymentStatus: "PAID",
+            paymentDate: new Date(),
             paymentId: data.orderId || merchantOrderId
           });
           res.json({ success: true, message: "Payment Verified" });
