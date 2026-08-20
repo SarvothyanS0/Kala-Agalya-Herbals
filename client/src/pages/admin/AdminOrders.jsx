@@ -82,16 +82,18 @@ export default function AdminOrders() {
   };
 
   const tableColumns = [
-    { key: "orderId", label: "Order ID", align: "text-left", width: "w-24" },
-    { key: "customer", label: "Customer Name", align: "text-left", width: "w-40" },
-    { key: "contact", label: "Contact & Location", align: "text-left", width: "w-44" },
-    { key: "amount", label: "Amount", align: "text-right", width: "w-28" },
-    { key: "payment", label: "Payment", align: "text-center", width: "w-28" },
-    { key: "paymentDate", label: "Payment Date", align: "text-left", width: "w-36" },
-    { key: "status", label: "Order Status", align: "text-center", width: "w-28" },
-    { key: "fastAction", label: "Fast Action", align: "text-center", width: "w-64" },
-    { key: "orderDate", label: "Order Placed", align: "text-left", width: "w-36" },
-    { key: "actions", label: "Actions", align: "text-center", width: "w-32" },
+    { key: "orderId", label: "Order ID", align: "text-left" },
+    { key: "customer", label: "Customer Name", align: "text-left" },
+    { key: "contact", label: "Contact & City", align: "text-left" },
+    { key: "amount", label: "Amount", align: "text-right" },
+    { key: "payment", label: "Payment", align: "text-center" },
+    { key: "paymentDate", label: "Payment Date", align: "text-left" },
+    { key: "status", label: "Status", align: "text-center" },
+    { key: "packed", label: "Packed", align: "text-center" },
+    { key: "dispatch", label: "Dispatch", align: "text-center" },
+    { key: "delivered", label: "Delivered", align: "text-center" },
+    { key: "orderDate", label: "Order Placed", align: "text-left" },
+    { key: "actions", label: "Actions", align: "text-center" },
   ];
 
   return (
@@ -158,13 +160,13 @@ export default function AdminOrders() {
           </div>
         ) : (
           <div className="overflow-x-auto custom-admin-table-scroll w-full">
-            <table className="w-full min-w-[1240px] border-collapse">
+            <table className="w-full min-w-[1280px] border-collapse">
               <thead className="bg-[#FDFBF7] border-b border-yellow-500/15">
                 <tr>
                   {tableColumns.map((col) => (
                     <th
                       key={col.key}
-                      className={`px-4 py-4 ${col.align} text-[11px] font-bold text-yellow-900 uppercase tracking-wider whitespace-nowrap font-grotesk`}
+                      className={`px-3.5 py-4 ${col.align} text-[11px] font-bold text-yellow-900 uppercase tracking-wider whitespace-nowrap font-grotesk`}
                     >
                       {col.label}
                     </th>
@@ -175,31 +177,44 @@ export default function AdminOrders() {
                 {filteredOrders.length > 0 ? (
                   filteredOrders.map((order) => (
                     <tr key={order._id} className="hover:bg-yellow-500/5 transition-colors group">
-                      {/* Order ID */}
-                      <td className="px-4 py-4 text-left whitespace-nowrap">
+                      {/* 1. Order ID */}
+                      <td className="px-3.5 py-4 text-left whitespace-nowrap">
                         <span className="font-mono text-xs font-bold text-yellow-800 bg-yellow-500/10 px-2.5 py-1 rounded-lg border border-yellow-500/20 inline-block">
                           {order.orderId || (order._id ? order._id.slice(-8).toUpperCase() : "—")}
                         </span>
                       </td>
 
-                      {/* Customer Name */}
-                      <td className="px-4 py-4 text-left whitespace-nowrap">
-                        <div className="font-bold text-[#1C1A16]">{order.customer?.name || "Customer"}</div>
+                      {/* 2. Customer Name (Truncated with Tooltip) */}
+                      <td className="px-3.5 py-4 text-left whitespace-nowrap">
+                        <div 
+                          className="font-bold text-[#1C1A16] max-w-[130px] sm:max-w-[150px] truncate" 
+                          title={order.customer?.name || "Customer"}
+                        >
+                          {order.customer?.name || "Customer"}
+                        </div>
                         {order.customer?.email && (
-                          <div className="text-[11px] text-[#9A9690] truncate max-w-[160px]">{order.customer.email}</div>
+                          <div 
+                            className="text-[11px] text-[#9A9690] max-w-[130px] sm:max-w-[150px] truncate" 
+                            title={order.customer.email}
+                          >
+                            {order.customer.email}
+                          </div>
                         )}
                       </td>
 
-                      {/* Contact & Location */}
-                      <td className="px-4 py-4 text-left">
+                      {/* 3. Contact & City */}
+                      <td className="px-3.5 py-4 text-left">
                         <div className="text-xs text-[#3a372e] font-semibold whitespace-nowrap font-mono">{order.customer?.phone || "—"}</div>
-                        <div className="text-[11px] text-[#8A867E] truncate max-w-[160px]">
+                        <div 
+                          className="text-[11px] text-[#8A867E] max-w-[140px] truncate"
+                          title={[order.customer?.address?.district, order.customer?.address?.state].filter(Boolean).join(", ") || "—"}
+                        >
                           {[order.customer?.address?.district, order.customer?.address?.state].filter(Boolean).join(", ") || "—"}
                         </div>
                       </td>
 
-                      {/* Amount */}
-                      <td className="px-4 py-4 text-right whitespace-nowrap">
+                      {/* 4. Amount */}
+                      <td className="px-3.5 py-4 text-right whitespace-nowrap">
                         <div className="font-black text-[#1C1A16] font-soria text-base">
                           ₹{(Number(order.totalAmount) || 0).toFixed(0)}
                         </div>
@@ -208,8 +223,8 @@ export default function AdminOrders() {
                         </div>
                       </td>
 
-                      {/* Payment Status */}
-                      <td className="px-4 py-4 text-center whitespace-nowrap">
+                      {/* 5. Payment Status */}
+                      <td className="px-3.5 py-4 text-center whitespace-nowrap">
                         <span
                           className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold font-grotesk uppercase tracking-wider border ${getPaymentStatusColor(
                             order.paymentStatus
@@ -219,8 +234,8 @@ export default function AdminOrders() {
                         </span>
                       </td>
 
-                      {/* Payment Date */}
-                      <td className="px-4 py-4 text-left whitespace-nowrap">
+                      {/* 6. Payment Date */}
+                      <td className="px-3.5 py-4 text-left whitespace-nowrap">
                         {order.paymentStatus === "PAID" ? (
                           <div className="text-xs">
                             <div className="font-bold text-emerald-700">
@@ -235,8 +250,8 @@ export default function AdminOrders() {
                         )}
                       </td>
 
-                      {/* Order Status */}
-                      <td className="px-4 py-4 text-center whitespace-nowrap">
+                      {/* 7. Order Status */}
+                      <td className="px-3.5 py-4 text-center whitespace-nowrap">
                         <span
                           className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold font-grotesk uppercase tracking-wider border ${getStatusColor(
                             order.orderStatus
@@ -246,79 +261,56 @@ export default function AdminOrders() {
                         </span>
                       </td>
 
-                      {/* Fast Action Column */}
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="flex flex-col items-center gap-1.5 min-w-[210px]">
-                          <div className="flex items-center justify-center gap-2 bg-[#FDFBF7] p-1.5 rounded-xl border border-yellow-500/15 w-full">
-                            {/* Packed Toggle */}
-                            <label className="relative inline-flex items-center cursor-pointer group" title="Toggle Packed State">
-                              <input
-                                type="checkbox"
-                                className="sr-only peer"
-                                checked={order.orderStatus === "Packed" || order.orderStatus === "Shipped" || order.orderStatus === "Delivered"}
-                                onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Packed" : "Pending")}
-                                disabled={order.orderStatus === "Shipped" || order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
-                              />
-                              <div className="w-8 h-4.5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-blue-500 peer-disabled:opacity-40"></div>
-                              <span className="ml-1.5 text-[9px] font-bold text-[#6C685F] uppercase font-grotesk">
-                                Packed
-                              </span>
-                            </label>
-
-                            <div className="w-px h-3.5 bg-yellow-500/20"></div>
-
-                            {/* Dispatched Toggle */}
-                            <label className="relative inline-flex items-center cursor-pointer group" title="Toggle Dispatched State">
-                              <input
-                                type="checkbox"
-                                className="sr-only peer"
-                                checked={order.orderStatus === "Shipped" || order.orderStatus === "Delivered"}
-                                onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Shipped" : "Pending")}
-                                disabled={order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
-                              />
-                              <div className="w-8 h-4.5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-yellow-600 peer-disabled:opacity-40"></div>
-                              <span className="ml-1.5 text-[9px] font-bold text-[#6C685F] uppercase font-grotesk">
-                                Dispatch
-                              </span>
-                            </label>
-
-                            <div className="w-px h-3.5 bg-yellow-500/20"></div>
-
-                            {/* Delivered Toggle */}
-                            <label className="relative inline-flex items-center cursor-pointer group" title="Toggle Delivered State">
-                              <input
-                                type="checkbox"
-                                className="sr-only peer"
-                                checked={order.orderStatus === "Delivered"}
-                                onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Delivered" : "Shipped")}
-                                disabled={(order.orderStatus !== "Shipped" && order.orderStatus !== "Delivered") || order.orderStatus === "Cancelled"}
-                              />
-                              <div className="w-8 h-4.5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-emerald-500 peer-disabled:opacity-40"></div>
-                              <span className="ml-1.5 text-[9px] font-bold text-[#6C685F] uppercase font-grotesk">
-                                Deliv
-                              </span>
-                            </label>
-                          </div>
-
-                          {order.orderStatus === "Shipped" && (
-                            <button
-                              onClick={() => handleFastUpdate(order._id, "Delivered")}
-                              className="px-2.5 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-md text-[8.5px] font-bold font-grotesk uppercase tracking-wider hover:bg-emerald-100 transition-all w-full text-center"
-                            >
-                              ✓ Confirm Delivered
-                            </button>
-                          )}
-                        </div>
+                      {/* 8. Separate Column: Packed Toggle */}
+                      <td className="px-3.5 py-4 text-center whitespace-nowrap">
+                        <label className="relative inline-flex items-center cursor-pointer group justify-center" title="Toggle Packed State">
+                          <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={order.orderStatus === "Packed" || order.orderStatus === "Shipped" || order.orderStatus === "Delivered"}
+                            onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Packed" : "Pending")}
+                            disabled={order.orderStatus === "Shipped" || order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
+                          />
+                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500 peer-disabled:opacity-40 shadow-xs"></div>
+                        </label>
                       </td>
 
-                      {/* Order Placed Date */}
-                      <td className="px-4 py-4 text-left text-xs text-[#8A867E] whitespace-nowrap">
+                      {/* 9. Separate Column: Dispatch Toggle */}
+                      <td className="px-3.5 py-4 text-center whitespace-nowrap">
+                        <label className="relative inline-flex items-center cursor-pointer group justify-center" title="Toggle Dispatch State">
+                          <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={order.orderStatus === "Shipped" || order.orderStatus === "Delivered"}
+                            onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Shipped" : "Pending")}
+                            disabled={order.orderStatus === "Delivered" || order.orderStatus === "Cancelled"}
+                          />
+                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-yellow-600 peer-disabled:opacity-40 shadow-xs"></div>
+                        </label>
+                      </td>
+
+                      {/* 10. Separate Column: Delivered Toggle */}
+                      <td className="px-3.5 py-4 text-center whitespace-nowrap">
+                        <label className="relative inline-flex items-center cursor-pointer group justify-center" title="Toggle Delivered State">
+                          <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={order.orderStatus === "Delivered"}
+                            onChange={(e) => handleFastUpdate(order._id, e.target.checked ? "Delivered" : "Shipped")}
+                            disabled={(order.orderStatus !== "Shipped" && order.orderStatus !== "Delivered") || order.orderStatus === "Cancelled"}
+                          />
+                          <div className="w-10 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 peer-disabled:opacity-40 shadow-xs"></div>
+                        </label>
+                      </td>
+
+                      {/* 11. Order Placed Date */}
+                      <td className="px-3.5 py-4 text-left text-xs text-[#8A867E] whitespace-nowrap">
                         <div className="font-medium text-[#4A473E]">{new Date(order.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
                         <div className="text-[10px] text-[#9A9690] mt-0.5">{new Date(order.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</div>
                       </td>
 
-                      {/* Actions */}
-                      <td className="px-4 py-4 whitespace-nowrap text-center">
+                      {/* 12. Actions */}
+                      <td className="px-3.5 py-4 whitespace-nowrap text-center">
                         <div className="inline-flex items-center gap-1.5">
                           <Link
                             to={`/admin/orders/${order._id}`}
