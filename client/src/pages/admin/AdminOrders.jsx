@@ -55,9 +55,17 @@ export default function AdminOrders() {
       : "text-amber-800 bg-amber-50 border border-amber-200";
   };
 
+  const getFilterCount = (status) => {
+    if (status === "all") return orders.length;
+    if (status === "PAID") return orders.filter(o => o.paymentStatus === "PAID").length;
+    if (status === "Pending") return orders.filter(o => o.paymentStatus === "PENDING" || (o.orderStatus === "Pending" && o.paymentStatus !== "PAID")).length;
+    return orders.filter(o => o.orderStatus === status).length;
+  };
+
   const filteredOrders = orders.filter((order) => {
     if (filter === "all") return true;
     if (filter === "PAID") return order.paymentStatus === "PAID";
+    if (filter === "Pending") return order.paymentStatus === "PENDING" || (order.orderStatus === "Pending" && order.paymentStatus !== "PAID");
     return order.orderStatus === filter;
   });
 
@@ -127,7 +135,7 @@ export default function AdminOrders() {
             }`}
           >
             <span className="relative z-10">
-              {status} {status === "all" ? `(${orders.length})` : `(${orders.filter(o => o.orderStatus === status).length})`}
+              {status} ({getFilterCount(status)})
             </span>
           </button>
         ))}
