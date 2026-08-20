@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useToast } from "../../components/Alert";
 import AdminLayout from "./AdminLayout";
 import Avatar from "../../components/Avatar";
+import { openInvoice } from "../../services/invoiceGenerator";
 
 export default function AdminOrderDetail() {
   const { id } = useParams();
@@ -117,17 +118,28 @@ export default function AdminOrderDetail() {
           </div>
         </div>
 
-        <div className="text-left sm:text-right">
-          <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk mb-0.5">Order Date</p>
-          <p className="font-bold text-[#1C1A16] text-sm font-inter">
-            {new Date(order.createdAt).toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit"
-            })}
-          </p>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => openInvoice(order)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-black bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 transition-all font-grotesk uppercase tracking-wider shadow-gold"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Download Invoice PDF</span>
+          </button>
+          <div className="text-left sm:text-right hidden sm:block">
+            <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk mb-0.5">Order Date</p>
+            <p className="font-bold text-[#1C1A16] text-sm font-inter">
+              {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+              })}
+            </p>
+          </div>
         </div>
       </div>
 

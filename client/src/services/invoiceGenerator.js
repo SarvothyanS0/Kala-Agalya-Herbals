@@ -1,170 +1,623 @@
 // ─── Invoice PDF Generator (Shared Utility) ──────────────────────────────────
 export function generateInvoiceHTML(order) {
-  const invoiceNo = `KAH-${order.orderId || order._id.toString().slice(-8).toUpperCase()}`;
-  const date = new Date(order.createdAt).toLocaleDateString("en-IN", {
-    day: "2-digit", month: "long", year: "numeric"
+  const invoiceNo = `KAH-${order.orderId || (order._id ? order._id.toString().slice(-8).toUpperCase() : "ORDER")}`;
+  const date = new Date(order.paymentDate || order.createdAt).toLocaleDateString("en-IN", {
+    day: "2-digit", month: "short", year: "numeric"
   });
-  const subtotal = order.items.reduce((s, i) => s + i.price * i.quantity, 0);
+  const time = new Date(order.paymentDate || order.createdAt).toLocaleTimeString("en-IN", {
+    hour: "2-digit", minute: "2-digit"
+  });
+
+  const subtotal = (order.items || []).reduce((s, i) => s + (Number(i.price) || 0) * (Number(i.quantity) || 1), 0);
   const gstAmount = Math.round(subtotal * 0.18);
-  const shipping = order.shippingAmount || 0;
+  const shipping = Number(order.shippingAmount) || 0;
   const crossedTotal = subtotal + gstAmount + shipping;
   const finalAmount = subtotal + shipping;
-  const itemsRows = order.items.map(item => `
+
+  const itemsRows = (order.items || []).map((item, idx) => `
     <tr>
-      <td style="padding:14px 16px;border-bottom:1px solid #2a2000;font-size:14px;color:#e5e7eb;">${item.name}</td>
-      <td style="padding:14px 16px;border-bottom:1px solid #2a2000;font-size:13px;color:#9ca3af;text-align:center;">${item.size || "-"}</td>
-      <td style="padding:14px 16px;border-bottom:1px solid #2a2000;font-size:13px;color:#9ca3af;text-align:center;">${item.quantity}</td>
-      <td style="padding:14px 16px;border-bottom:1px solid #2a2000;font-size:13px;color:#9ca3af;text-align:right;">₹${item.price.toFixed(2)}</td>
-      <td style="padding:14px 16px;border-bottom:1px solid #2a2000;font-size:14px;color:#fbbf24;font-weight:700;text-align:right;">₹${(item.price * item.quantity).toFixed(2)}</td>
+      <td class="td-product">
+        <div class="prod-name">${item.name || "Herbal Product"}</div>
+        ${item.size ? `<span class="prod-size-badge">${item.size}</span>` : ""}
+      </td>
+      <td class="td-center">${item.quantity || 1}</td>
+      <td class="td-right">₹${(Number(item.price) || 0).toFixed(2)}</td>
+      <td class="td-right td-total">₹${((Number(item.price) || 0) * (Number(item.quantity) || 1)).toFixed(2)}</td>
     </tr>
   `).join("");
 
-  const addr = order.customer.address;
-  const fullAddress = [addr?.door, addr?.street, addr?.landmark, addr?.district, addr?.state, addr?.pincode]
-    .filter(Boolean).join(", ");
+  const addr = order.customer?.address || {};
+  const addressParts = [addr.door, addr.street, addr.landmark, addr.district, addr.state, addr.pincode].filter(Boolean);
+  const fullAddress = addressParts.length > 0 ? addressParts.join(", ") : "Address not provided";
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Invoice ${invoiceNo} | Kala Agalya Herbals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Tax Invoice #${invoiceNo} | Kala Agalya Herbals</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+    
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: #0a0802; color: #e5e7eb; }
-    .page { max-width: 820px; margin: 0 auto; padding: 48px 40px; background: #0d0b03; min-height: 100vh; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
-    .logo-section {}
-    .logo-name { font-size: 26px; font-weight: 900; color: #fbbf24; letter-spacing: 1px; }
-    .logo-tagline { font-size: 10px; color: #92400e; text-transform: uppercase; letter-spacing: 4px; margin-top: 4px; }
-    .invoice-badge { text-align: right; }
-    .invoice-title { font-size: 36px; font-weight: 900; color: #fbbf24; letter-spacing: -1px; }
-    .invoice-no { font-size: 13px; color: #78350f; text-transform: uppercase; letter-spacing: 3px; margin-top: 6px;}
-    .invoice-date { font-size: 12px; color: #6b7280; margin-top: 4px; }
-    .top-bar { height: 3px; background: linear-gradient(90deg, #b45309, #fbbf24, #b45309); border-radius: 2px; margin-bottom: 40px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 40px; }
-    .info-box { background: #15120a; border: 1px solid #2a1a00; border-radius: 14px; padding: 24px; }
-    .info-label { font-size: 9px; font-weight: 800; color: #78350f; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 14px; }
-    .info-value { font-size: 15px; font-weight: 700; color: #f3f4f6; line-height: 1.4; }
-    .info-sub { font-size: 12px; color: #6b7280; margin-top: 6px; line-height: 1.6; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 32px; background: #15120a; border-radius: 14px; overflow: hidden; border: 1px solid #2a1a00; }
-    thead { background: linear-gradient(135deg, #451a03, #2a1000); }
-    th { padding: 14px 16px; text-align: left; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; color: #fbbf24; }
-    th:last-child, th:nth-child(3), th:nth-child(4) { text-align: right; }
-    th:nth-child(2), th:nth-child(3) { text-align: center; }
-    .totals { display: flex; justify-content: flex-end; margin-bottom: 40px; }
-    .totals-box { background: #15120a; border: 1px solid #2a1a00; border-radius: 14px; padding: 24px 32px; min-width: 300px; }
-    .total-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; color: #9ca3af; border-bottom: 1px solid #1e1500; }
-    .total-row:last-child { border-bottom: none; }
-    .total-row .label { font-weight: 600; }
-    .total-row.crossed-total { color: #6b7280; }
-    .total-row.crossed-total .val { text-decoration: line-through; color: #6b7280; }
-    .total-row.final { padding-top: 14px; margin-top: 6px; border-top: 2px solid #b45309 !important; font-size: 17px; font-weight: 900; color: #fbbf24; border-bottom: none !important; }
-    .status-badge { display: inline-block; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; padding: 4px 12px; border-radius: 99px; }
-    .payment-id { font-size: 11px; color: #6b7280; margin-top: 8px; word-break: break-all; }
-    .footer { text-align: center; padding-top: 32px; border-top: 1px solid #1a1000; }
-    .footer-brand { font-size: 16px; font-weight: 900; color: #fbbf24; letter-spacing: 1px; }
-    .footer-text { font-size: 10px; color: #4b3800; text-transform: uppercase; letter-spacing: 3px; margin-top: 6px; }
-    .footer-note { font-size: 11px; color: #374151; margin-top: 16px; }
+    
+    :root {
+      --bg: #0d0b06;
+      --card-bg: #141108;
+      --card-border: #2e2410;
+      --gold-primary: #f59e0b;
+      --gold-light: #fbbf24;
+      --gold-dark: #b45309;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --emerald: #10b981;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #090804;
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Screen Action Bar */
+    .screen-actions {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(14, 12, 6, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #332608;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .screen-actions .left-info {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .screen-actions .btn-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .action-btn {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .btn-print {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #000;
+      box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+    }
+    .btn-print:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.45);
+    }
+    .btn-close {
+      background: #231c0e;
+      color: #d1d5db;
+      border: 1px solid #3d2f13;
+    }
+    .btn-close:hover {
+      background: #332812;
+      color: #fff;
+    }
+
+    /* Container */
+    .invoice-wrapper {
+      max-width: 820px;
+      margin: 24px auto 48px;
+      padding: 0 16px;
+    }
+
+    .invoice-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: clamp(20px, 4.5vw, 44px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .invoice-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #92400e, #f59e0b, #fbbf24, #92400e);
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .brand-section {
+      flex: 1 1 260px;
+    }
+    .brand-logo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(20px, 3.5vw, 26px);
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-sub {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: #b45309;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .brand-contact-info {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .invoice-meta-section {
+      text-align: right;
+      flex: 1 1 200px;
+    }
+    .invoice-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 800;
+      color: var(--gold-primary);
+      letter-spacing: 1px;
+    }
+    .invoice-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: #d97706;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 4px;
+      font-family: monospace;
+    }
+    .invoice-date-line {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .badge-paid {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-top: 10px;
+    }
+    .payment-ref {
+      font-size: 10px;
+      font-family: monospace;
+      color: var(--text-dim);
+      margin-top: 6px;
+      word-break: break-all;
+    }
+
+    /* Grid for Customer & Shipping */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .info-box {
+      background: #18150c;
+      border: 1px solid #2b220e;
+      border-radius: 14px;
+      padding: 18px 20px;
+    }
+    .info-title {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--gold-dark);
+      margin-bottom: 8px;
+    }
+    .info-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .info-details {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+
+    /* Items Table */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      margin-bottom: 28px;
+      background: #18150c;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      min-width: 480px;
+    }
+    thead {
+      background: #231b0b;
+      border-bottom: 1px solid var(--card-border);
+    }
+    th {
+      padding: 12px 16px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--gold-light);
+    }
+    th.th-center, td.td-center { text-align: center; }
+    th.th-right, td.td-right { text-align: right; }
+    
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #241c0b;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .td-product .prod-name {
+      font-weight: 600;
+      color: #fff;
+    }
+    .prod-size-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      background: #2b200b;
+      color: var(--gold-light);
+      padding: 2px 7px;
+      border-radius: 5px;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+    .td-total {
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    /* Summary / Totals */
+    .summary-section {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 32px;
+    }
+    .summary-card {
+      width: 100%;
+      max-width: 340px;
+      background: #18150c;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px 22px;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .summary-row.discount {
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+    .summary-row.discount .val {
+      text-decoration: line-through;
+    }
+    .summary-row.grand-total {
+      margin-top: 10px;
+      padding-top: 12px;
+      border-top: 1px solid #38290f;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+
+    /* Footer */
+    .footer-section {
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--card-border);
+    }
+    .footer-brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+    .footer-thanks {
+      font-size: 12px;
+      color: #92400e;
+      font-weight: 600;
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .footer-info {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    /* Responsive Mobile Media Queries */
+    @media (max-width: 640px) {
+      .screen-actions {
+        padding: 10px 14px;
+      }
+      .screen-actions .left-info {
+        display: none;
+      }
+      .screen-actions .btn-group {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .action-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 9px 12px;
+        font-size: 11px;
+      }
+      .invoice-wrapper {
+        margin: 12px auto 32px;
+        padding: 0 10px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .invoice-meta-section {
+        text-align: left;
+        width: 100%;
+      }
+      .summary-card {
+        max-width: 100%;
+      }
+    }
+
+    /* High Precision Print & PDF Optimization */
     @media print {
-      body { background: #0a0802 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .page { padding: 24px 30px; }
-      .no-print { display: none !important; }
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body {
+        background: #0d0b06 !important;
+        color: #f3f4f6 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .invoice-wrapper {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .invoice-card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 16px 0 !important;
+        background: transparent !important;
+      }
+      .info-box, .table-container, .summary-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      tr {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Download / Print button (hidden on print) -->
-  <div class="no-print" style="position:fixed;top:20px;right:20px;z-index:999;display:flex;gap:12px;">
-    <button onclick="window.print()" style="cursor:pointer;padding:12px 24px;background:linear-gradient(135deg,#b45309,#fbbf24);color:#0a0802;font-family:'Inter',sans-serif;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:2px;border:none;border-radius:10px;box-shadow:0 0 20px rgba(251,191,36,0.3);">
-      ⬇ Download PDF
-    </button>
-  </div>
 
-  <div class="page">
-    <div class="top-bar"></div>
-
-    <div class="header">
-      <div class="logo-section">
-        <div class="logo-name">🌿 Kala Agalya Herbals</div>
-        <div class="logo-tagline">Pure • Natural • Naturopathy</div>
-      </div>
-      <div class="invoice-badge">
-        <div class="invoice-title">INVOICE</div>
-        <div class="invoice-no">#${invoiceNo}</div>
-        <div class="invoice-date">Date: ${date}</div>
-        <div class="invoice-date" style="margin-top:3px;font-size:10px;color:#6b7280;">Order ID: ${order.orderId || order._id}</div>
-        <div style="margin-top:10px;">
-          <span class="status-badge">✓ PAID</span>
-        </div>
-        ${order.paymentId ? `<div class="payment-id">TXN: ${order.paymentId}</div>` : ""}
-      </div>
+  <!-- Screen Action Floating Bar (Hidden when printed to PDF) -->
+  <div class="screen-actions no-print">
+    <div class="left-info">
+      <span>🌿 Kala Agalya Herbals</span>
+      <span>•</span>
+      <span>Invoice #${invoiceNo}</span>
     </div>
-
-    <div class="grid-2">
-      <div class="info-box">
-        <div class="info-label">Billed To</div>
-        <div class="info-value">${order.customer.name}</div>
-        <div class="info-sub">
-          ${order.customer.email || ""}<br/>
-          ${order.customer.phone || ""}
-          ${order.customer.altPhone ? ` / ${order.customer.altPhone}` : ""}
-        </div>
-      </div>
-      <div class="info-box">
-        <div class="info-label">Shipping Address</div>
-        <div class="info-value" style="font-size:13px;">${fullAddress || "Not provided"}</div>
-      </div>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th style="text-align:center;">Size</th>
-          <th style="text-align:center;">Qty</th>
-          <th style="text-align:right;">Unit Price</th>
-          <th style="text-align:right;">Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${itemsRows}
-      </tbody>
-    </table>
-
-    <div class="totals">
-      <div class="totals-box">
-        <div class="total-row"><span class="label">Original Price</span><span class="val">₹${subtotal.toFixed(2)}</span></div>
-        <div class="total-row"><span class="label">GST</span><span class="val" style="color:#f59e0b;">18%</span></div>
-        <div class="total-row"><span class="label">Shipping</span><span class="val" style="color:${shipping === 0 ? '#4ade80' : '#fbbf24'}">${shipping === 0 ? 'FREE' : '₹' + shipping.toFixed(2)}</span></div>
-        <div class="total-row crossed-total"><span class="label">Total Amount</span><span class="val">₹${crossedTotal.toFixed(2)}</span></div>
-        <div class="total-row final"><span class="label">Final Amount</span><span class="val">₹${finalAmount.toFixed(2)}</span></div>
-      </div>
-    </div>
-
-    <div class="footer">
-      <div class="footer-brand">Kala Agalya Herbals</div>
-      <div class="footer-text">Thank you for your order!</div>
-      <div class="footer-note">
-        For any queries, contact us at kalaagalyaherbals@gmail.com<br/>
-        GSTIN: Applied For &nbsp;•&nbsp; kalaagalyaherbals.in
-      </div>
+    <div class="btn-group">
+      <button class="action-btn btn-close" onclick="window.close()">✕ Close</button>
+      <button class="action-btn btn-print" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+        Download / Print PDF
+      </button>
     </div>
   </div>
+
+  <div class="invoice-wrapper">
+    <div class="invoice-card">
+      
+      <!-- Header -->
+      <div class="header">
+        <div class="brand-section">
+          <div class="brand-logo-title">
+            <span>🌿</span>
+            <span>Kala Agalya Herbals</span>
+          </div>
+          <div class="brand-sub">Pure • Natural • Naturopathy</div>
+          <div class="brand-contact-info">
+            kalaagalyaherbals@gmail.com<br/>
+            kalaagalyaherbals.in &nbsp;•&nbsp; Tamil Nadu, India
+          </div>
+        </div>
+
+        <div class="invoice-meta-section">
+          <div class="invoice-heading">TAX INVOICE</div>
+          <div class="invoice-num">#${invoiceNo}</div>
+          <div class="invoice-date-line">Date: ${date} ${time ? `at ${time}` : ''}</div>
+          <div class="invoice-date-line" style="font-size:11px;">Order Ref: ${order.orderId || order._id}</div>
+          <div>
+            <span class="badge-paid">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              ${order.paymentStatus === "PAID" ? "PAID" : "CONFIRMED"}
+            </span>
+          </div>
+          ${order.paymentId ? `<div class="payment-ref">TXN ID: ${order.paymentId}</div>` : ""}
+        </div>
+      </div>
+
+      <!-- Customer & Shipping -->
+      <div class="info-grid">
+        <div class="info-box">
+          <div class="info-title">Billed To (Customer)</div>
+          <div class="info-name">${order.customer?.name || "Customer"}</div>
+          <div class="info-details">
+            ${order.customer?.email ? `✉ ${order.customer.email}<br/>` : ""}
+            ${order.customer?.phone ? `📞 ${order.customer.phone}` : ""}
+            ${order.customer?.altPhone ? ` / ${order.customer.altPhone}` : ""}
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">Shipping Delivery Address</div>
+          <div class="info-name" style="font-size:13px; font-weight:600;">${order.customer?.name || "Customer"}</div>
+          <div class="info-details">${fullAddress}</div>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Item Description</th>
+              <th class="th-center">Qty</th>
+              <th class="th-right">Unit Price</th>
+              <th class="th-right">Line Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsRows}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Totals Summary -->
+      <div class="summary-section">
+        <div class="summary-card">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>₹${subtotal.toFixed(2)}</span>
+          </div>
+          <div class="summary-row">
+            <span>Estimated GST (18%)</span>
+            <span style="color:#f59e0b;">Included</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping & Handling</span>
+            <span style="color:${shipping === 0 ? '#34d399' : '#fbbf24'}; font-weight:600;">
+              ${shipping === 0 ? 'FREE' : '₹' + shipping.toFixed(2)}
+            </span>
+          </div>
+          <div class="summary-row discount">
+            <span>Standard Price</span>
+            <span class="val">₹${crossedTotal.toFixed(2)}</span>
+          </div>
+          <div class="summary-row grand-total">
+            <span>Grand Total Paid</span>
+            <span>₹${finalAmount.toFixed(2)}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer-section">
+        <div class="footer-brand">Kala Agalya Herbals</div>
+        <div class="footer-thanks">Thank you for choosing Natural Wellness!</div>
+        <div class="footer-info">
+          This is a computer-generated tax invoice. For customer care support or returns, write to us at kalaagalyaherbals@gmail.com.<br/>
+          GSTIN: Applied For &nbsp;•&nbsp; kalaagalyaherbals.in
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>`;
 }
 
 export function openInvoice(order) {
+  if (!order) return;
   const html = generateInvoiceHTML(order);
-  const blob = new Blob([html], { type: "text/html" });
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
   const url = URL.createObjectURL(blob);
+  
   const win = window.open(url, "_blank");
-  // Prompt print dialog automatically after load
-  if (win) {
-    win.onload = () => {
-      setTimeout(() => win.print(), 600);
-    };
+  if (!win || win.closed || typeof win.closed === "undefined") {
+    // If popup was blocked, fallback to creating a hidden download link or navigating
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 }
