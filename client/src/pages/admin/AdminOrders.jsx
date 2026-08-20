@@ -2,7 +2,6 @@ import { API_URL } from "../../services/api";
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AdminLayout from "./AdminLayout";
-import { openInvoice } from "../../services/invoiceGenerator";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -495,24 +494,13 @@ export default function AdminOrders() {
 
                       {/* 12. Actions */}
                       <td className="px-3.5 py-4 whitespace-nowrap text-center">
-                        <div className="inline-flex items-center gap-1.5">
-                          <Link
-                            to={`/admin/orders/${order._id}`}
-                            className="inline-flex items-center px-3 py-1.5 bg-[#FDFBF7] text-yellow-900 border border-yellow-500/25 rounded-xl hover:bg-yellow-500/15 transition-all font-bold text-[10px] font-grotesk uppercase tracking-wider shadow-xs"
-                            title="View Full Order Details"
-                          >
-                            View
-                          </Link>
-                          <button
-                            onClick={() => openInvoice(order)}
-                            className="inline-flex items-center px-2.5 py-1.5 bg-yellow-500/10 text-yellow-800 border border-yellow-500/20 rounded-xl hover:bg-yellow-500/20 transition-all font-bold text-[10px] font-grotesk uppercase tracking-wider"
-                            title="Print / Save Invoice PDF"
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </button>
-                        </div>
+                        <Link
+                          to={`/admin/orders/${order._id}`}
+                          className="inline-flex items-center px-3.5 py-1.5 bg-[#FDFBF7] text-yellow-900 border border-yellow-500/25 rounded-xl hover:bg-yellow-500/15 transition-all font-bold text-[10px] font-grotesk uppercase tracking-wider shadow-xs"
+                          title="View Full Order Details"
+                        >
+                          View
+                        </Link>
                       </td>
                     </tr>
                   ))
