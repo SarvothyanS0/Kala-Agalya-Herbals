@@ -8,6 +8,7 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   const fetchOrders = useCallback(async () => {
@@ -62,11 +63,97 @@ export default function AdminOrders() {
     return orders.filter(o => o.orderStatus === status).length;
   };
 
+  // ── Multi-Field Search Matcher (Name, Order ID, Phone, Date & Time) ──
+  const matchesSearch = (order, query) => {
+    if (!query || !query.trim()) return true;
+    const q = query.toLowerCase().trim();
+
+    // 1. Order ID & Database ID
+    if (order.orderId && order.orderId.toLowerCase().includes(q)) return true;
+    if (order._id && order._id.toString().toLowerCase().includes(q)) return true;
+
+    // 2. Customer Name & Contact Information
+    if (order.customer?.name && order.customer.name.toLowerCase().includes(q)) return true;
+    if (order.customer?.email && order.customer.email.toLowerCase().includes(q)) return true;
+    if (order.customer?.phone && order.customer.phone.toLowerCase().includes(q)) return true;
+    if (order.customer?.altPhone && order.customer.altPhone.toLowerCase().includes(q)) return true;
+    if (order.customer?.address?.district && order.customer.address.district.toLowerCase().includes(q)) return true;
+    if (order.customer?.address?.state && order.customer.address.state.toLowerCase().includes(q)) return true;
+    if (order.customer?.address?.pincode && order.customer.address.pincode.toLowerCase().includes(q)) return true;
+
+    // 3. Payment ID / Transaction Ref
+    if (order.paymentId && order.paymentId.toLowerCase().includes(q)) return true;
+
+    // 4. Order Status or Payment Status
+    if (order.orderStatus && order.orderStatus.toLowerCase().includes(q)) return true;
+    if (order.paymentStatus && order.paymentStatus.toLowerCase().includes(q)) return true;
+
+    // 5. Order Created Date & Time
+    if (order.createdAt) {
+      const created = new Date(order.createdAt);
+      const str1 = created.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }).toLowerCase(); // "20 aug 2026"
+      const str2 = created.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }).toLowerCase(); // "20 august 2026"
+      const str3 = created.toLocaleDateString("en-IN").toLowerCase(); // "20/08/2026"
+      const strIso = created.toISOString().toLowerCase(); // "2026-08-20"
+      const time12 = created.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }).toLowerCase(); // "08:30 pm"
+      const time24 = created.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }).toLowerCase(); // "20:30"
+      
+      if (
+        str1.includes(q) ||
+        str2.includes(q) ||
+        str3.includes(q) ||
+        strIso.includes(q) ||
+        time12.includes(q) ||
+        time24.includes(q)
+      ) {
+        return true;
+      }
+    }
+
+    // 6. Payment Confirmed Date & Time
+    if (order.paymentDate) {
+      const pay = new Date(order.paymentDate);
+      const str1 = pay.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }).toLowerCase();
+      const str2 = pay.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }).toLowerCase();
+      const str3 = pay.toLocaleDateString("en-IN").toLowerCase();
+      const strIso = pay.toISOString().toLowerCase();
+      const time12 = pay.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }).toLowerCase();
+      const time24 = pay.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }).toLowerCase();
+
+      if (
+        str1.includes(q) ||
+        str2.includes(q) ||
+        str3.includes(q) ||
+        strIso.includes(q) ||
+        time12.includes(q) ||
+        time24.includes(q)
+      ) {
+        return true;
+      }
+    }
+
+    // 7. Product Item Names
+    if (order.items && Array.isArray(order.items)) {
+      if (order.items.some(item => item.name && item.name.toLowerCase().includes(q))) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const filteredOrders = orders.filter((order) => {
-    if (filter === "all") return true;
-    if (filter === "PAID") return order.paymentStatus === "PAID";
-    if (filter === "Pending") return order.paymentStatus === "PENDING" || (order.orderStatus === "Pending" && order.paymentStatus !== "PAID");
-    return order.orderStatus === filter;
+    // Tab filter
+    let statusMatch = false;
+    if (filter === "all") statusMatch = true;
+    else if (filter === "PAID") statusMatch = order.paymentStatus === "PAID";
+    else if (filter === "Pending") statusMatch = order.paymentStatus === "PENDING" || (order.orderStatus === "Pending" && order.paymentStatus !== "PAID");
+    else statusMatch = order.orderStatus === filter;
+
+    if (!statusMatch) return false;
+
+    // Search query filter
+    return matchesSearch(order, searchQuery);
   });
 
   const handleFastUpdate = async (orderId, newStatus) => {
@@ -106,10 +193,11 @@ export default function AdminOrders() {
 
   return (
     <AdminLayout>
+      {/* Header section */}
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria">Order Management</h1>
-          <p className="text-[#6C685F] text-sm font-inter">Monitor, process, and download customer orders & invoices</p>
+          <p className="text-[#6C685F] text-sm font-inter">Search, monitor, process, and download customer orders & invoices</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="bg-white border border-yellow-500/20 px-4 py-2 rounded-2xl shadow-xs text-xs font-grotesk font-bold text-[#6C685F]">
@@ -121,42 +209,89 @@ export default function AdminOrders() {
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="bg-white rounded-2xl border border-yellow-500/12 p-2 mb-6 flex flex-wrap items-center gap-2 shadow-xs">
-        {/* Order-status filter tabs */}
-        {["all", "Pending", "Packed", "Shipped", "Delivered"].map((status) => (
-          <button
-            key={status}
-            onClick={() => setFilter(status)}
-            className={`px-4 py-2.5 rounded-xl font-bold font-grotesk transition-all duration-300 relative overflow-hidden text-xs uppercase tracking-wider ${
-              filter === status
-                ? "text-black bg-gradient-to-r from-yellow-500 to-amber-600 shadow-gold"
-                : "text-[#6C685F] hover:text-[#1C1A16] hover:bg-yellow-500/8"
-            }`}
-          >
-            <span className="relative z-10">
-              {status} ({getFilterCount(status)})
-            </span>
-          </button>
-        ))}
+      {/* Search & Filter Controls Card */}
+      <div className="bg-white rounded-3xl border border-yellow-500/15 p-4 sm:p-5 mb-6 shadow-xs space-y-4">
+        {/* ── Search Bar ── */}
+        <div className="relative w-full">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-yellow-700">
+            <svg className="w-5 h-5 text-yellow-600/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by customer name, order ID, phone, date (e.g. 20 Aug, 20/08), or time (e.g. 08:30 PM)..."
+            className="w-full pl-11 pr-10 py-3.5 bg-[#FDFBF7] border border-yellow-500/20 rounded-2xl text-sm font-inter text-[#1C1A16] placeholder-[#9A9690] focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-600 transition-all"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#9A9690] hover:text-[#1C1A16] transition-colors"
+              title="Clear search"
+            >
+              <svg className="w-5 h-5 bg-yellow-500/15 hover:bg-yellow-500/30 p-1 rounded-full text-yellow-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
 
-        {/* Divider */}
-        <div className="hidden sm:block w-px h-6 bg-yellow-500/20 mx-1" />
+        {/* ── Filter Tabs & Status Strip ── */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-yellow-500/10">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Order-status filter tabs */}
+            {["all", "Pending", "Packed", "Shipped", "Delivered"].map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilter(status)}
+                className={`px-4 py-2 rounded-xl font-bold font-grotesk transition-all duration-300 relative overflow-hidden text-xs uppercase tracking-wider ${
+                  filter === status
+                    ? "text-black bg-gradient-to-r from-yellow-500 to-amber-600 shadow-gold"
+                    : "text-[#6C685F] hover:text-[#1C1A16] hover:bg-yellow-500/8 border border-transparent"
+                }`}
+              >
+                <span className="relative z-10">
+                  {status} ({getFilterCount(status)})
+                </span>
+              </button>
+            ))}
 
-        {/* Payment-status filter tab — Paid */}
-        <button
-          onClick={() => setFilter("PAID")}
-          className={`px-4 py-2.5 rounded-xl font-bold font-grotesk transition-all duration-300 text-xs uppercase tracking-wider flex items-center gap-1.5 ${
-            filter === "PAID"
-              ? "text-white bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md"
-              : "text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100"
-          }`}
-        >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-          </svg>
-          Paid ({orders.filter(o => o.paymentStatus === "PAID").length})
-        </button>
+            {/* Divider */}
+            <div className="hidden sm:block w-px h-5 bg-yellow-500/20 mx-1" />
+
+            {/* Payment-status filter tab — Paid */}
+            <button
+              onClick={() => setFilter("PAID")}
+              className={`px-4 py-2 rounded-xl font-bold font-grotesk transition-all duration-300 text-xs uppercase tracking-wider flex items-center gap-1.5 ${
+                filter === "PAID"
+                  ? "text-white bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md"
+                  : "text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100"
+              }`}
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+              </svg>
+              Paid ({orders.filter(o => o.paymentStatus === "PAID").length})
+            </button>
+          </div>
+
+          {/* Active Search / Match Summary Badge */}
+          {searchQuery && (
+            <div className="text-xs font-inter text-[#6C685F] flex items-center gap-2">
+              <span>
+                Found <strong className="text-yellow-800 font-bold">{filteredOrders.length}</strong> matching order{filteredOrders.length !== 1 ? 's' : ''}
+              </span>
+              <button
+                onClick={() => setSearchQuery("")}
+                className="text-[11px] text-yellow-700 hover:underline font-bold font-grotesk uppercase tracking-wider"
+              >
+                Reset
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Orders Table Container */}
@@ -345,8 +480,22 @@ export default function AdminOrders() {
                     <td colSpan={tableColumns.length} className="px-6 py-20 text-center text-[#6C685F]">
                       <div className="flex flex-col items-center">
                         <svg className="w-16 h-16 text-yellow-600/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-                        <p className="text-xl font-bold text-[#1C1A16] font-grotesk mb-1">No Orders Found</p>
-                        <p className="text-sm font-inter">Try selecting a different filter above</p>
+                        <p className="text-xl font-bold text-[#1C1A16] font-grotesk mb-1">
+                          {searchQuery ? "No Orders Matching Search" : "No Orders Found"}
+                        </p>
+                        <p className="text-sm font-inter">
+                          {searchQuery
+                            ? `No orders found matching "${searchQuery}". Try a different name, order ID, date, or time.`
+                            : "Try selecting a different filter above"}
+                        </p>
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery("")}
+                            className="mt-4 px-4 py-2 bg-yellow-500/10 text-yellow-800 border border-yellow-500/25 rounded-xl font-grotesk text-xs font-bold uppercase tracking-wider hover:bg-yellow-500/20 transition-all"
+                          >
+                            Clear Search
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
