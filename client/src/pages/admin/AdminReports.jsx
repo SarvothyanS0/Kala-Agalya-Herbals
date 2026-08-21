@@ -14,42 +14,49 @@ export default function AdminReports() {
   const navigate = useNavigate();
   const { addToast } = useToast();
 
+  // Local date helper (YYYY-MM-DD) avoiding UTC midnight shift
+  const toLocalDateString = (d = new Date()) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
     if (!token) {
       navigate("/admin/login");
       return;
     }
-    const today = new Date().toISOString().split("T")[0];
+    const today = toLocalDateString();
     setSingleDate(today);
     setEndDate(today);
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    setStartDate(thirtyDaysAgo.toISOString().split("T")[0]);
+    setStartDate(toLocalDateString(thirtyDaysAgo));
   }, [navigate]);
 
   const applyPreset = (preset) => {
     const today = new Date();
-    const fmt = (d) => d.toISOString().split("T")[0];
     if (preset === "today") {
       setMode("single");
-      setSingleDate(fmt(today));
+      setSingleDate(toLocalDateString(today));
     } else if (preset === "yesterday") {
       const y = new Date(today);
       y.setDate(y.getDate() - 1);
       setMode("single");
-      setSingleDate(fmt(y));
+      setSingleDate(toLocalDateString(y));
     } else if (preset === "last7") {
       const s = new Date(today);
       s.setDate(s.getDate() - 6);
       setMode("range");
-      setStartDate(fmt(s));
-      setEndDate(fmt(today));
+      setStartDate(toLocalDateString(s));
+      setEndDate(toLocalDateString(today));
     } else if (preset === "thisMonth") {
       const s = new Date(today.getFullYear(), today.getMonth(), 1);
       setMode("range");
-      setStartDate(fmt(s));
-      setEndDate(fmt(today));
+      setStartDate(toLocalDateString(s));
+      setEndDate(toLocalDateString(today));
     }
   };
 
@@ -92,26 +99,38 @@ export default function AdminReports() {
     // ── Filter: PAID orders ONLY ──────────────────────────────────
     const paidOrders = report.orders.filter(o => o.paymentStatus === "PAID");
     if (paidOrders.length === 0) {
-      addToast("No PAID orders found in this date range", "error");
+      addToast("No PAID orders found for the selected date", "error");
       return;
     }
 
-    // ── Helper: format date cleanly ───────────────────────────────
+    // ── Helper: format date cleanly in IST ────────────────────────
     const fmtDate = (dateStr) => {
       if (!dateStr) return "N/A";
       const d = new Date(dateStr);
-      const day   = String(d.getDate()).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
       const month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
-      const year  = d.getFullYear();
-      const hrs   = String(d.getHours()).padStart(2, "0");
-      const mins  = String(d.getMinutes()).padStart(2, "0");
+      const year = d.getFullYear();
+      const hrs = String(d.getHours()).padStart(2, "0");
+      const mins = String(d.getMinutes()).padStart(2, "0");
       return `${day}-${month}-${year} ${hrs}:${mins}`;
+    };
+
+    // ── Helper: clean string (remove newlines and trim) ───────────
+    const cleanStr = (val) => {
+      if (!val) return "N/A";
+      return String(val).replace(/[\r\n]+/g, ", ").trim();
     };
 
     // ── Helper: escape CSV cell ───────────────────────────────────
     const esc = (val) => `"${String(val ?? "N/A").replace(/"/g, '""')}"`;
+    // Text formula escape (keeps phone & pincode as exact text without scientific notation 6.38E+09)
+    const escText = (val) => {
+      if (!val || val === "N/A") return '"N/A"';
+      const clean = String(val).replace(/[\r\n]+/g, "").replace(/"/g, '""').trim();
+      return `="${clean}"`;
+    };
 
-    // ── Column headers ────────────────────────────────────────────
+    // ── Column headers (Order Status removed as requested) ────────
     const headers = [
       "S.No",
       "Order ID",
@@ -130,10 +149,9 @@ export default function AdminReports() {
       "Products Ordered",
       "Total Amount (₹)",
       "Payment Status",
-      "Order Status",
     ];
 
-    // ── Build rows ────────────────────────────────────────────────
+    // ── Build rows (PAID orders only) ─────────────────────────────
     const rows = paidOrders.map((order, idx) => {
       const addr = order.customer?.address || {};
       const products = (order.items || [])
@@ -141,28 +159,27 @@ export default function AdminReports() {
         .join(" | ");
 
       return [
-        idx + 1,
-        order.orderId || order._id,
-        fmtDate(order.createdAt),
-        fmtDate(order.paymentDate || order.createdAt),
-        order.customer?.name   || "N/A",
-        order.customer?.phone  || "N/A",
-        order.customer?.altPhone || "N/A",
-        order.customer?.email  || "N/A",
-        addr.door      || "N/A",
-        addr.street    || "N/A",
-        addr.landmark  || "N/A",
-        addr.district  || "N/A",
-        addr.state     || "N/A",
-        addr.pincode   || "N/A",
-        products       || "N/A",
-        order.totalAmount || 0,
-        "PAID",
-        order.orderStatus || "N/A",
-      ].map(esc);
+        esc(idx + 1),
+        escText(order.orderId || (order._id ? order._id.toString().slice(-8).toUpperCase() : "N/A")),
+        esc(fmtDate(order.createdAt)),
+        esc(fmtDate(order.paymentDate || order.createdAt)),
+        esc(cleanStr(order.customer?.name)),
+        escText(order.customer?.phone),
+        escText(order.customer?.altPhone),
+        esc(cleanStr(order.customer?.email)),
+        esc(cleanStr(addr.door)),
+        esc(cleanStr(addr.street)),
+        esc(cleanStr(addr.landmark)),
+        esc(cleanStr(addr.district)),
+        esc(cleanStr(addr.state)),
+        escText(addr.pincode),
+        esc(cleanStr(products)),
+        esc(order.totalAmount || 0),
+        esc("PAID"),
+      ];
     });
 
-    // ── Assemble CSV with UTF-8 BOM (so Excel opens correctly) ───
+    // ── Assemble CSV with UTF-8 BOM (so Excel opens cleanly) ──────
     const BOM = "\uFEFF";
     const csvContent = BOM + [
       headers.map(esc).join(","),
@@ -171,10 +188,10 @@ export default function AdminReports() {
 
     // ── Trigger download ──────────────────────────────────────────
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url  = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     const effectiveStart = mode === "single" ? singleDate : startDate;
-    const effectiveEnd   = mode === "single" ? singleDate : endDate;
+    const effectiveEnd = mode === "single" ? singleDate : endDate;
     link.setAttribute("href", url);
     link.setAttribute("download", `KAH_Paid_Orders_${effectiveStart}_to_${effectiveEnd}.csv`);
     link.style.visibility = "hidden";

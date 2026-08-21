@@ -163,16 +163,17 @@ exports.getReports = async (req, res) => {
     
     const query = {};
     if (startDate && endDate) {
-      const start = new Date(startDate);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
+      // Explicitly construct IST (+05:30) boundaries so Railway/UTC server filters exact Indian calendar days
+      const start = new Date(`${startDate}T00:00:00.000+05:30`);
+      const end = new Date(`${endDate}T23:59:59.999+05:30`);
       query.createdAt = { $gte: start, $lte: end };
     }
     
     const orders = await Order.find(query).sort({ createdAt: -1 });
     
-    const totalSales = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+    // Only calculate sales & product volumes from PAID orders
+    const paidOrders = orders.filter(o => o.paymentStatus === "PAID");
+    const totalSales = paidOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
     
     // Get all active products to ensure even 0-sale products are listed
     const allProducts = await Product.find({ isActive: true });
@@ -190,7 +191,7 @@ exports.getReports = async (req, res) => {
       }
     });
 
-    orders.forEach(order => {
+    paidOrders.forEach(order => {
       if (order.items && Array.isArray(order.items)) {
         order.items.forEach(item => {
           const name = item.name || "Unknown Product";
@@ -214,6 +215,7 @@ exports.getReports = async (req, res) => {
       success: true,
       report: {
         totalOrders: orders.length,
+        paidOrdersCount: paidOrders.length,
         totalSales,
         bestSelling,
         orders
