@@ -191,12 +191,21 @@ exports.checkStatus = async (req, res) => {
         });
     
         const data = await response.json();
+
+        // ── DIAGNOSTIC LOG: See full PhonePe response in Railway logs ──────
+        console.log("[checkStatus] PhonePe HTTP status:", response.status);
+        console.log("[checkStatus] PhonePe raw response:", JSON.stringify(data, null, 2));
         
-        // V2 State is usually inside the main object or data.state
-        const state = data.state || (data.data && data.data.state);
+        // V2 State can be at root or nested — check all known locations
+        const state = data.state 
+          || (data.data && data.data.state)
+          || (data.paymentDetails && data.paymentDetails[0] && data.paymentDetails[0].state);
+
+        console.log("[checkStatus] Resolved state:", state, "| merchantOrderId:", merchantOrderId);
     
-        if (response.ok && (state === "COMPLETED" || state === "SUCCESS")) {
+        if (response.ok && (state === "COMPLETED" || state === "SUCCESS" || state === "PAYMENT_SUCCESS")) {
           const orderId = merchantOrderId.startsWith("T") ? merchantOrderId.slice(1) : merchantOrderId;
+          console.log("[checkStatus] Updating order to PAID, orderId:", orderId);
           await Order.findByIdAndUpdate(orderId, {
             paymentStatus: "PAID",
             paymentDate: new Date(),
@@ -204,6 +213,7 @@ exports.checkStatus = async (req, res) => {
           });
           res.json({ success: true, message: "Payment Verified" });
         } else {
+          console.log("[checkStatus] Payment NOT verified. state:", state, "| data.message:", data.message);
           res.json({ success: false, message: data.message || "Payment not completed" });
         }
     
@@ -211,6 +221,73 @@ exports.checkStatus = async (req, res) => {
         console.error("Status Check Error:", error);
         res.status(500).json({ success: false, message: error.message });
     }
+};
+
+/**
+ * PhonePe Webhook / Callback Handler
+ * PhonePe POSTs to this endpoint after every payment (success or failure).
+ * Event: checkout.order.completed / checkout.order.failed
+ */
+exports.phonePeCallback = async (req, res) => {
+  try {
+    console.log("[phonePeCallback] Received callback from PhonePe");
+    console.log("[phonePeCallback] Body:", JSON.stringify(req.body, null, 2));
+
+    const body = req.body || {};
+
+    // PhonePe checkout event structure:
+    // { event: "checkout.order.completed", payload: { merchantOrderId, orderId, state, ... } }
+    const event = body.event || "";
+    const payload = body.payload || body.data || body;
+
+    const merchantOrderId =
+      payload.merchantOrderId ||
+      payload.transactionId ||
+      body.merchantOrderId;
+
+    // Determine if payment is successful from the event name OR the state field
+    const isSuccess =
+      event === "checkout.order.completed" ||
+      payload.state === "COMPLETED" ||
+      payload.state === "SUCCESS" ||
+      payload.state === "PAYMENT_SUCCESS" ||
+      body.state === "COMPLETED";
+
+    console.log("[phonePeCallback] event:", event, "| merchantOrderId:", merchantOrderId, "| isSuccess:", isSuccess);
+
+    if (!merchantOrderId) {
+      console.warn("[phonePeCallback] No merchantOrderId found in callback body");
+      return res.status(200).json({ success: false, message: "No merchantOrderId" });
+    }
+
+    if (isSuccess) {
+      const orderId = merchantOrderId.startsWith("T")
+        ? merchantOrderId.slice(1)
+        : merchantOrderId;
+
+      // Only update if still PENDING (avoid duplicate updates)
+      const order = await Order.findById(orderId);
+      if (order && order.paymentStatus !== "PAID") {
+        await Order.findByIdAndUpdate(orderId, {
+          paymentStatus: "PAID",
+          paymentDate: new Date(),
+          paymentId: payload.orderId || body.orderId || merchantOrderId
+        });
+        console.log("[phonePeCallback] ✅ Order", orderId, "marked as PAID via webhook");
+      } else if (order && order.paymentStatus === "PAID") {
+        console.log("[phonePeCallback] Order", orderId, "already PAID — skipping duplicate update");
+      }
+    } else {
+      console.log("[phonePeCallback] event:", event, "— no PAID update needed");
+    }
+
+    // PhonePe expects a 200 OK — always send it
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error("[phonePeCallback] Error:", err);
+    // Still respond 200 so PhonePe doesn't retry endlessly
+    res.status(200).json({ success: false, message: err.message });
+  }
 };
 
 /**
