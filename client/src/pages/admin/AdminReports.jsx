@@ -89,55 +89,102 @@ export default function AdminReports() {
       return;
     }
 
+    // ── Filter: PAID orders ONLY ──────────────────────────────────
+    const paidOrders = report.orders.filter(o => o.paymentStatus === "PAID");
+    if (paidOrders.length === 0) {
+      addToast("No PAID orders found in this date range", "error");
+      return;
+    }
+
+    // ── Helper: format date cleanly ───────────────────────────────
+    const fmtDate = (dateStr) => {
+      if (!dateStr) return "N/A";
+      const d = new Date(dateStr);
+      const day   = String(d.getDate()).padStart(2, "0");
+      const month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+      const year  = d.getFullYear();
+      const hrs   = String(d.getHours()).padStart(2, "0");
+      const mins  = String(d.getMinutes()).padStart(2, "0");
+      return `${day}-${month}-${year} ${hrs}:${mins}`;
+    };
+
+    // ── Helper: escape CSV cell ───────────────────────────────────
+    const esc = (val) => `"${String(val ?? "N/A").replace(/"/g, '""')}"`;
+
+    // ── Column headers ────────────────────────────────────────────
     const headers = [
-      "Order ID", "Customer Name", "Phone", "Address", "District",
-      "State", "Pincode", "Products", "Total Amount",
-      "Payment Status", "Order Status", "Dispatched", "Order Date",
+      "S.No",
+      "Order ID",
+      "Order Date & Time",
+      "Payment Date & Time",
+      "Customer Name",
+      "Phone",
+      "Alt Phone",
+      "Email",
+      "Door / Flat No",
+      "Street",
+      "Landmark",
+      "District",
+      "State",
+      "Pincode",
+      "Products Ordered",
+      "Total Amount (₹)",
+      "Payment Status",
+      "Order Status",
     ];
 
-    const rows = report.orders.map((order) => {
-      const products = order.items
-        ? order.items.map((item) => `${item.name || "Unknown Product"} (${item.size || "N/A"}) x${item.quantity || 0}`).join("; ")
-        : "";
-      const door = order.customer?.address?.door || "";
-      const street = order.customer?.address?.street || "";
-      const landmark = order.customer?.address?.landmark || "";
-      const address = [door, street, landmark].filter(Boolean).join(", ") || "N/A";
+    // ── Build rows ────────────────────────────────────────────────
+    const rows = paidOrders.map((order, idx) => {
+      const addr = order.customer?.address || {};
+      const products = (order.items || [])
+        .map(i => `${i.name || "Product"} (${i.size || "N/A"}) x${i.quantity || 1} @ ₹${i.price || 0}`)
+        .join(" | ");
+
       return [
+        idx + 1,
         order.orderId || order._id,
-        order.customer?.name || "N/A",
-        order.customer?.phone || "N/A",
-        address,
-        order.customer?.address?.district || "N/A",
-        order.customer?.address?.state || "N/A",
-        order.customer?.address?.pincode || "N/A",
-        products,
+        fmtDate(order.createdAt),
+        fmtDate(order.paymentDate || order.createdAt),
+        order.customer?.name   || "N/A",
+        order.customer?.phone  || "N/A",
+        order.customer?.altPhone || "N/A",
+        order.customer?.email  || "N/A",
+        addr.door      || "N/A",
+        addr.street    || "N/A",
+        addr.landmark  || "N/A",
+        addr.district  || "N/A",
+        addr.state     || "N/A",
+        addr.pincode   || "N/A",
+        products       || "N/A",
         order.totalAmount || 0,
-        order.paymentStatus || "N/A",
+        "PAID",
         order.orderStatus || "N/A",
-        ["Shipped", "Delivered"].includes(order.orderStatus) ? "Yes" : "No",
-        order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN") : "N/A",
-      ];
+      ].map(esc);
     });
 
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")),
-    ].join("\n");
+    // ── Assemble CSV with UTF-8 BOM (so Excel opens correctly) ───
+    const BOM = "\uFEFF";
+    const csvContent = BOM + [
+      headers.map(esc).join(","),
+      ...rows.map(r => r.join(",")),
+    ].join("\r\n");
 
+    // ── Trigger download ──────────────────────────────────────────
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url  = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
     const effectiveStart = mode === "single" ? singleDate : startDate;
-    const effectiveEnd = mode === "single" ? singleDate : endDate;
+    const effectiveEnd   = mode === "single" ? singleDate : endDate;
     link.setAttribute("href", url);
-    link.setAttribute("download", `orders_${effectiveStart}_to_${effectiveEnd}.csv`);
+    link.setAttribute("download", `KAH_Paid_Orders_${effectiveStart}_to_${effectiveEnd}.csv`);
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    addToast("Report downloaded successfully", "success");
+    URL.revokeObjectURL(url);
+    addToast(`Downloaded ${paidOrders.length} paid order(s) successfully ✅`, "success");
   };
+
 
   return (
     <AdminLayout>
