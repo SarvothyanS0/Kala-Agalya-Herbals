@@ -10,8 +10,8 @@ const connectDB = require("./config/db");
 connectDB();
 
 const app = express();
-// Enable full trust proxy for multi-hop load balancers (AWS ALB, Nginx, Cloudflare, Railway, Render)
-app.set("trust proxy", true);
+// Enable trust proxy for Railway's single-hop load balancer (1 = one proxy level)
+app.set("trust proxy", 1);
 
 // Gzip compress all responses — reduces JSON size by ~70%
 app.use(compression());
