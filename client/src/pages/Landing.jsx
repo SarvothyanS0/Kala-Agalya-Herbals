@@ -5,6 +5,153 @@ import { useToast } from "../components/Alert";
 import { API_URL, BASE_URL } from "../services/api";
 import ImageWithSkeleton from "../components/ImageWithSkeleton";
 
+/* ── Query Section Component ──────────────────────────────────── */
+function QuerySection() {
+  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.phone.trim() || !form.message.trim()) {
+      setError("Please fill in Name, Phone and Message.");
+      return;
+    }
+    setError("");
+    setSubmitting(true);
+    try {
+      const res = await fetch(`${API_URL}/queries`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+        setForm({ name: "", phone: "", email: "", message: "" });
+      } else {
+        setError(data.message || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Server error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <section id="query" className="py-20 bg-[#FDFBF7] border-t border-yellow-500/10">
+      <div className="max-w-3xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <span className="inline-block px-4 py-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-yellow-800 text-[10px] font-grotesk font-extrabold uppercase tracking-[0.25em] mb-4">
+            💬 Have a Question?
+          </span>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-[#1C1A16] font-soria mb-3">
+            We're Here to <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">Help You</span>
+          </h2>
+          <p className="text-[#6C685F] text-sm max-w-md mx-auto font-inter leading-relaxed">
+            Have a question about our products, delivery, or ingredients? Send us a message and we'll get back to you soon.
+          </p>
+        </div>
+
+        {/* Form Card */}
+        <div className="bg-white rounded-3xl border border-yellow-500/15 shadow-lg overflow-hidden">
+          <div className="h-1.5 w-full bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600" />
+
+          {submitted ? (
+            <div className="p-12 text-center">
+              <div className="w-20 h-20 bg-green-50 border-2 border-green-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-[#1C1A16] font-soria mb-2">Message Received! 🎉</h3>
+              <p className="text-[#6C685F] font-inter text-sm mb-6">Thank you for reaching out. We'll get back to you shortly on your phone or email.</p>
+              <button
+                onClick={() => setSubmitted(false)}
+                className="px-6 py-2.5 bg-yellow-500/10 border border-yellow-500/30 text-yellow-700 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-yellow-500/20 transition-all"
+              >
+                Send Another Query
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* Name */}
+                <div>
+                  <label className="block text-[10px] font-bold text-[#7C786E] uppercase tracking-[0.2em] mb-2 font-grotesk">Full Name *</label>
+                  <input
+                    type="text" name="name" value={form.name} onChange={handleChange}
+                    placeholder="e.g. Priya Sharma"
+                    className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm text-[#1C1A16] placeholder-[#9A9690] focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-500 transition-all font-inter"
+                  />
+                </div>
+                {/* Phone */}
+                <div>
+                  <label className="block text-[10px] font-bold text-[#7C786E] uppercase tracking-[0.2em] mb-2 font-grotesk">Phone Number *</label>
+                  <input
+                    type="tel" name="phone" value={form.phone} onChange={handleChange}
+                    placeholder="e.g. 9876543210"
+                    className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm text-[#1C1A16] placeholder-[#9A9690] focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-500 transition-all font-inter"
+                  />
+                </div>
+              </div>
+              {/* Email */}
+              <div>
+                <label className="block text-[10px] font-bold text-[#7C786E] uppercase tracking-[0.2em] mb-2 font-grotesk">Email Address <span className="text-[#9A9690] normal-case font-normal">(optional)</span></label>
+                <input
+                  type="email" name="email" value={form.email} onChange={handleChange}
+                  placeholder="e.g. priya@gmail.com"
+                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm text-[#1C1A16] placeholder-[#9A9690] focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-500 transition-all font-inter"
+                />
+              </div>
+              {/* Message */}
+              <div>
+                <label className="block text-[10px] font-bold text-[#7C786E] uppercase tracking-[0.2em] mb-2 font-grotesk">Your Message *</label>
+                <textarea
+                  name="message" value={form.message} onChange={handleChange} rows={4}
+                  placeholder="Type your question or message here..."
+                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm text-[#1C1A16] placeholder-[#9A9690] focus:outline-none focus:ring-2 focus:ring-yellow-500/30 focus:border-yellow-500 transition-all resize-none font-inter"
+                />
+              </div>
+              {/* Error */}
+              {error && (
+                <p className="text-red-500 text-xs font-inter flex items-center gap-2">
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  {error}
+                </p>
+              )}
+              {/* Submit */}
+              <button
+                type="submit" disabled={submitting}
+                className="w-full py-4 bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold rounded-xl uppercase tracking-widest text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed font-grotesk flex items-center justify-center gap-3"
+              >
+                {submitting ? (
+                  <><div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" /><span>Sending...</span></>
+                ) : (
+                  <><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg><span>Send My Query</span></>
+                )}
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* Contact info strip */}
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-xs text-[#7C786E] font-inter">
+          <span className="flex items-center gap-2">📞 <a href="tel:+916382460820" className="hover:text-yellow-700 transition-colors">+91 6382460820</a></span>
+          <span className="hidden sm:block w-px h-4 bg-yellow-500/20" />
+          <span className="flex items-center gap-2">✉️ <a href="mailto:kalaagalyaherbals@gmail.com" className="hover:text-yellow-700 transition-colors">kalaagalyaherbals@gmail.com</a></span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
 /* ── Static data ──────────────────────────────────────────────── */
 const heroSlides = [
   { title: "Revitalize Your", highlight: "Natural Shine",    subtitle: "Experience the ancient power of 18+ rare herbs blended in pure coconut oil.", badge: "🌿 100% Naturopathy & Organic",  image: "/images/Home 1.webp", alt: "Kala Agalya Herbals Naturopathy Hair Oil bottle" },
@@ -1205,6 +1352,9 @@ export default function Landing() {
           </a>
         </div>
       </section>
+
+      {/* ── Query / Contact Section ───────────────────────────────── */}
+      <QuerySection />
     </div>
   );
 }

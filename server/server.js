@@ -75,6 +75,7 @@ app.use("/api/admin/orders", require("./routes/adminOrderRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/banners", require("./routes/bannerRoutes"));
+app.use("/api/queries", require("./routes/queryRoutes"));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

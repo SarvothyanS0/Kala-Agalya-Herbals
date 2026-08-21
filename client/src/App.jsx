@@ -23,6 +23,7 @@ import AdminRoute from "./routes/AdminRoute";
 import AdminReports from "./pages/admin/AdminReports";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminReviews from "./pages/admin/AdminReviews";
+import AdminQueries from "./pages/admin/AdminQueries";
 import { ToastProvider } from "./components/Alert";
 import Footer from "./components/Footer.jsx";
 import Contact from "./pages/Contact";
@@ -152,6 +153,7 @@ function Layout() {
           <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
           <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
           <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
+          <Route path="/admin/queries" element={<AdminRoute><AdminQueries /></AdminRoute>} />
         </Routes>
       </main>
       {(!isAdminRoute && !isAuthRoute) && <Footer />}
