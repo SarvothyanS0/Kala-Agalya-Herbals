@@ -107,12 +107,17 @@ export default function AdminReports() {
     const fmtDate = (dateStr) => {
       if (!dateStr) return "N/A";
       const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return "N/A";
       const day = String(d.getDate()).padStart(2, "0");
       const month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
       const year = d.getFullYear();
-      const hrs = String(d.getHours()).padStart(2, "0");
+      let hrs = d.getHours();
       const mins = String(d.getMinutes()).padStart(2, "0");
-      return `${day}-${month}-${year} ${hrs}:${mins}`;
+      const ampm = hrs >= 12 ? "PM" : "AM";
+      hrs = hrs % 12;
+      hrs = hrs ? hrs : 12;
+      const formattedHrs = String(hrs).padStart(2, "0");
+      return `${day}-${month}-${year} ${formattedHrs}:${mins} ${ampm}`;
     };
 
     // ── Helper: clean string (remove newlines and trim) ───────────
@@ -123,10 +128,10 @@ export default function AdminReports() {
 
     // ── Helper: escape CSV cell ───────────────────────────────────
     const esc = (val) => `"${String(val ?? "N/A").replace(/"/g, '""')}"`;
-    // Text formula escape (keeps phone & pincode as exact text without scientific notation 6.38E+09)
+    // Text formula escape (prevents scientific notation for phone/pincode & prevents Excel ##### date overflow)
     const escText = (val) => {
       if (!val || val === "N/A") return '"N/A"';
-      const clean = String(val).replace(/[\r\n]+/g, "").replace(/"/g, '""').trim();
+      const clean = String(val).replace(/[\r\n]+/g, " ").replace(/"/g, '""').trim();
       return `="${clean}"`;
     };
 
@@ -161,8 +166,8 @@ export default function AdminReports() {
       return [
         esc(idx + 1),
         escText(order.orderId || (order._id ? order._id.toString().slice(-8).toUpperCase() : "N/A")),
-        esc(fmtDate(order.createdAt)),
-        esc(fmtDate(order.paymentDate || order.createdAt)),
+        escText(fmtDate(order.createdAt)),
+        escText(fmtDate(order.paymentDate || order.createdAt)),
         esc(cleanStr(order.customer?.name)),
         escText(order.customer?.phone),
         escText(order.customer?.altPhone),
