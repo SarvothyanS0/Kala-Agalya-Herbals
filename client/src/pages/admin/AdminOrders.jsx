@@ -175,6 +175,29 @@ export default function AdminOrders() {
     }
   };
 
+  const handleMarkAsPaid = async (orderId) => {
+    if (!window.confirm("Mark this order as PAID? Do this only if you have confirmed payment in PhonePe.")) return;
+    try {
+      const token = localStorage.getItem("adminToken");
+      const res = await fetch(`${API_URL}/admin/orders/${orderId}/mark-paid`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOrders(orders.map(o =>
+          o._id === orderId
+            ? { ...o, paymentStatus: "PAID", paymentDate: new Date().toISOString() }
+            : o
+        ));
+      } else {
+        alert("Failed to update: " + data.message);
+      }
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  };
+
   const tableColumns = [
     { key: "orderId", label: "Order ID", align: "text-left" },
     { key: "customer", label: "Customer Name", align: "text-left" },
@@ -494,13 +517,24 @@ export default function AdminOrders() {
 
                       {/* 12. Actions */}
                       <td className="px-3.5 py-4 whitespace-nowrap text-center">
-                        <Link
-                          to={`/admin/orders/${order._id}`}
-                          className="inline-flex items-center px-3.5 py-1.5 bg-[#FDFBF7] text-yellow-900 border border-yellow-500/25 rounded-xl hover:bg-yellow-500/15 transition-all font-bold text-[10px] font-grotesk uppercase tracking-wider shadow-xs"
-                          title="View Full Order Details"
-                        >
-                          View
-                        </Link>
+                        <div className="flex items-center justify-center gap-2">
+                          <Link
+                            to={`/admin/orders/${order._id}`}
+                            className="inline-flex items-center px-3.5 py-1.5 bg-[#FDFBF7] text-yellow-900 border border-yellow-500/25 rounded-xl hover:bg-yellow-500/15 transition-all font-bold text-[10px] font-grotesk uppercase tracking-wider shadow-xs"
+                            title="View Full Order Details"
+                          >
+                            View
+                          </Link>
+                          {order.paymentStatus !== "PAID" && (
+                            <button
+                              onClick={() => handleMarkAsPaid(order._id)}
+                              className="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl hover:bg-emerald-100 active:scale-95 transition-all font-bold text-[10px] font-grotesk uppercase tracking-wider shadow-xs"
+                              title="Manually mark as Paid (use only after confirming in PhonePe)"
+                            >
+                              ✓ Paid
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))

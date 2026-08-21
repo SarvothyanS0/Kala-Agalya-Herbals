@@ -45,6 +45,25 @@ exports.updateOrderStatus = async (req, res) => {
   }
 };
 
+// Manually mark an order as PAID (admin override for stuck payments)
+exports.markOrderAsPaid = async (req, res) => {
+  try {
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        paymentStatus: "PAID",
+        paymentDate: new Date(),
+        updatedAt: Date.now()
+      },
+      { new: true }
+    );
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    res.json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Get dashboard statistics
 exports.getDashboardStats = async (req, res) => {
   try {

@@ -14,6 +14,7 @@ router.get("/dashboard/sales-chart", adminOrderController.getSalesChartData);
 router.get("/", adminOrderController.getAllOrders);
 router.get("/:id", adminOrderController.getOrder);
 router.put("/:id/status", adminOrderController.updateOrderStatus);
+router.put("/:id/mark-paid", adminOrderController.markOrderAsPaid);
 
 // Reports
 router.get("/reports/data", adminOrderController.getReports);
