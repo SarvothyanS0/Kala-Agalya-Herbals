@@ -135,30 +135,30 @@ export default function AdminReports() {
       return `="${clean}"`;
     };
 
-    // ── Column headers (Order Status removed as requested) ────────
+    // ── Column headers ───────────────────────────────────────────
     const headers = [
-      "S.No",
+      "S.NO",
       "Order ID",
-      "Order Date & Time",
-      "Payment Date & Time",
       "Customer Name",
+      "Address",
       "Phone",
-      "Alt Phone",
-      "Email",
-      "Door / Flat No",
-      "Street",
-      "Landmark",
       "District",
       "State",
       "Pincode",
       "Products Ordered",
       "Total Amount (₹)",
       "Payment Status",
+      "Order Date & Time",
     ];
 
     // ── Build rows (PAID orders only) ─────────────────────────────
     const rows = paidOrders.map((order, idx) => {
       const addr = order.customer?.address || {};
+      const addressVal = addr.street || addr.address || "N/A";
+      const districtVal = addr.district || addr.city || "N/A";
+      const stateVal = addr.state || "N/A";
+      const pincodeVal = addr.pincode || addr.zipCode || "N/A";
+
       const products = (order.items || [])
         .map(i => `${i.name || "Product"} (${i.size || "N/A"}) x${i.quantity || 1} @ ₹${i.price || 0}`)
         .join(" | ");
@@ -166,21 +166,16 @@ export default function AdminReports() {
       return [
         esc(idx + 1),
         escText(order.orderId || (order._id ? order._id.toString().slice(-8).toUpperCase() : "N/A")),
-        escText(fmtDate(order.createdAt)),
-        escText(fmtDate(order.paymentDate || order.createdAt)),
         esc(cleanStr(order.customer?.name)),
+        esc(cleanStr(addressVal)),
         escText(order.customer?.phone),
-        escText(order.customer?.altPhone),
-        esc(cleanStr(order.customer?.email)),
-        esc(cleanStr(addr.door)),
-        esc(cleanStr(addr.street)),
-        esc(cleanStr(addr.landmark)),
-        esc(cleanStr(addr.district)),
-        esc(cleanStr(addr.state)),
-        escText(addr.pincode),
+        esc(cleanStr(districtVal)),
+        esc(cleanStr(stateVal)),
+        escText(pincodeVal),
         esc(cleanStr(products)),
         esc(order.totalAmount || 0),
         esc("PAID"),
+        escText(fmtDate(order.createdAt)),
       ];
     });
 
