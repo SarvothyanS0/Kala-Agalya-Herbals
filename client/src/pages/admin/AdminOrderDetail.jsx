@@ -343,6 +343,34 @@ export default function AdminOrderDetail() {
                   </>
                 )}
               </button>
+
+              {/* WhatsApp Send Button — visible only when tracking is saved */}
+              {order.trackingNumber && order.customer?.phone && (() => {
+                const rawPhone = order.customer.phone.replace(/\D/g, "");
+                const waPhone = rawPhone.startsWith("91") ? rawPhone : `91${rawPhone}`;
+                const customerName = order.customer.name || "Customer";
+                const trackingLine = order.trackingNumber;
+                const urlLine = order.trackingUrl ? `\n🔗 Track here: ${order.trackingUrl}` : "";
+                const message = encodeURIComponent(
+                  `Hello ${customerName}! 👋\n\nYour order from *Kala Agalya Herbals* has been shipped! 🚚\n\n📦 Tracking Number: *${trackingLine}*${urlLine}\n\nThank you for shopping with us! 🌿`
+                );
+                const waLink = `https://wa.me/${waPhone}?text=${message}`;
+                return (
+                  <a
+                    id="whatsapp-tracking-btn"
+                    href={waLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-green-400 hover:to-emerald-500 transition-all shadow-md font-grotesk flex items-center justify-center gap-2"
+                  >
+                    {/* WhatsApp SVG icon */}
+                    <svg className="w-4 h-4" viewBox="0 0 32 32" fill="currentColor">
+                      <path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.738 5.472 2.027 7.773L0 32l8.418-2.006A15.94 15.94 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.28 13.28 0 01-6.773-1.853l-.486-.29-4.997 1.191 1.259-4.866-.317-.5A13.268 13.268 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.862c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.63-.199-.896.199-.265.397-1.028 1.295-1.26 1.561-.232.265-.464.298-.862.1-.398-.2-1.68-.619-3.2-1.975-1.183-1.056-1.982-2.36-2.214-2.758-.232-.398-.025-.613.174-.811.18-.178.398-.464.597-.696.199-.232.265-.398.398-.663.132-.265.066-.497-.034-.696-.1-.199-.896-2.16-1.228-2.958-.323-.778-.651-.672-.896-.685l-.763-.013c-.265 0-.696.1-.1061.497-.365.398-1.393 1.361-1.393 3.32s1.426 3.85 1.625 4.115c.199.265 2.807 4.285 6.803 6.011.951.41 1.693.655 2.272.839.954.303 1.823.26 2.51.158.766-.114 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.1-.166-.365-.265-.763-.464z"/>
+                    </svg>
+                    Send Tracking via WhatsApp
+                  </a>
+                );
+              })()}
             </div>
           </div>
 
