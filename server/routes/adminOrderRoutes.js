@@ -17,6 +17,7 @@ router.get("/reports/data", adminOrderController.getReports);
 router.get("/", adminOrderController.getAllOrders);
 router.put("/:id/status", adminOrderController.updateOrderStatus);
 router.put("/:id/mark-paid", adminOrderController.markOrderAsPaid);
+router.put("/:id/tracking", adminOrderController.updateTracking);
 router.get("/:id", adminOrderController.getOrder);
 
 module.exports = router;

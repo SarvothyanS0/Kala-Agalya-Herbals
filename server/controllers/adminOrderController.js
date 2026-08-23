@@ -64,6 +64,32 @@ exports.markOrderAsPaid = async (req, res) => {
   }
 };
 
+// Save courier tracking number and URL
+exports.updateTracking = async (req, res) => {
+  try {
+    const { trackingNumber, trackingUrl } = req.body;
+
+    if (!trackingNumber || !trackingNumber.trim()) {
+      return res.status(400).json({ success: false, message: "Tracking number is required" });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        trackingNumber: trackingNumber.trim(),
+        trackingUrl: trackingUrl ? trackingUrl.trim() : "",
+        updatedAt: Date.now()
+      },
+      { new: true }
+    );
+
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    res.json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Get dashboard statistics
 exports.getDashboardStats = async (req, res) => {
   try {

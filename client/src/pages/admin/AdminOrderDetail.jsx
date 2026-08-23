@@ -10,6 +10,9 @@ export default function AdminOrderDetail() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [savingTracking, setSavingTracking] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [trackingUrl, setTrackingUrl] = useState("");
   const navigate = useNavigate();
   const { addToast } = useToast();
 
@@ -24,6 +27,8 @@ export default function AdminOrderDetail() {
       const data = await response.json();
       if (data.success) {
         setOrder(data.order);
+        setTrackingNumber(data.order.trackingNumber || "");
+        setTrackingUrl(data.order.trackingUrl || "");
       } else {
         addToast("Failed to fetch order details", "error");
       }
@@ -68,6 +73,37 @@ export default function AdminOrderDetail() {
       addToast("Failed to update order status", "error");
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const saveTracking = async () => {
+    if (!trackingNumber.trim()) {
+      addToast("Please enter a tracking number", "error");
+      return;
+    }
+    setSavingTracking(true);
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`${API_URL}/admin/orders/${id}/tracking`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ trackingNumber: trackingNumber.trim(), trackingUrl: trackingUrl.trim() }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setOrder(data.order);
+        addToast("Tracking info saved successfully!", "success");
+      } else {
+        addToast(data.message || "Failed to save tracking info", "error");
+      }
+    } catch (error) {
+      console.error("Error saving tracking:", error);
+      addToast("Failed to save tracking info", "error");
+    } finally {
+      setSavingTracking(false);
     }
   };
 
@@ -238,6 +274,75 @@ export default function AdminOrderDetail() {
                   {order.paymentStatus}
                 </span>
               </div>
+            </div>
+          </div>
+
+          {/* Courier Tracking */}
+          <div className="bg-white rounded-3xl shadow-card p-7 border border-yellow-500/12">
+            <h2 className="text-xs font-bold text-yellow-800 uppercase tracking-widest mb-5 font-grotesk bg-yellow-500/8 -mx-7 -mt-7 px-7 py-3 border-b border-yellow-500/12 rounded-t-3xl flex items-center gap-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+              </svg>
+              Courier Tracking
+            </h2>
+
+            {order.trackingNumber && (
+              <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-start gap-2">
+                <svg className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                <div className="min-w-0">
+                  <p className="text-[9px] font-bold text-emerald-700 uppercase tracking-widest font-grotesk mb-0.5">Current Tracking No.</p>
+                  <p className="font-mono text-xs font-black text-emerald-800 break-all">{order.trackingNumber}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[10px] font-bold text-[#9A9690] uppercase tracking-widest font-grotesk mb-1.5">
+                  Courier Tracking Number *
+                </label>
+                <input
+                  id="tracking-number-input"
+                  type="text"
+                  value={trackingNumber}
+                  onChange={(e) => setTrackingNumber(e.target.value)}
+                  placeholder="e.g. C1001426132"
+                  className="w-full px-3 py-2.5 font-mono text-sm text-[#1C1A16] bg-[#FDFBF7] border border-yellow-500/20 rounded-xl focus:outline-none focus:border-yellow-500 transition-colors placeholder-gray-400"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-[#9A9690] uppercase tracking-widest font-grotesk mb-1.5">
+                  Courier Tracking URL (Optional)
+                </label>
+                <input
+                  id="tracking-url-input"
+                  type="url"
+                  value={trackingUrl}
+                  onChange={(e) => setTrackingUrl(e.target.value)}
+                  placeholder="https://www.dtdcexpress.com/..."
+                  className="w-full px-3 py-2.5 text-sm text-[#1C1A16] bg-[#FDFBF7] border border-yellow-500/20 rounded-xl focus:outline-none focus:border-yellow-500 transition-colors placeholder-gray-400"
+                />
+                <p className="text-[9px] text-[#9A9690] mt-1 font-grotesk">Paste the full URL from your courier website. Customer will click this to track their package.</p>
+              </div>
+              <button
+                id="save-tracking-btn"
+                onClick={saveTracking}
+                disabled={savingTracking}
+                className="w-full bg-gradient-to-r from-purple-600 to-indigo-700 text-white py-3 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-purple-500 hover:to-indigo-600 transition-all shadow-md disabled:opacity-50 font-grotesk flex items-center justify-center gap-2"
+              >
+                {savingTracking ? (
+                  <>
+                    <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                    Save Tracking Info
+                  </>
+                )}
+              </button>
             </div>
           </div>
 

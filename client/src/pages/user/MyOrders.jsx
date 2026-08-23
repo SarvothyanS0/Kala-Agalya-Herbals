@@ -215,6 +215,19 @@ export default function MyOrders() {
                             ✅ Confirm Delivery
                           </button>
                         )}
+                        {order.trackingNumber && (
+                          <a
+                            href={order.trackingUrl || "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={e => { if (!order.trackingUrl) e.preventDefault(); }}
+                            title={`Tracking: ${order.trackingNumber}`}
+                            className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-700 border border-purple-500/40 rounded-xl text-[10px] font-bold uppercase tracking-widest text-white hover:from-purple-500 hover:to-indigo-600 transition-all shadow-md font-sans flex items-center gap-1.5"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" /></svg>
+                            Track
+                          </a>
+                        )}
                         <button onClick={() => setExpandedId(isExpanded ? null : order._id)}
                           className="p-2 rounded-lg hover:bg-yellow-500/5 transition-colors">
                           <svg className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,6 +331,24 @@ export default function MyOrders() {
                               {order.customer?.address ? [order.customer.address.door, order.customer.address.street, order.customer.address.district, order.customer.address.state, order.customer.address.pincode].filter(Boolean).join(", ") : "N/A"}
                             </div>
                           </div>
+                          {order.trackingNumber && (
+                            <div className="sm:col-span-3">
+                              <div className="text-[9px] font-bold text-[#7C786E] uppercase tracking-widest mb-1">Courier Tracking</div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-lg font-mono text-xs font-black text-purple-800">
+                                  <svg className="w-3 h-3 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" /></svg>
+                                  {order.trackingNumber}
+                                </span>
+                                {order.trackingUrl && (
+                                  <a href={order.trackingUrl} target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-[9px] font-bold uppercase tracking-widest hover:bg-purple-500 transition-colors">
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                    Track on Website
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

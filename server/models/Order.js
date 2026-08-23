@@ -35,7 +35,9 @@ const orderSchema = new mongoose.Schema({
   },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  orderId: { type: String, unique: true }
+  orderId: { type: String, unique: true },
+  trackingNumber: { type: String, default: "" },
+  trackingUrl: { type: String, default: "" }
 });
 
 async function generateUniqueOrderId() {
