@@ -76,7 +76,20 @@ export default function AdminOrderDetail() {
     }
   };
 
-  const saveTracking = async () => {
+  const buildWhatsAppLink = (savedOrder) => {
+    if (!savedOrder?.customer?.phone) return null;
+    const rawPhone = savedOrder.customer.phone.replace(/\D/g, "");
+    const waPhone = rawPhone.startsWith("91") ? rawPhone : `91${rawPhone}`;
+    const customerName = savedOrder.customer.name || "Customer";
+    const trackingNo = savedOrder.trackingNumber;
+    const urlLine = savedOrder.trackingUrl ? `\n🔗 Track here: ${savedOrder.trackingUrl}` : "";
+    const message = encodeURIComponent(
+      `Hello ${customerName}! 👋\n\nYour order from *Kala Agalya Herbals* has been shipped! 🚚\n\n📦 Tracking Number: *${trackingNo}*${urlLine}\n\nThank you for shopping with us! 🌿`
+    );
+    return `https://wa.me/${waPhone}?text=${message}`;
+  };
+
+  const saveTracking = async (sendWhatsApp = false) => {
     if (!trackingNumber.trim()) {
       addToast("Please enter a tracking number", "error");
       return;
@@ -96,6 +109,14 @@ export default function AdminOrderDetail() {
       if (data.success) {
         setOrder(data.order);
         addToast("Tracking info saved successfully!", "success");
+        if (sendWhatsApp) {
+          const waLink = buildWhatsAppLink(data.order);
+          if (waLink) {
+            window.open(waLink, "_blank", "noopener,noreferrer");
+          } else {
+            addToast("No customer phone number found to send WhatsApp", "error");
+          }
+        }
       } else {
         addToast(data.message || "Failed to save tracking info", "error");
       }
@@ -325,52 +346,55 @@ export default function AdminOrderDetail() {
                 />
                 <p className="text-[9px] text-[#9A9690] mt-1 font-grotesk">Paste the full URL from your courier website. Customer will click this to track their package.</p>
               </div>
-              <button
-                id="save-tracking-btn"
-                onClick={saveTracking}
-                disabled={savingTracking}
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-700 text-white py-3 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-purple-500 hover:to-indigo-600 transition-all shadow-md disabled:opacity-50 font-grotesk flex items-center justify-center gap-2"
-              >
-                {savingTracking ? (
-                  <>
-                    <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
-                    Save Tracking Info
-                  </>
-                )}
-              </button>
+              {/* Two action buttons side by side */}
+              <div className="grid grid-cols-1 gap-2">
+                {/* Save to My Orders only */}
+                <button
+                  id="save-tracking-btn"
+                  onClick={() => saveTracking(false)}
+                  disabled={savingTracking}
+                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-700 text-white py-3 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-purple-500 hover:to-indigo-600 transition-all shadow-md disabled:opacity-50 font-grotesk flex items-center justify-center gap-2"
+                >
+                  {savingTracking ? (
+                    <>
+                      <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      Save to My Orders
+                    </>
+                  )}
+                </button>
 
-              {/* WhatsApp Send Button — visible only when tracking is saved */}
-              {order.trackingNumber && order.customer?.phone && (() => {
-                const rawPhone = order.customer.phone.replace(/\D/g, "");
-                const waPhone = rawPhone.startsWith("91") ? rawPhone : `91${rawPhone}`;
-                const customerName = order.customer.name || "Customer";
-                const trackingLine = order.trackingNumber;
-                const urlLine = order.trackingUrl ? `\n🔗 Track here: ${order.trackingUrl}` : "";
-                const message = encodeURIComponent(
-                  `Hello ${customerName}! 👋\n\nYour order from *Kala Agalya Herbals* has been shipped! 🚚\n\n📦 Tracking Number: *${trackingLine}*${urlLine}\n\nThank you for shopping with us! 🌿`
-                );
-                const waLink = `https://wa.me/${waPhone}?text=${message}`;
-                return (
-                  <a
-                    id="whatsapp-tracking-btn"
-                    href={waLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-green-400 hover:to-emerald-500 transition-all shadow-md font-grotesk flex items-center justify-center gap-2"
-                  >
-                    {/* WhatsApp SVG icon */}
-                    <svg className="w-4 h-4" viewBox="0 0 32 32" fill="currentColor">
-                      <path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.738 5.472 2.027 7.773L0 32l8.418-2.006A15.94 15.94 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.28 13.28 0 01-6.773-1.853l-.486-.29-4.997 1.191 1.259-4.866-.317-.5A13.268 13.268 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.862c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.63-.199-.896.199-.265.397-1.028 1.295-1.26 1.561-.232.265-.464.298-.862.1-.398-.2-1.68-.619-3.2-1.975-1.183-1.056-1.982-2.36-2.214-2.758-.232-.398-.025-.613.174-.811.18-.178.398-.464.597-.696.199-.232.265-.398.398-.663.132-.265.066-.497-.034-.696-.1-.199-.896-2.16-1.228-2.958-.323-.778-.651-.672-.896-.685l-.763-.013c-.265 0-.696.1-.1061.497-.365.398-1.393 1.361-1.393 3.32s1.426 3.85 1.625 4.115c.199.265 2.807 4.285 6.803 6.011.951.41 1.693.655 2.272.839.954.303 1.823.26 2.51.158.766-.114 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.1-.166-.365-.265-.763-.464z"/>
-                    </svg>
-                    Send Tracking via WhatsApp
-                  </a>
-                );
-              })()}
+                {/* Save + Send WhatsApp combined */}
+                <button
+                  id="save-and-whatsapp-btn"
+                  onClick={() => saveTracking(true)}
+                  disabled={savingTracking}
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-green-400 hover:to-emerald-500 transition-all shadow-md disabled:opacity-50 font-grotesk flex items-center justify-center gap-2"
+                >
+                  {savingTracking ? (
+                    <>
+                      <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" viewBox="0 0 32 32" fill="currentColor">
+                        <path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.738 5.472 2.027 7.773L0 32l8.418-2.006A15.94 15.94 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.28 13.28 0 01-6.773-1.853l-.486-.29-4.997 1.191 1.259-4.866-.317-.5A13.268 13.268 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.27-9.862c-.398-.199-2.356-1.163-2.72-1.295-.365-.133-.63-.199-.896.199-.265.397-1.028 1.295-1.26 1.561-.232.265-.464.298-.862.1-.398-.2-1.68-.619-3.2-1.975-1.183-1.056-1.982-2.36-2.214-2.758-.232-.398-.025-.613.174-.811.18-.178.398-.464.597-.696.199-.232.265-.398.398-.663.132-.265.066-.497-.034-.696-.1-.199-.896-2.16-1.228-2.958-.323-.778-.651-.672-.896-.685l-.763-.013c-.265 0-.696.1-.1061.497-.365.398-1.393 1.361-1.393 3.32s1.426 3.85 1.625 4.115c.199.265 2.807 4.285 6.803 6.011.951.41 1.693.655 2.272.839.954.303 1.823.26 2.51.158.766-.114 2.356-.963 2.688-1.894.332-.93.332-1.728.232-1.894-.1-.166-.365-.265-.763-.464z"/>
+                      </svg>
+                      Save & Send WhatsApp
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <p className="text-[9px] text-[#9A9690] text-center font-grotesk pt-1">
+                "Save to My Orders" updates the customer's order page only.<br/>
+                "Save & Send WhatsApp" does both at once.
+              </p>
             </div>
           </div>
 
