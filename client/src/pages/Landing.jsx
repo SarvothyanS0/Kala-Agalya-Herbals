@@ -299,39 +299,83 @@ function ReviewCard({ review, badgeText, onImageClick }) {
   );
 }
 
-/* ── OfferBannerCard (Adaptive Horizontal Slider & Showcase Card) ── */
-function OfferBannerCard({ banner, onImageClick, isSingle = false }) {
-  const bImg = resolveImg(banner.image);
+/* ── OfferBannerCarousel (Smooth Auto-Scroll & Showcase Carousel) ── */
+function OfferBannerCarousel({ banners, onImageClick }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
 
-  if (isSingle) {
+  const total = banners.length;
+
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % total);
+  }, [total]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + total) % total);
+  }, [total]);
+
+  useEffect(() => {
+    if (total <= 1 || isPaused) return;
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [total, isPaused, nextSlide]);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 45) {
+      nextSlide();
+    } else if (diff < -45) {
+      prevSlide();
+    }
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
+  if (total === 0) return null;
+
+  // Single Banner: Centered Showcase Poster
+  if (total === 1) {
+    const banner = banners[0];
+    const bImg = resolveImg(banner.image);
     return (
-      <div className="w-full max-w-4xl bg-white rounded-3xl p-5 sm:p-7 border border-yellow-500/25 shadow-card hover:shadow-gold-lg transition-all duration-500 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 group">
-        <div
-          onClick={() => onImageClick && onImageClick(bImg)}
-          className="relative w-full md:w-3/5 h-[280px] sm:h-[360px] rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/15 flex items-center justify-center p-3 cursor-pointer group/img"
-        >
-          <ImageWithSkeleton
-            src={bImg}
-            alt={banner.title}
-            className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-700 filter drop-shadow-xl"
-            containerClassName="w-full h-full"
-          />
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-2 backdrop-blur-xs rounded-2xl">
-            🔍 Click to Zoom Poster
+      <div className="max-w-4xl mx-auto">
+        <div className="relative group bg-white rounded-3xl p-4 sm:p-6 border border-yellow-500/25 shadow-card hover:shadow-gold-lg transition-all duration-500 overflow-hidden">
+          <div
+            onClick={() => onImageClick && onImageClick(bImg)}
+            className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/15 flex items-center justify-center cursor-pointer group/img"
+          >
+            <ImageWithSkeleton
+              src={bImg}
+              alt={banner.title || "Offer Banner"}
+              className="w-full h-full object-contain group-hover/img:scale-[1.02] transition-transform duration-700 filter drop-shadow-md"
+              containerClassName="w-full h-full"
+            />
+            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-2 backdrop-blur-xs rounded-2xl">
+              🔍 Click to Zoom Poster
+            </div>
           </div>
-        </div>
 
-        <div className="w-full md:w-2/5 text-center md:text-left space-y-4 font-inter">
-          <span className="px-3.5 py-1 rounded-full bg-amber-500/15 text-amber-900 text-[11px] font-black uppercase font-grotesk tracking-widest inline-block border border-amber-500/30">
-            ⚡ Active Deal
-          </span>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1C1A16] font-soria leading-tight">{banner.title}</h3>
-          <p className="text-[#6C685F] text-sm leading-relaxed font-inter">{banner.subtitle}</p>
-
-          <div className="pt-2">
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <span className="text-xs text-[#7C786E] font-inter font-medium flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              ⚡ Limited Stock Available for this Offer
+            </span>
             <a
               href={banner.linkUrl || "#product"}
-              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-extrabold text-black bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 shadow-gold hover:shadow-gold-lg transition-all transform hover:-translate-y-0.5 font-grotesk uppercase tracking-wider text-xs w-full sm:w-auto"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-500 text-black shadow-gold hover:shadow-gold-lg transition-all transform hover:-translate-y-0.5"
             >
               <span>Claim Offer Now 🛒</span>
             </a>
@@ -341,46 +385,109 @@ function OfferBannerCard({ banner, onImageClick, isSingle = false }) {
     );
   }
 
+  // Multiple Banners: Interactive Carousel Slider with Smooth Sliding Effect
   return (
-    <div className="w-[300px] sm:w-[350px] md:w-[380px] shrink-0 bg-white p-5 rounded-3xl border border-yellow-500/20 shadow-card hover:shadow-gold hover:-translate-y-1 transition-all duration-400 group flex flex-col justify-between">
-      <div>
+    <div
+      className="relative max-w-5xl mx-auto"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Slider Viewport */}
+      <div className="relative overflow-hidden rounded-3xl bg-white border border-yellow-500/25 shadow-card p-3 sm:p-5">
         <div
-          onClick={() => onImageClick && onImageClick(bImg)}
-          className="w-full h-56 sm:h-64 mb-4 rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/10 flex items-center justify-center p-3 cursor-pointer relative group/img"
+          className="flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
-          <ImageWithSkeleton
-            src={bImg}
-            alt={banner.title}
-            className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-700 filter drop-shadow-md"
-            containerClassName="w-full h-full"
-            loading="lazy"
-          />
-          <div className="absolute inset-0 bg-black/35 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-1.5 rounded-2xl backdrop-blur-xs">
-            🔍 Click to Zoom Poster
-          </div>
+          {banners.map((banner, idx) => {
+            const bImg = resolveImg(banner.image);
+            return (
+              <div
+                key={banner._id || idx}
+                className="w-full shrink-0 px-1 sm:px-2 flex flex-col"
+              >
+                <div
+                  onClick={() => onImageClick && onImageClick(bImg)}
+                  className="relative w-full aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/15 flex items-center justify-center cursor-pointer group/slide"
+                >
+                  <ImageWithSkeleton
+                    src={bImg}
+                    alt={banner.title || `Offer Banner ${idx + 1}`}
+                    className="w-full h-full object-contain group-hover/slide:scale-[1.02] transition-transform duration-700 filter drop-shadow-md"
+                    containerClassName="w-full h-full"
+                    loading={idx === 0 ? "eager" : "lazy"}
+                  />
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/slide:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-2 backdrop-blur-xs rounded-2xl">
+                    🔍 Click to Zoom Poster
+                  </div>
+                  <div className="absolute top-3 left-3 px-3 py-1 bg-black/70 backdrop-blur-md rounded-full text-white text-[11px] font-bold font-grotesk border border-white/20 flex items-center gap-1.5 shadow-md">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                    <span>Offer #{idx + 1} of {total}</span>
+                  </div>
+                </div>
+
+                {/* Bottom Action Bar */}
+                <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 px-2">
+                  <div className="flex items-center gap-2 text-xs font-inter text-[#6C685F]">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-900 font-bold text-[11px] font-grotesk uppercase">
+                      🔥 Special Deal
+                    </span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="font-medium">Limited Quantity Available</span>
+                  </div>
+
+                  <a
+                    href={banner.linkUrl || "#product"}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-2.5 rounded-xl font-extrabold text-xs uppercase tracking-wider font-grotesk bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-500 text-black shadow-gold hover:shadow-gold-lg transition-all transform hover:-translate-y-0.5"
+                  >
+                    <span>Claim Offer 🛒</span>
+                  </a>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        <div className="flex items-center justify-between gap-1 mb-2">
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk uppercase border bg-amber-50 text-amber-800 border-amber-300">
-            🔥 Special Offer
-          </span>
-        </div>
+        {/* Navigation Arrows */}
+        <button
+          type="button"
+          onClick={prevSlide}
+          aria-label="Previous offer"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/95 text-[#1C1A16] border border-yellow-500/30 shadow-gold hover:bg-yellow-500 hover:text-black hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
 
-        <h3 className="text-lg sm:text-xl font-bold font-soria text-[#1C1A16] group-hover:text-yellow-700 transition-colors line-clamp-1 mb-1">
-          {banner.title}
-        </h3>
-        <p className="text-[#6C685F] text-xs font-inter line-clamp-2 leading-relaxed mb-4">
-          {banner.subtitle}
-        </p>
+        <button
+          type="button"
+          onClick={nextSlide}
+          aria-label="Next offer"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/95 text-[#1C1A16] border border-yellow-500/30 shadow-gold hover:bg-yellow-500 hover:text-black hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
 
-      <div className="pt-3 border-t border-yellow-500/10">
-        <a
-          href={banner.linkUrl || "#product"}
-          className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-extrabold text-xs uppercase tracking-wider font-grotesk bg-gradient-to-r from-yellow-500 to-amber-600 text-black hover:from-yellow-400 hover:to-amber-500 shadow-gold transition-all"
-        >
-          <span>Claim Offer 🛒</span>
-        </a>
+      {/* Slide Indicators / Dots */}
+      <div className="flex items-center justify-center gap-2 mt-5">
+        {banners.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentIndex(i)}
+            aria-label={`Go to offer ${i + 1}`}
+            className={`h-2.5 rounded-full transition-all duration-400 cursor-pointer ${
+              i === currentIndex
+                ? "w-8 bg-gradient-to-r from-yellow-500 to-amber-600 shadow-xs"
+                : "w-2.5 bg-yellow-500/30 hover:bg-yellow-500/60"
+            }`}
+          />
+        ))}
       </div>
     </div>
   );
@@ -1054,43 +1161,52 @@ export default function Landing() {
         <section id="launch-offer" className="py-20 bg-gradient-to-b from-white via-[#FDFBF7] to-white relative overflow-hidden border-t border-yellow-500/15" aria-labelledby="offer-heading">
           <div className="absolute top-0 left-1/3 w-[450px] h-[450px] bg-yellow-500/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+            {/* Section Header: Banner Title & Subtitle as Head of the Section with Redesigned Luxury Description */}
             <div className="text-center max-w-3xl mx-auto mb-10 scroll-animate">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-yellow-500/30 text-yellow-900 text-xs font-grotesk font-black uppercase tracking-widest mb-3 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 shadow-xs">
-                {bannerSettings.badge || "🔥 Limited Time Website Exclusive Deal"}
-              </span>
-              <h2 id="offer-heading" className="text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria">
-                {bannerSettings.title}{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700">
-                  {bannerSettings.highlightText}
-                </span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-500/15 text-amber-900 text-xs font-grotesk font-extrabold uppercase tracking-widest mb-4 shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                {bannerSettings.badge || "🔥 Limited Time Special Offer"}
+              </div>
+
+              <h2 id="offer-heading" className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria leading-tight mb-4">
+                {(() => {
+                  const heading = (bannerSettings.title && bannerSettings.title !== "Website Launching") 
+                    ? bannerSettings.title 
+                    : (banners[0]?.title || bannerSettings.title || "Month End Offer");
+                  const highlight = bannerSettings.highlightText;
+                  return (
+                    <>
+                      {heading}{" "}
+                      {highlight ? (
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700">
+                          {highlight}
+                        </span>
+                      ) : null}
+                    </>
+                  );
+                })()}
               </h2>
-              <p className="text-[#6C685F] text-base font-inter mt-2">
-                {bannerSettings.subtitle || "Claim our promotional launch discount package before stock runs out!"}
-              </p>
+
+              {/* Redesigned Description Card / Pill */}
+              {(() => {
+                const sub = (bannerSettings.subtitle && bannerSettings.subtitle !== "Claim our promotional launch discount package before stock runs out!")
+                  ? bannerSettings.subtitle
+                  : (banners[0]?.subtitle || bannerSettings.subtitle || "Grab Your Favorite Products for Less and Healthy Choices, Happy Savings!");
+                return sub ? (
+                  <div className="relative inline-block max-w-2xl mx-auto">
+                    <p className="text-[#5C5850] text-sm sm:text-base font-inter leading-relaxed px-5 py-2.5 rounded-2xl bg-amber-500/8 border border-amber-500/20 shadow-xs">
+                      {sub}
+                    </p>
+                  </div>
+                ) : null;
+              })()}
             </div>
 
-            {/* Adaptive layout: If 1 image -> Center showcase card without scroll. If 2+ images -> Auto + Manual Horizontal Scroll */}
-            {banners.length === 1 ? (
-              <div className="max-w-4xl mx-auto flex justify-center">
-                <OfferBannerCard
-                  banner={banners[0]}
-                  onImageClick={img => setSelectedZoomImg(img)}
-                  isSingle={true}
-                />
-              </div>
-            ) : (
-              <div className="pt-2">
-                <AutoManualScroll speed={1.3}>
-                  {banners.map((b, i) => (
-                    <OfferBannerCard
-                      key={b._id || i}
-                      banner={b}
-                      onImageClick={img => setSelectedZoomImg(img)}
-                    />
-                  ))}
-                </AutoManualScroll>
-              </div>
-            )}
+            {/* Offer Banners Carousel with Smooth Auto-Scroll / Interactive Controls */}
+            <OfferBannerCarousel
+              banners={banners}
+              onImageClick={img => setSelectedZoomImg(img)}
+            />
           </div>
         </section>
       )}
