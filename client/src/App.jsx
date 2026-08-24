@@ -35,6 +35,8 @@ import TermsOfService from "./pages/policies/TermsOfService";
 import { HelmetProvider } from "react-helmet-async";
 import { ReactLenis } from "@studio-freight/react-lenis";
 import useScrollAnimation from "./hooks/useScrollAnimation";
+import { LanguageProvider } from "./context/LanguageContext";
+import LanguageSelectorModal from "./components/LanguageSelectorModal";
 
 /* ── Global cursor + scroll-progress bar ─────────────── */
 function useGlobalEffects() {
@@ -164,11 +166,14 @@ function Layout() {
 export default function App() {
   return (
     <HelmetProvider>
-      <ToastProvider>
-        <Router>
-          <Layout />
-        </Router>
-      </ToastProvider>
+      <LanguageProvider>
+        <ToastProvider>
+          <Router>
+            <Layout />
+            <LanguageSelectorModal />
+          </Router>
+        </ToastProvider>
+      </LanguageProvider>
     </HelmetProvider>
   );
 }

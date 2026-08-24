@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { FaYoutube, FaInstagram, FaWhatsapp } from "react-icons/fa6";
 import { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { FiGlobe } from 'react-icons/fi';
 
 const footerContent = {
   about: {
@@ -30,6 +32,7 @@ const footerContent = {
 
 export default function Footer() {
   const [showTop, setShowTop] = useState(false);
+  const { currentLang, openModal } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 400);
@@ -181,6 +184,17 @@ export default function Footer() {
           {/* Bottom bar */}
           <div className="border-t border-[#cbe3d1] pt-7 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#5c786a] font-medium">
             <p>{footerContent.copyright}</p>
+            
+            {/* Language Switcher Trigger */}
+            <button
+              onClick={openModal}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#d8ebd9] hover:bg-[#b7dbc0] text-[#1b4332] font-semibold transition-all border border-[#bddeaf] shadow-xs"
+              aria-label="Change Language"
+            >
+              <FiGlobe className="w-3.5 h-3.5 text-[#1b4332]" />
+              <span>Language: {currentLang.nativeName} ({currentLang.name})</span>
+            </button>
+
             <p className="flex items-center gap-1.5">
               Made with <span className="text-red-500 animate-pulse">♥</span> in Chennai, India 🇮🇳
             </p>

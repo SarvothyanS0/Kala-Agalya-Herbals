@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
+import { useLanguage } from "../context/LanguageContext";
+import { FiGlobe } from "react-icons/fi";
 
 export default function Navbar() {
   const [count,       setCount]       = useState(0);
@@ -11,6 +13,8 @@ export default function Navbar() {
   const [avatar,   setAvatar]   = useState(localStorage.getItem("userAvatar"));
   const [userName, setUserName] = useState(localStorage.getItem("userName"));
   const [token,    setToken]    = useState(localStorage.getItem("userToken"));
+
+  const { currentLang, openModal } = useLanguage();
 
   /* ── Cart + profile sync ─────────────────────────── */
   useEffect(() => {
@@ -107,7 +111,7 @@ export default function Navbar() {
           </Link>
 
           {/* ── Desktop links ─────────────────────── */}
-          <div className="hidden md:flex items-center gap-6 lg:gap-8" role="menubar">
+          <div className="hidden md:flex items-center gap-5 lg:gap-7" role="menubar">
             {navLinks.map(({ label, to, type }) =>
               type === "anchor" ? (
                 <a key={label} href={to} role="menuitem"
@@ -123,6 +127,18 @@ export default function Navbar() {
                 </Link>
               )
             )}
+
+            {/* Translate Button */}
+            <button
+              onClick={openModal}
+              aria-label="Change Language"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 hover:bg-yellow-500/20 text-[#3a3830] hover:text-yellow-800 text-xs font-semibold transition-all duration-300 shadow-sm group"
+            >
+              <FiGlobe className="w-3.5 h-3.5 text-yellow-600 group-hover:rotate-45 transition-transform duration-300" />
+              <span className="font-medium font-inter">
+                {currentLang.code === "en" ? "Translate" : currentLang.nativeName}
+              </span>
+            </button>
 
             {token ? (
               <>
@@ -162,7 +178,21 @@ export default function Navbar() {
           </div>
 
           {/* ── Mobile right controls ──────────────── */}
-          <div className="flex items-center gap-2 sm:gap-3 md:hidden">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 md:hidden">
+            {/* Translate Button Mobile */}
+            <button
+              onClick={openModal}
+              aria-label="Change Language"
+              className="flex items-center gap-1 p-2 rounded-full bg-yellow-900/8 border border-yellow-500/20 text-yellow-700 hover:bg-yellow-500/15 transition-all text-xs font-semibold flex-shrink-0"
+            >
+              <FiGlobe className="w-4 h-4 text-yellow-600" />
+              {currentLang.code !== "en" && (
+                <span className="text-[10px] max-w-[48px] truncate font-bold text-yellow-800">
+                  {currentLang.nativeName}
+                </span>
+              )}
+            </button>
+
             {/* Login or Avatar — compact */}
             {token ? (
               <Link to="/profile" onClick={closeMenu} aria-label="Profile"
@@ -220,7 +250,7 @@ export default function Navbar() {
       >
         <div className="absolute inset-0 bg-[#FDFBF7]/97 backdrop-blur-2xl" onClick={closeMenu} aria-hidden="true" />
 
-        <div className={`relative h-full flex flex-col items-center justify-center gap-6 transition-all duration-400 ${
+        <div className={`relative h-full flex flex-col items-center justify-center gap-5 transition-all duration-400 ${
           isMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-6 opacity-0"
         }`}>
           {/* Decorative orbs */}
@@ -230,37 +260,49 @@ export default function Navbar() {
           {navLinks.map(({ label, to, type }, i) =>
             type === "anchor" ? (
               <a key={label} href={to} onClick={closeMenu}
-                className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors duration-300 font-soria"
+                className="text-2xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors duration-300 font-soria"
                 style={{ animationDelay: `${i * 0.07}s` }}>
                 {label}
               </a>
             ) : (
               <Link key={label} to={to} onClick={closeMenu}
-                className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors duration-300 font-soria"
+                className="text-2xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors duration-300 font-soria"
                 style={{ animationDelay: `${i * 0.07}s` }}>
                 {label}
               </Link>
             )
           )}
 
+          {/* Language Switcher in Mobile Drawer */}
+          <button
+            onClick={() => {
+              closeMenu();
+              openModal();
+            }}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-[#2C2921] hover:bg-yellow-500/20 text-sm font-semibold font-inter transition-all"
+          >
+            <FiGlobe className="w-4 h-4 text-yellow-600" />
+            <span>🌐 {currentLang.nativeName} ({currentLang.name})</span>
+          </button>
+
           {token ? (
             <>
-              <Link to="/my-orders" onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">My Orders</Link>
-              <Link to="/profile"   onClick={closeMenu} className="text-3xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Profile</Link>
+              <Link to="/my-orders" onClick={closeMenu} className="text-2xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">My Orders</Link>
+              <Link to="/profile"   onClick={closeMenu} className="text-2xl font-bold text-[#2C2921] hover:text-yellow-600 transition-colors font-soria">Profile</Link>
             </>
           ) : (
             <Link to="/login" onClick={closeMenu}
-              className="mt-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold text-lg hover:shadow-gold transition-all duration-300 font-grotesk">
+              className="mt-1 px-8 py-3 rounded-full bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-bold text-base hover:shadow-gold transition-all duration-300 font-grotesk">
               Login
             </Link>
           )}
 
           <Link to="/cart" onClick={closeMenu}
-            className="text-lg font-semibold text-[#6C685F] hover:text-yellow-600 transition-colors font-inter mt-2">
+            className="text-base font-semibold text-[#6C685F] hover:text-yellow-600 transition-colors font-inter">
             🛒 Cart ({count})
           </Link>
 
-          <div className="absolute bottom-8 flex gap-5 text-xs text-[#9A9690] font-inter">
+          <div className="absolute bottom-6 flex gap-5 text-xs text-[#9A9690] font-inter">
             <a href="https://www.instagram.com/kala.agalya_herbalhairoil" target="_blank" rel="noreferrer" className="hover:text-yellow-600 transition-colors">Instagram</a>
             <span>·</span>
             <a href="https://youtube.com/@kala.agalya_vlogs5086" target="_blank" rel="noreferrer" className="hover:text-yellow-600 transition-colors">YouTube</a>
