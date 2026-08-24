@@ -1,81 +1,162 @@
 const Banner = require("../models/Banner");
+const BannerSetting = require("../models/BannerSetting");
 const sharp = require("sharp");
 const cache = require("../utils/cache");
 
-const CACHE_KEY = "active_banners";
+const CACHE_KEY = "active_banners_data";
 const CACHE_TTL = 300; // 5 minutes
 
-// Get active banners for website (cached)
+// Helper to get or create default banner settings
+async function getOrCreateBannerSettings() {
+  let settings = await BannerSetting.findOne().lean();
+  if (!settings) {
+    settings = await BannerSetting.create({
+      badge: "🔥 Limited Time Website Exclusive Deal",
+      title: "Website Launching",
+      highlightText: "Special Offer",
+      subtitle: "Claim our promotional launch discount package before stock runs out!",
+    });
+  }
+  return settings;
+}
+
+// Get active banners + section settings for website (cached)
 exports.getBanners = async (req, res) => {
   try {
     const cached = cache.get(CACHE_KEY);
     if (cached) {
-      return res.json({ success: true, banners: cached });
+      return res.json({ success: true, ...cached });
     }
-    const banners = await Banner.find({ isActive: true }).sort({ createdAt: -1 }).lean();
-    cache.set(CACHE_KEY, banners, CACHE_TTL);
-    res.json({ success: true, banners });
+
+    const [banners, settings] = await Promise.all([
+      Banner.find({ isActive: true }).sort({ createdAt: -1 }).lean(),
+      getOrCreateBannerSettings(),
+    ]);
+
+    const result = { banners, settings };
+    cache.set(CACHE_KEY, result, CACHE_TTL);
+
+    res.json({ success: true, ...result });
   } catch (error) {
     console.error("Error fetching active banners:", error);
     res.status(500).json({ success: false, message: "Failed to fetch banners" });
   }
 };
 
-// Get all banners for Admin (not cached — admin needs fresh data)
+// Get all banners & settings for Admin (not cached)
 exports.getAllBannersAdmin = async (req, res) => {
   try {
-    const banners = await Banner.find().sort({ createdAt: -1 }).lean();
-    res.json({ success: true, banners });
+    const [banners, settings] = await Promise.all([
+      Banner.find().sort({ createdAt: -1 }).lean(),
+      getOrCreateBannerSettings(),
+    ]);
+
+    res.json({ success: true, banners, settings });
   } catch (error) {
     console.error("Error fetching admin banners:", error);
     res.status(500).json({ success: false, message: "Failed to fetch banners" });
   }
 };
 
-// Add / Upload new Offer Banner
+// Update Section Title & Header Settings (Admin)
+exports.updateBannerSettings = async (req, res) => {
+  try {
+    const { badge, title, highlightText, subtitle } = req.body;
+
+    let settings = await BannerSetting.findOne();
+    if (!settings) {
+      settings = new BannerSetting({});
+    }
+
+    if (badge !== undefined) settings.badge = badge.trim();
+    if (title !== undefined) settings.title = title.trim();
+    if (highlightText !== undefined) settings.highlightText = highlightText.trim();
+    if (subtitle !== undefined) settings.subtitle = subtitle.trim();
+    settings.updatedAt = new Date();
+
+    await settings.save();
+
+    // Invalidate active banner cache
+    cache.invalidate(CACHE_KEY);
+
+    res.json({
+      success: true,
+      message: "Banner section title and headers updated successfully! ✨",
+      settings,
+    });
+  } catch (error) {
+    console.error("Error updating banner settings:", error);
+    res.status(500).json({ success: false, message: "Failed to update banner section settings" });
+  }
+};
+
+// Add / Upload new Offer Banner(s) - Supports multiple images
 exports.addBanner = async (req, res) => {
   try {
     const { title, subtitle, linkUrl } = req.body;
 
-    if (!req.file || !req.file.buffer) {
-      return res.status(400).json({ success: false, message: "Please select an offer banner image to upload" });
+    // Collect all uploaded files (handles both req.files array and req.file single)
+    let files = [];
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      files = req.files;
+    } else if (req.file) {
+      files = [req.file];
     }
 
-    let image = "";
-    try {
-      const webpBuffer = await sharp(req.file.buffer)
-        .resize(1200, 1200, { fit: "inside", withoutEnlargement: true })
-        .webp({ quality: 80 })
-        .toBuffer();
-      const b64 = webpBuffer.toString("base64");
-      image = `data:image/webp;base64,${b64}`;
-    } catch (imgErr) {
-      console.error("Banner sharp compression error, falling back to raw buffer:", imgErr);
-      const b64 = Buffer.from(req.file.buffer).toString("base64");
-      image = `data:${req.file.mimetype || 'image/jpeg'};base64,${b64}`;
+    if (files.length === 0) {
+      return res.status(400).json({ success: false, message: "Please select at least one offer banner image to upload" });
     }
 
-    const banner = new Banner({
-      title: title?.trim() || "Website Launching Offer",
-      subtitle: subtitle?.trim() || "Special Exclusive Deal",
-      linkUrl: linkUrl?.trim() || "#pricing",
-      image,
-      isActive: true
-    });
+    const defaultTitle = title?.trim() || "Special Launch Offer";
+    const defaultSubtitle = subtitle?.trim() || "Limited Time Website Exclusive Deal";
+    const defaultLinkUrl = linkUrl?.trim() || "#product";
 
-    await banner.save();
+    const createdBanners = [];
 
-    // Invalidate cache so website shows new banner immediately
+    for (const file of files) {
+      let image = "";
+      try {
+        const webpBuffer = await sharp(file.buffer)
+          .resize(1200, 1200, { fit: "inside", withoutEnlargement: true })
+          .webp({ quality: 80 })
+          .toBuffer();
+        const b64 = webpBuffer.toString("base64");
+        image = `data:image/webp;base64,${b64}`;
+      } catch (imgErr) {
+        console.error("Banner sharp compression error, falling back to raw buffer:", imgErr);
+        const b64 = Buffer.from(file.buffer).toString("base64");
+        image = `data:${file.mimetype || "image/jpeg"};base64,${b64}`;
+      }
+
+      const banner = new Banner({
+        title: defaultTitle,
+        subtitle: defaultSubtitle,
+        linkUrl: defaultLinkUrl,
+        image,
+        isActive: true,
+      });
+
+      await banner.save();
+      createdBanners.push(banner);
+    }
+
+    // Invalidate cache
     cache.invalidate(CACHE_KEY);
+
+    const message =
+      createdBanners.length === 1
+        ? "Offer banner uploaded & published successfully! 🚀"
+        : `${createdBanners.length} offer banners uploaded & published successfully! 🚀`;
 
     res.status(201).json({
       success: true,
-      message: "Offer banner uploaded and published successfully!",
-      banner
+      message,
+      banners: createdBanners,
+      banner: createdBanners[0],
     });
   } catch (error) {
-    console.error("Error adding offer banner:", error);
-    res.status(500).json({ success: false, message: "Failed to upload offer banner", error: error.message });
+    console.error("Error adding offer banners:", error);
+    res.status(500).json({ success: false, message: "Failed to upload offer banner(s)", error: error.message });
   }
 };
 
@@ -90,10 +171,14 @@ exports.toggleBanner = async (req, res) => {
     banner.isActive = !banner.isActive;
     await banner.save();
 
-    // Invalidate cache so the website reflects the toggle immediately
+    // Invalidate cache
     cache.invalidate(CACHE_KEY);
 
-    res.json({ success: true, message: `Banner ${banner.isActive ? "activated" : "deactivated"} successfully`, banner });
+    res.json({
+      success: true,
+      message: `Banner ${banner.isActive ? "activated" : "deactivated"} successfully`,
+      banner,
+    });
   } catch (error) {
     console.error("Error toggling banner:", error);
     res.status(500).json({ success: false, message: "Failed to update banner status" });

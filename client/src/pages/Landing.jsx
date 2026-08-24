@@ -299,6 +299,93 @@ function ReviewCard({ review, badgeText, onImageClick }) {
   );
 }
 
+/* ── OfferBannerCard (Adaptive Horizontal Slider & Showcase Card) ── */
+function OfferBannerCard({ banner, onImageClick, isSingle = false }) {
+  const bImg = resolveImg(banner.image);
+
+  if (isSingle) {
+    return (
+      <div className="w-full max-w-4xl bg-white rounded-3xl p-5 sm:p-7 border border-yellow-500/25 shadow-card hover:shadow-gold-lg transition-all duration-500 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 group">
+        <div
+          onClick={() => onImageClick && onImageClick(bImg)}
+          className="relative w-full md:w-3/5 h-[280px] sm:h-[360px] rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/15 flex items-center justify-center p-3 cursor-pointer group/img"
+        >
+          <ImageWithSkeleton
+            src={bImg}
+            alt={banner.title}
+            className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-700 filter drop-shadow-xl"
+            containerClassName="w-full h-full"
+          />
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-2 backdrop-blur-xs rounded-2xl">
+            🔍 Click to Zoom Poster
+          </div>
+        </div>
+
+        <div className="w-full md:w-2/5 text-center md:text-left space-y-4 font-inter">
+          <span className="px-3.5 py-1 rounded-full bg-amber-500/15 text-amber-900 text-[11px] font-black uppercase font-grotesk tracking-widest inline-block border border-amber-500/30">
+            ⚡ Active Deal
+          </span>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1C1A16] font-soria leading-tight">{banner.title}</h3>
+          <p className="text-[#6C685F] text-sm leading-relaxed font-inter">{banner.subtitle}</p>
+
+          <div className="pt-2">
+            <a
+              href={banner.linkUrl || "#product"}
+              className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-extrabold text-black bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 shadow-gold hover:shadow-gold-lg transition-all transform hover:-translate-y-0.5 font-grotesk uppercase tracking-wider text-xs w-full sm:w-auto"
+            >
+              <span>Claim Offer Now 🛒</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-[300px] sm:w-[350px] md:w-[380px] shrink-0 bg-white p-5 rounded-3xl border border-yellow-500/20 shadow-card hover:shadow-gold hover:-translate-y-1 transition-all duration-400 group flex flex-col justify-between">
+      <div>
+        <div
+          onClick={() => onImageClick && onImageClick(bImg)}
+          className="w-full h-56 sm:h-64 mb-4 rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/10 flex items-center justify-center p-3 cursor-pointer relative group/img"
+        >
+          <ImageWithSkeleton
+            src={bImg}
+            alt={banner.title}
+            className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-700 filter drop-shadow-md"
+            containerClassName="w-full h-full"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-black/35 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-1.5 rounded-2xl backdrop-blur-xs">
+            🔍 Click to Zoom Poster
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-1 mb-2">
+          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold font-grotesk uppercase border bg-amber-50 text-amber-800 border-amber-300">
+            🔥 Special Offer
+          </span>
+        </div>
+
+        <h3 className="text-lg sm:text-xl font-bold font-soria text-[#1C1A16] group-hover:text-yellow-700 transition-colors line-clamp-1 mb-1">
+          {banner.title}
+        </h3>
+        <p className="text-[#6C685F] text-xs font-inter line-clamp-2 leading-relaxed mb-4">
+          {banner.subtitle}
+        </p>
+      </div>
+
+      <div className="pt-3 border-t border-yellow-500/10">
+        <a
+          href={banner.linkUrl || "#product"}
+          className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-extrabold text-xs uppercase tracking-wider font-grotesk bg-gradient-to-r from-yellow-500 to-amber-600 text-black hover:from-yellow-400 hover:to-amber-500 shadow-gold transition-all"
+        >
+          <span>Claim Offer 🛒</span>
+        </a>
+      </div>
+    </div>
+  );
+}
+
 /* ── IngredientCard ──────────────────────────────────────────── */
 function IngredientCard({ item }) {
   return (
@@ -593,6 +680,12 @@ export default function Landing() {
   const [reviews,        setReviews]        = useState([]);
   const [dandruffReviews,setDandruffReviews]= useState([]);
   const [banners,        setBanners]        = useState([]);
+  const [bannerSettings, setBannerSettings] = useState({
+    badge: "🔥 Limited Time Website Exclusive Deal",
+    title: "Website Launching",
+    highlightText: "Special Offer",
+    subtitle: "Claim our promotional launch discount package before stock runs out!",
+  });
   const [loadingProducts,setLoadingProducts] = useState(true);
   const [reviewForm,     setReviewForm]     = useState({ name: "", rating: 5, comment: "", category: "hair_oil" });
   const [reviewImage,    setReviewImage]    = useState(null);
@@ -679,7 +772,12 @@ export default function Landing() {
   const fetchBanners = useCallback(() => {
     fetch(`${API_URL}/banners`)
       .then(r => r.json())
-      .then(d => { if (d.success && Array.isArray(d.banners)) setBanners(d.banners); })
+      .then(d => {
+        if (d.success) {
+          if (Array.isArray(d.banners)) setBanners(d.banners);
+          if (d.settings) setBannerSettings(d.settings);
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -953,63 +1051,46 @@ export default function Landing() {
 
       {/* ══ SPECIAL WEBSITE LAUNCHING OFFER BANNER SECTION ════════════ */}
       {banners.length > 0 && (
-        <section id="launch-offer" className="py-16 bg-gradient-to-b from-white via-[#FDFBF7] to-white relative overflow-hidden" aria-labelledby="offer-heading">
-          <div className="max-w-6xl mx-auto px-5 sm:px-8 relative z-10">
+        <section id="launch-offer" className="py-20 bg-gradient-to-b from-white via-[#FDFBF7] to-white relative overflow-hidden border-t border-yellow-500/15" aria-labelledby="offer-heading">
+          <div className="absolute top-0 left-1/3 w-[450px] h-[450px] bg-yellow-500/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
             <div className="text-center max-w-3xl mx-auto mb-10 scroll-animate">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-yellow-500/30 text-yellow-900 text-xs font-grotesk font-black uppercase tracking-widest mb-3 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 shadow-xs">
-                🔥 Limited Time Website Exclusive Deal
+                {bannerSettings.badge || "🔥 Limited Time Website Exclusive Deal"}
               </span>
               <h2 id="offer-heading" className="text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria">
-                Website Launching <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700">Special Offer</span>
+                {bannerSettings.title}{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700">
+                  {bannerSettings.highlightText}
+                </span>
               </h2>
               <p className="text-[#6C685F] text-base font-inter mt-2">
-                Claim our promotional launch discount package before stock runs out!
+                {bannerSettings.subtitle || "Claim our promotional launch discount package before stock runs out!"}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
-              {banners.map((b, i) => {
-                const bImg = resolveImg(b.image);
-                return (
-                  <div
-                    key={b._id || i}
-                    className="group relative bg-white rounded-3xl p-4 sm:p-6 border border-yellow-500/25 shadow-2xl hover:shadow-gold-lg transition-all duration-500 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6"
-                  >
-                    <div
-                      onClick={() => setSelectedZoomImg(bImg)}
-                      className="relative w-full md:w-3/5 h-[280px] sm:h-[360px] rounded-2xl overflow-hidden bg-gradient-to-br from-[#FDFBF7] to-[#F5F2EB] border border-yellow-500/15 flex items-center justify-center p-3 cursor-pointer group/img"
-                    >
-                      <ImageWithSkeleton
-                        src={bImg}
-                        alt={b.title}
-                        className="max-h-full max-w-full object-contain group-hover/img:scale-105 transition-transform duration-700 filter drop-shadow-xl"
-                        containerClassName="w-full h-full"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold font-grotesk gap-2 backdrop-blur-xs rounded-2xl">
-                        🔍 Click to Zoom Poster
-                      </div>
-                    </div>
-
-                    <div className="w-full md:w-2/5 text-center md:text-left space-y-4 font-inter">
-                      <span className="px-3.5 py-1 rounded-full bg-amber-500/15 text-amber-900 text-[11px] font-black uppercase font-grotesk tracking-widest inline-block border border-amber-500/30">
-                        ⚡ Active Deal
-                      </span>
-                      <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1C1A16] font-soria leading-tight">{b.title}</h3>
-                      <p className="text-[#6C685F] text-sm leading-relaxed font-inter">{b.subtitle}</p>
-                      
-                      <div className="pt-2">
-                        <a
-                          href={b.linkUrl || "#product"}
-                          className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-extrabold text-black bg-gradient-to-r from-yellow-500 via-amber-500 to-yellow-600 hover:from-yellow-400 hover:to-amber-400 shadow-gold hover:shadow-gold-lg transition-all transform hover:-translate-y-0.5 font-grotesk uppercase tracking-wider text-xs w-full sm:w-auto"
-                        >
-                          <span>Claim Offer Now 🛒</span>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Adaptive layout: If 1 image -> Center showcase card without scroll. If 2+ images -> Auto + Manual Horizontal Scroll */}
+            {banners.length === 1 ? (
+              <div className="max-w-4xl mx-auto flex justify-center">
+                <OfferBannerCard
+                  banner={banners[0]}
+                  onImageClick={img => setSelectedZoomImg(img)}
+                  isSingle={true}
+                />
+              </div>
+            ) : (
+              <div className="pt-2">
+                <AutoManualScroll speed={1.3}>
+                  {banners.map((b, i) => (
+                    <OfferBannerCard
+                      key={b._id || i}
+                      banner={b}
+                      onImageClick={img => setSelectedZoomImg(img)}
+                    />
+                  ))}
+                </AutoManualScroll>
+              </div>
+            )}
           </div>
         </section>
       )}

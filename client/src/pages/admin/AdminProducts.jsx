@@ -18,22 +18,10 @@ export default function AdminProducts() {
       { size: "200ml", mrp: 0, price: 0, stock: 0 },
       { size: "500ml", mrp: 0, price: 0, stock: 0 },
     ],
-    images: [],      // Array of File objects
-    imageUrls: [],   // Array of display URLs
+    images: [], // Array of File objects
+    imageUrls: [], // Array of display URLs
     isActive: true,
   });
-
-  // Banners State
-  const [banners, setBanners] = useState([]);
-  const [showBannerModal, setShowBannerModal] = useState(false);
-  const [isSubmittingBanner, setIsSubmittingBanner] = useState(false);
-  const [bannerFormData, setBannerFormData] = useState({
-    title: "",
-    subtitle: "",
-    linkUrl: "#product"
-  });
-  const [bannerFile, setBannerFile] = useState(null);
-  const [bannerPreview, setBannerPreview] = useState(null);
 
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -53,21 +41,6 @@ export default function AdminProducts() {
     }
   }, [addToast]);
 
-  const fetchBanners = useCallback(async () => {
-    const token = localStorage.getItem("adminToken");
-    try {
-      const response = await fetch(`${API_URL}/banners/admin`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setBanners(data.banners);
-      }
-    } catch (error) {
-      console.error("Error fetching banners:", error);
-    }
-  }, []);
-
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
     if (!token) {
@@ -75,89 +48,7 @@ export default function AdminProducts() {
       return;
     }
     fetchProducts();
-    fetchBanners();
-  }, [navigate, fetchProducts, fetchBanners]);
-
-  const handleBannerFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setBannerFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setBannerPreview(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleBannerSubmit = async (e) => {
-    e.preventDefault();
-    if (!bannerFile) {
-      addToast("Please select an offer banner image to upload", "warning");
-      return;
-    }
-
-    setIsSubmittingBanner(true);
-    const token = localStorage.getItem("adminToken");
-    const fd = new FormData();
-    fd.append("title", bannerFormData.title);
-    fd.append("subtitle", bannerFormData.subtitle);
-    fd.append("linkUrl", bannerFormData.linkUrl);
-    fd.append("image", bannerFile);
-
-    try {
-      const res = await fetch(`${API_URL}/banners`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
-        body: fd
-      });
-      const data = await res.json();
-      if (data.success) {
-        addToast("Offer banner uploaded & published to home page! 🚀", "success");
-        setShowBannerModal(false);
-        setBannerFile(null);
-        setBannerPreview(null);
-        setBannerFormData({ title: "", subtitle: "", linkUrl: "#product" });
-        fetchBanners();
-      } else {
-        addToast(data.message || "Failed to upload banner", "error");
-      }
-    } catch (err) {
-      console.error("Banner upload error:", err);
-      addToast("Failed to upload offer banner", "error");
-    } finally {
-      setIsSubmittingBanner(false);
-    }
-  };
-
-  const handleToggleBanner = async (id) => {
-    const token = localStorage.getItem("adminToken");
-    try {
-      const res = await fetch(`${API_URL}/banners/${id}/toggle`, {
-        method: "PATCH",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        addToast(data.message, "success");
-        fetchBanners();
-      } else addToast("Failed to update status", "error");
-    } catch { addToast("Error updating banner status", "error"); }
-  };
-
-  const handleDeleteBanner = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this offer banner?")) return;
-    const token = localStorage.getItem("adminToken");
-    try {
-      const res = await fetch(`${API_URL}/banners/${id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        addToast("Offer banner deleted successfully", "success");
-        fetchBanners();
-      } else addToast("Failed to delete banner", "error");
-    } catch { addToast("Error deleting banner", "error"); }
-  };
+  }, [navigate, fetchProducts]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -171,7 +62,7 @@ export default function AdminProducts() {
     submitData.append("isActive", formData.isActive);
 
     if (formData.images && formData.images.length > 0) {
-      formData.images.forEach(file => {
+      formData.images.forEach((file) => {
         submitData.append("images", file);
       });
     }
@@ -184,14 +75,17 @@ export default function AdminProducts() {
       const response = await fetch(url, {
         method: editingProduct ? "PUT" : "POST",
         headers: {
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: submitData,
       });
 
       const data = await response.json();
       if (data.success) {
-        addToast(editingProduct ? "Product updated successfully" : "Product created successfully", "success");
+        addToast(
+          editingProduct ? "Product updated successfully" : "Product created successfully",
+          "success"
+        );
         setShowModal(false);
         resetForm();
         fetchProducts();
@@ -212,7 +106,7 @@ export default function AdminProducts() {
       const response = await fetch(`${API_URL}/products/${id}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -234,8 +128,8 @@ export default function AdminProducts() {
     setFormData({
       name: product.name,
       description: product.description,
-      gstPercentage: product.gstPercentage || 0,
-      sizes: product.sizes,
+      gstPercentage: product.gstPercentage ?? 0,
+      sizes: product.sizes || [],
       images: [],
       imageUrls: product.images || [],
       isActive: product.isActive,
@@ -262,14 +156,14 @@ export default function AdminProducts() {
 
   const updateSize = (index, field, value) => {
     const newSizes = [...formData.sizes];
-    newSizes[index][field] = (field === "size" || value === "") ? value : Number(value);
+    newSizes[index][field] = field === "size" || value === "" ? value : Number(value);
     setFormData({ ...formData, sizes: newSizes });
   };
 
   const addSize = () => {
     setFormData({
       ...formData,
-      sizes: [...formData.sizes, { size: "", mrp: 0, price: 0, offerPrice: null, stock: 0 }]
+      sizes: [...formData.sizes, { size: "", mrp: 0, price: 0, offerPrice: null, stock: 0 }],
     });
   };
 
@@ -291,19 +185,13 @@ export default function AdminProducts() {
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
             <div className="min-w-0">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1C1A16] mb-1 font-soria whitespace-nowrap">
-                Product & Banner Management
+                Product Inventory
               </h1>
               <p className="text-[#6C685F] text-xs sm:text-sm font-inter">
-                Manage herbal oil inventory & upload homepage promotional offer banners
+                Manage herbal oil catalog items, bottle sizes, pricing, MRP, and stock inventory
               </p>
             </div>
             <div className="flex flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
-              <button
-                onClick={() => setShowBannerModal(true)}
-                className="flex-1 sm:flex-initial px-5 py-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black font-extrabold font-grotesk rounded-xl shadow-gold hover:shadow-gold-lg transition-all flex items-center justify-center gap-2 uppercase tracking-wider text-xs whitespace-nowrap"
-              >
-                <span>🔥 Upload Offer Banner</span>
-              </button>
               <button
                 onClick={() => {
                   resetForm();
@@ -319,85 +207,6 @@ export default function AdminProducts() {
             </div>
           </div>
 
-          {/* ══ OFFER BANNERS MANAGEMENT SECTION ════════════════════ */}
-          <div className="mb-12 bg-white p-7 rounded-3xl border border-yellow-500/20 shadow-card">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-yellow-500/12 pb-5 mb-6">
-              <div>
-                <span className="px-3 py-1 rounded-full bg-yellow-500/15 text-yellow-800 text-[10px] font-extrabold font-grotesk uppercase tracking-widest inline-block mb-1">
-                  🔥 Promotional Banners
-                </span>
-                <h3 className="text-2xl font-bold text-[#1C1A16] font-soria">Homepage Launch Offer Banners</h3>
-                <p className="text-[#6C685F] text-xs font-inter mt-0.5">Upload launch offers & discount banners to display on the live website</p>
-              </div>
-              <button
-                onClick={() => setShowBannerModal(true)}
-                className="px-4 py-2 bg-yellow-500/15 text-yellow-900 border border-yellow-500/30 rounded-xl font-bold font-grotesk text-xs uppercase tracking-wider hover:bg-yellow-500/25 transition-colors"
-              >
-                + Add Offer Poster
-              </button>
-            </div>
-
-            {banners.length === 0 ? (
-              <div className="text-center py-10 bg-[#FDFBF7] rounded-2xl border border-dashed border-yellow-500/30">
-                <p className="text-sm text-[#6C685F] font-inter mb-3">No promotional offer banners uploaded yet.</p>
-                <button
-                  onClick={() => setShowBannerModal(true)}
-                  className="px-5 py-2 bg-yellow-500 text-black font-bold font-grotesk text-xs uppercase tracking-wider rounded-xl hover:bg-yellow-400"
-                >
-                  Upload Offer Poster Now
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {banners.map((b) => (
-                  <div key={b._id} className="bg-[#FDFBF7] rounded-2xl border border-yellow-500/20 overflow-hidden shadow-sm flex flex-col justify-between group">
-                    <div className="relative h-48 bg-black/5 overflow-hidden p-2 flex items-center justify-center">
-                      <img
-                        src={b.image.startsWith("data:") || b.image.startsWith("http") ? b.image : `${BASE_URL.replace(/\/api$/, "")}${b.image}`}
-                        alt={b.title}
-                        className="max-h-full max-w-full object-contain"
-                      />
-                      <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase font-grotesk tracking-wider border shadow-xs ${b.isActive ? "bg-emerald-100 text-emerald-800 border-emerald-300" : "bg-gray-100 text-gray-700 border-gray-300"}`}>
-                        {b.isActive ? "● Active on Website" : "○ Hidden"}
-                      </span>
-                    </div>
-
-                    <div className="p-4 space-y-2 font-inter border-t border-yellow-500/10 bg-white">
-                      <h4 className="font-bold text-[#1C1A16] text-base font-grotesk leading-snug">{b.title}</h4>
-                      <p className="text-xs text-[#6C685F] line-clamp-1">{b.subtitle}</p>
-
-                      <div className="pt-3 flex items-center justify-between gap-2 border-t border-yellow-500/10">
-                        <button
-                          onClick={() => handleToggleBanner(b._id)}
-                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold font-grotesk uppercase tracking-wider transition-colors ${
-                            b.isActive
-                              ? "bg-amber-100 text-amber-900 hover:bg-amber-200"
-                              : "bg-emerald-100 text-emerald-900 hover:bg-emerald-200"
-                          }`}
-                        >
-                          {b.isActive ? "Hide Banner" : "Show on Website"}
-                        </button>
-
-                        <button
-                          onClick={() => handleDeleteBanner(b._id)}
-                          className="px-3 py-1.5 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg text-[11px] font-bold font-grotesk uppercase tracking-wider transition-colors"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Products Section Header */}
-          <div className="mb-6">
-            <h3 className="text-2xl font-bold text-[#1C1A16] font-soria">Product Catalog Items</h3>
-            <p className="text-[#6C685F] text-xs font-inter mt-0.5">Manage bottle sizes, pricing, MRP discounts, and inventory stock</p>
-          </div>
-
           {/* Products Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => (
@@ -411,7 +220,11 @@ export default function AdminProducts() {
                   <div className="relative h-64 bg-gradient-to-b from-[#FDFBF7] to-[#F5F2EB] p-4 flex items-center justify-center border-b border-yellow-500/10 group">
                     {product.images && product.images.length > 0 ? (
                       <img
-                        src={product.images[0].startsWith("data:") || product.images[0].startsWith("http") ? product.images[0] : `${BASE_URL.replace(/\/api$/, "")}${product.images[0]}`}
+                        src={
+                          product.images[0].startsWith("data:") || product.images[0].startsWith("http")
+                            ? product.images[0]
+                            : `${BASE_URL.replace(/\/api$/, "")}${product.images[0]}`
+                        }
                         alt={product.name}
                         className="max-h-full max-w-full object-contain transform group-hover:scale-105 transition-transform duration-500"
                       />
@@ -419,9 +232,13 @@ export default function AdminProducts() {
                       <div className="text-4xl text-yellow-600/30 font-soria">Kala Agalya</div>
                     )}
                     <div className="absolute top-4 right-4 flex gap-2">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase font-grotesk tracking-widest ${
-                        product.isActive ? "bg-emerald-100 text-emerald-800 border border-emerald-200" : "bg-gray-100 text-gray-600 border border-gray-200"
-                      }`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase font-grotesk tracking-widest ${
+                          product.isActive
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                            : "bg-gray-100 text-gray-600 border border-gray-200"
+                        }`}
+                      >
                         {product.isActive ? "Active" : "Disabled"}
                       </span>
                     </div>
@@ -429,20 +246,29 @@ export default function AdminProducts() {
 
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-[#1C1A16] font-grotesk mb-2">{product.name}</h3>
-                    <p className="text-[#6C685F] text-xs font-inter line-clamp-2 mb-4 leading-relaxed">{product.description}</p>
+                    <p className="text-[#6C685F] text-xs font-inter line-clamp-2 mb-4 leading-relaxed">
+                      {product.description}
+                    </p>
 
                     <div className="space-y-2 border-t border-yellow-500/10 pt-4">
-                      <span className="text-[10px] font-extrabold text-yellow-800 uppercase tracking-widest block font-grotesk">Sizes & Pricing</span>
+                      <span className="text-[10px] font-extrabold text-yellow-800 uppercase tracking-widest block font-grotesk">
+                        Sizes & Pricing
+                      </span>
                       <div className="grid grid-cols-1 gap-2">
                         {product.sizes.map((s, idx) => (
-                          <div key={idx} className="flex justify-between items-center bg-[#FDFBF7] px-3.5 py-2 rounded-xl text-xs font-inter border border-yellow-500/10">
+                          <div
+                            key={idx}
+                            className="flex justify-between items-center bg-[#FDFBF7] px-3.5 py-2 rounded-xl text-xs font-inter border border-yellow-500/10"
+                          >
                             <span className="font-bold text-[#1C1A16] font-grotesk">{s.size}</span>
                             <div className="flex items-center gap-2">
                               {s.mrp && s.mrp > s.price && (
                                 <span className="line-through text-[#9A9690] text-[11px]">₹{s.mrp}</span>
                               )}
                               <span className="font-bold text-yellow-800 font-grotesk text-sm">₹{s.price}</span>
-                              <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md font-grotesk">Stock: {s.stock}</span>
+                              <span className="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md font-grotesk">
+                                Stock: {s.stock}
+                              </span>
                             </div>
                           </div>
                         ))}
@@ -472,7 +298,9 @@ export default function AdminProducts() {
           {products.length === 0 && (
             <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-yellow-500/30">
               <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                <svg className="w-8 h-8 text-yellow-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
               </div>
               <p className="text-[#6C685F] mb-3 font-inter text-sm">No products found in inventory.</p>
               <button
@@ -510,7 +338,9 @@ export default function AdminProducts() {
 
                 <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 font-inter">
                   <div>
-                    <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Product Name</label>
+                    <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
+                      Product Name
+                    </label>
                     <input
                       type="text"
                       value={formData.name}
@@ -522,7 +352,9 @@ export default function AdminProducts() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Description</label>
+                    <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
+                      Description
+                    </label>
                     <textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -534,348 +366,172 @@ export default function AdminProducts() {
 
                   {/* GST Percentage */}
                   <div className="bg-[#FDFBF7] p-5 rounded-2xl border border-yellow-500/12">
-                    <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-3 font-grotesk">GST Percentage (%)</label>
+                    <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-3 font-grotesk">
+                      GST Percentage (%)
+                    </label>
                     <div className="flex gap-2.5 flex-wrap">
-                      {[0, 5, 12, 18, 28].map(gst => (
+                      {[0, 5, 12, 18, 28].map((gst) => (
                         <button
                           key={gst}
                           type="button"
                           onClick={() => setFormData({ ...formData, gstPercentage: gst })}
                           className={`px-4 py-2 rounded-xl text-xs font-bold font-grotesk border transition-all ${
                             formData.gstPercentage === gst
-                              ? 'bg-gradient-to-r from-yellow-500 to-amber-600 text-black border-yellow-500 shadow-gold'
-                              : 'bg-white text-[#6C685F] border-yellow-500/20 hover:border-yellow-500/50 hover:text-[#1C1A16]'
+                              ? "bg-gradient-to-r from-yellow-500 to-amber-600 text-black border-yellow-500 shadow-gold"
+                              : "bg-white text-[#6C685F] border-yellow-500/20 hover:border-yellow-500/50 hover:text-[#1C1A16]"
                           }`}
                         >
                           {gst}%
                         </button>
                       ))}
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        value={formData.gstPercentage}
-                        onChange={(e) => setFormData({ ...formData, gstPercentage: Number(e.target.value) })}
-                        className="w-20 px-3 py-2 bg-white border border-yellow-500/20 rounded-xl text-[#1C1A16] text-xs outline-none focus:border-yellow-600 text-center font-bold font-grotesk"
-                        placeholder="Custom"
-                      />
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">Product Images (Up to 5)</label>
-                    <div className="space-y-4">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={(e) => {
-                          const files = Array.from(e.target.files);
-                          if (files.length > 0) {
-                            setFormData({
-                              ...formData,
-                              images: [...formData.images, ...files].slice(0, 5),
-                              imageUrls: [...formData.imageUrls, ...files.map(f => URL.createObjectURL(f))].slice(0, 5)
-                            });
-                          }
-                        }}
-                        className="block w-full text-xs text-[#6C685F] file:mr-4 file:py-2.5 file:px-5 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-yellow-500/10 file:text-yellow-800 hover:file:bg-yellow-500/20 transition-all cursor-pointer font-grotesk"
-                      />
-                      {(formData.imageUrls.length > 0) && (
-                        <div className="flex flex-wrap gap-3">
-                          {formData.imageUrls.map((url, idx) => (
-                            <div key={idx} className="relative w-20 h-20 rounded-2xl border border-yellow-500/20 overflow-hidden bg-[#FDFBF7] flex-shrink-0 group p-1">
-                              <img
-                                src={url.startsWith("blob") || url.startsWith("http") || url.startsWith("data:image") ? url : `${BASE_URL.replace(/\/api$/, "")}${url}`}
-                                alt={`Preview ${idx}`}
-                                className="w-full h-full object-contain"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const newUrls = formData.imageUrls.filter((_, i) => i !== idx);
-                                  const newImages = formData.images.filter((_, i) => i !== idx);
-                                  setFormData({ ...formData, imageUrls: newUrls, images: newImages });
-                                }}
-                                className="absolute inset-0 bg-red-600/70 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-2xl text-xs font-bold"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <label className="text-xs font-bold text-yellow-800 uppercase tracking-wider font-grotesk">Sizes & Pricing</label>
+                  {/* Sizes and Pricing */}
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider font-grotesk">
+                        Sizes & Pricing
+                      </label>
                       <button
                         type="button"
                         onClick={addSize}
-                        className="text-xs font-bold text-yellow-700 hover:text-yellow-900 font-grotesk flex items-center gap-1"
+                        className="text-xs font-bold text-yellow-800 hover:text-yellow-600 flex items-center gap-1 font-grotesk uppercase tracking-wider"
                       >
-                        + Add Size Variant
+                        + Add Size
                       </button>
                     </div>
 
                     <div className="space-y-3">
-                      {formData.sizes.map((s, idx) => (
-                        <div key={idx} className="bg-[#FDFBF7] p-4 rounded-2xl border border-yellow-500/12 grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
-                          <div>
-                            <span className="text-[10px] font-bold text-gray-500 block mb-1 font-grotesk uppercase">Size</span>
-                            <input
-                              type="text"
-                              value={s.size}
-                              onChange={(e) => updateSize(idx, "size", e.target.value)}
-                              placeholder="e.g. 100ml"
-                              className="w-full px-3 py-2 bg-white border border-yellow-500/20 rounded-xl text-xs font-bold font-grotesk"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <span className="text-[10px] font-bold text-gray-500 block mb-1 font-grotesk uppercase">MRP (₹)</span>
-                            <input
-                              type="number"
-                              value={s.mrp || ""}
-                              onChange={(e) => updateSize(idx, "mrp", e.target.value)}
-                              placeholder="MRP"
-                              className="w-full px-3 py-2 bg-white border border-yellow-500/20 rounded-xl text-xs font-bold font-grotesk"
-                            />
-                          </div>
-                          <div>
-                            <span className="text-[10px] font-bold text-gray-500 block mb-1 font-grotesk uppercase">Selling Price (₹)</span>
-                            <input
-                              type="number"
-                              value={s.price || ""}
-                              onChange={(e) => updateSize(idx, "price", e.target.value)}
-                              placeholder="Price"
-                              className="w-full px-3 py-2 bg-white border border-yellow-500/20 rounded-xl text-xs font-bold font-grotesk"
-                              required
-                            />
-                          </div>
-                          <div className="flex gap-2 items-center">
-                            <div className="flex-1">
-                              <span className="text-[10px] font-bold text-gray-500 block mb-1 font-grotesk uppercase">Stock</span>
-                              <input
-                                type="number"
-                                value={s.stock || 0}
-                                onChange={(e) => updateSize(idx, "stock", e.target.value)}
-                                className="w-full px-3 py-2 bg-white border border-yellow-500/20 rounded-xl text-xs font-bold font-grotesk"
-                              />
-                            </div>
-                            {formData.sizes.length > 1 && (
-                              <button
-                                type="button"
-                                onClick={() => removeSize(idx)}
-                                className="mt-4 p-2 text-red-600 hover:bg-red-50 rounded-xl"
-                              >
-                                ✕
-                              </button>
-                            )}
-                          </div>
+                      {formData.sizes.map((s, index) => (
+                        <div
+                          key={index}
+                          className="flex flex-wrap sm:flex-nowrap gap-3 items-center bg-[#FDFBF7] p-4 rounded-2xl border border-yellow-500/12"
+                        >
+                          <input
+                            type="text"
+                            value={s.size}
+                            onChange={(e) => updateSize(index, "size", e.target.value)}
+                            placeholder="Size (e.g. 100ml)"
+                            className="input-premium py-2 text-xs flex-1 min-w-[100px]"
+                            required
+                          />
+                          <input
+                            type="number"
+                            value={s.mrp || ""}
+                            onChange={(e) => updateSize(index, "mrp", e.target.value)}
+                            placeholder="MRP (₹)"
+                            className="input-premium py-2 text-xs w-24"
+                          />
+                          <input
+                            type="number"
+                            value={s.price || ""}
+                            onChange={(e) => updateSize(index, "price", e.target.value)}
+                            placeholder="Price (₹)"
+                            className="input-premium py-2 text-xs w-24"
+                            required
+                          />
+                          <input
+                            type="number"
+                            value={s.stock || ""}
+                            onChange={(e) => updateSize(index, "stock", e.target.value)}
+                            placeholder="Stock"
+                            className="input-premium py-2 text-xs w-20"
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeSize(index)}
+                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
                         </div>
                       ))}
                     </div>
                   </div>
 
-              <div className="flex items-center gap-3 bg-[#FDFBF7] p-4 rounded-2xl border border-yellow-500/12">
-                <input
-                  type="checkbox"
-                  id="active-check"
-                  checked={formData.isActive}
-                  onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                  className="w-5 h-5 accent-yellow-600 rounded cursor-pointer"
-                />
-                <label htmlFor="active-check" className="text-xs font-bold text-[#1C1A16] cursor-pointer uppercase tracking-wider font-grotesk">Set Product as Active</label>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-2 font-grotesk">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowModal(false);
-                    resetForm();
-                  }}
-                  className="flex-1 px-4 py-3 bg-[#F5F2EB] text-[#6C685F] border border-yellow-500/20 rounded-xl font-bold hover:bg-yellow-500/10 transition-colors text-xs uppercase tracking-wider"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold hover:from-yellow-400 hover:to-amber-500 transition-all text-xs uppercase tracking-wider shadow-gold"
-                >
-                  {editingProduct ? "Save Changes" : "Create Product"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Upload Offer Banner Modal */}
-      {showBannerModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 z-[60] animate-fadeIn overflow-y-auto">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-xl w-full my-auto border border-yellow-500/20 relative overflow-hidden">
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-white/95 backdrop-blur border-b border-yellow-500/12 px-6 py-4 flex justify-between items-center z-10">
-              <div>
-                <span className="px-2.5 py-0.5 rounded-full bg-yellow-500/15 text-yellow-800 text-[10px] font-extrabold font-grotesk uppercase tracking-wider inline-block mb-1">
-                  🔥 Homepage Offer Poster
-                </span>
-                <h2 className="text-xl font-bold text-[#1C1A16] font-grotesk tracking-wide">
-                  Upload Promotional Banner
-                </h2>
-              </div>
-              <button
-                onClick={() => {
-                  setShowBannerModal(false);
-                  setBannerFile(null);
-                  setBannerPreview(null);
-                }}
-                className="text-[#9A9690] hover:text-red-600 transition-colors p-2"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleBannerSubmit} className="p-6 sm:p-8 space-y-5 font-inter">
-              <div>
-                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
-                  Banner Title
-                </label>
-                <input
-                  type="text"
-                  value={bannerFormData.title}
-                  onChange={(e) => setBannerFormData({ ...bannerFormData, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
-                  placeholder="e.g. Website Launching Offer"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
-                  Subtitle / Description
-                </label>
-                <input
-                  type="text"
-                  value={bannerFormData.subtitle}
-                  onChange={(e) => setBannerFormData({ ...bannerFormData, subtitle: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
-                  placeholder="e.g. 200ml Launch Deal - Save Big!"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
-                  Target Section Link URL
-                </label>
-                <input
-                  type="text"
-                  value={bannerFormData.linkUrl}
-                  onChange={(e) => setBannerFormData({ ...bannerFormData, linkUrl: e.target.value })}
-                  className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
-                  placeholder="e.g. #product"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
-                  Banner Image Poster *
-                </label>
-
-                <div className="space-y-3">
-                  <div className="relative border-2 border-dashed border-yellow-500/30 hover:border-yellow-500/60 rounded-2xl p-5 text-center bg-[#FDFBF7] transition-all group">
+                  {/* Images */}
+                  <div>
+                    <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
+                      Product Images
+                    </label>
                     <input
                       type="file"
+                      multiple
                       accept="image/*"
-                      onChange={handleBannerFileChange}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files);
+                        setFormData({
+                          ...formData,
+                          images: files,
+                          imageUrls: files.map((file) => URL.createObjectURL(file)),
+                        });
+                      }}
+                      className="w-full text-xs text-[#6C685F] file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-yellow-50 file:text-yellow-900 hover:file:bg-yellow-100 cursor-pointer"
                     />
-                    <div className="flex flex-col items-center justify-center space-y-2 pointer-events-none">
-                      <div className="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-700 group-hover:scale-110 transition-transform">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
+                    {formData.imageUrls && formData.imageUrls.length > 0 && (
+                      <div className="flex gap-3 mt-3 overflow-x-auto py-2">
+                        {formData.imageUrls.map((url, idx) => (
+                          <div
+                            key={idx}
+                            className="relative w-16 h-16 rounded-xl border border-yellow-500/20 overflow-hidden bg-[#FDFBF7] shrink-0"
+                          >
+                            <img
+                              src={
+                                url.startsWith("blob:") || url.startsWith("data:") || url.startsWith("http")
+                                  ? url
+                                  : `${BASE_URL.replace(/\/api$/, "")}${url}`
+                              }
+                              alt="Preview"
+                              className="w-full h-full object-contain p-1"
+                            />
+                          </div>
+                        ))}
                       </div>
-                      <p className="text-xs font-bold text-[#1C1A16] font-grotesk">
-                        {bannerFile ? bannerFile.name : "Click or drag & drop banner image here"}
-                      </p>
-                      <p className="text-[11px] text-[#6C685F] font-inter">
-                        Supports JPG, PNG, WEBP (Max 15MB)
-                      </p>
-                    </div>
+                    )}
                   </div>
 
-                  {bannerPreview && (
-                    <div className="relative rounded-2xl border border-yellow-500/20 overflow-hidden bg-[#FDFBF7] p-3">
-                      <span className="block text-[10px] font-bold text-yellow-800 uppercase tracking-widest font-grotesk mb-2">
-                        Image Preview:
-                      </span>
-                      <div className="h-44 flex items-center justify-center bg-black/5 rounded-xl p-2 relative overflow-hidden">
-                        <img
-                          src={bannerPreview}
-                          alt="Banner Preview"
-                          className="max-h-full max-w-full object-contain rounded-lg shadow-sm"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setBannerFile(null);
-                            setBannerPreview(null);
-                          }}
-                          className="absolute top-2 right-2 px-3 py-1 bg-red-600 text-white rounded-lg text-xs font-bold font-grotesk shadow-md hover:bg-red-700 transition-colors"
-                        >
-                          Remove File
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+                  {/* Status Toggle */}
+                  <div className="flex items-center gap-3 pt-2">
+                    <input
+                      type="checkbox"
+                      id="isActive"
+                      checked={formData.isActive}
+                      onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                      className="w-4 h-4 text-yellow-600 rounded border-yellow-300 focus:ring-yellow-500"
+                    />
+                    <label htmlFor="isActive" className="text-xs font-bold text-[#1C1A16] font-grotesk">
+                      Active (Visible on website)
+                    </label>
+                  </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 font-grotesk">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowBannerModal(false);
-                    setBannerFile(null);
-                    setBannerPreview(null);
-                  }}
-                  className="flex-1 px-4 py-3 bg-[#F5F2EB] text-[#6C685F] border border-yellow-500/20 rounded-xl font-bold hover:bg-yellow-500/10 transition-colors text-xs uppercase tracking-wider"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmittingBanner}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold hover:from-yellow-400 hover:to-amber-500 transition-all text-xs uppercase tracking-wider shadow-gold flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  {isSubmittingBanner ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                      <span>Uploading...</span>
-                    </>
-                  ) : (
-                    <span>🚀 Publish Banner</span>
-                  )}
-                </button>
+                  <div className="flex gap-4 pt-4 border-t border-yellow-500/10 font-grotesk">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowModal(false);
+                        resetForm();
+                      }}
+                      className="flex-1 px-4 py-3 bg-[#F5F2EB] text-[#6C685F] border border-yellow-500/20 rounded-xl font-bold hover:bg-yellow-500/10 transition-colors text-xs uppercase tracking-wider"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-black rounded-xl font-bold hover:from-yellow-400 hover:to-amber-500 transition-all text-xs uppercase tracking-wider shadow-gold"
+                    >
+                      {editingProduct ? "Save Changes" : "Create Product"}
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+            </div>
+          )}
         </>
       )}
     </AdminLayout>
   );
 }
-
-

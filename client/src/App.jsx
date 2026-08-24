@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
 import AdminProducts from "./pages/admin/AdminProducts";
+import AdminBanners from "./pages/admin/AdminBanners";
 import UserLogin from "./pages/auth/UserLogin";
 import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -152,6 +153,7 @@ function Layout() {
           <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
           <Route path="/admin/orders/:id" element={<AdminRoute><AdminOrderDetail /></AdminRoute>} />
           <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+          <Route path="/admin/banners" element={<AdminRoute><AdminBanners /></AdminRoute>} />
           <Route path="/admin/reports" element={<AdminRoute><AdminReports /></AdminRoute>} />
           <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
           <Route path="/admin/reviews" element={<AdminRoute><AdminReviews /></AdminRoute>} />
