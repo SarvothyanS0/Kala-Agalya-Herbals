@@ -24,19 +24,19 @@ exports.getProductReviews = async (req, res) => {
     let query = {};
     if (productId === "dandruff") {
       query = { category: "dandruff" };
-    } else if (productId === "hair_oil") {
-      query = { category: { $ne: "dandruff" } };
     } else if (productId === "all") {
       query = {};
+    } else if (productId === "hair_oil") {
+      query = { category: { $ne: "dandruff" } };
     } else if (mongoose.Types.ObjectId.isValid(productId)) {
       query = {
+        category: { $ne: "dandruff" },
         $or: [
           { product: productId },
           { category: "hair_oil" },
           { category: { $exists: false } },
           { category: null },
-          { category: "" },
-          { category: { $ne: "dandruff" } }
+          { category: "" }
         ]
       };
     } else {

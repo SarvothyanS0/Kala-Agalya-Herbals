@@ -1006,8 +1006,9 @@ export default function Landing() {
     finally { setIsSubmitting(false); }
   };
 
-  const avgRating  = reviews.length ? (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(1) : "5.0";
-  const ratingStats = [5,4,3,2,1].map(stars => ({ stars, pct: reviews.length ? ((reviews.filter(r => r.rating === stars).length / reviews.length) * 100).toFixed(0) + "%" : "0%" }));
+  const hairCareReviews = reviews.filter(r => r.category !== "dandruff");
+  const avgRating  = hairCareReviews.length ? (hairCareReviews.reduce((a, r) => a + r.rating, 0) / hairCareReviews.length).toFixed(1) : "5.0";
+  const ratingStats = [5,4,3,2,1].map(stars => ({ stars, pct: hairCareReviews.length ? ((hairCareReviews.filter(r => r.rating === stars).length / hairCareReviews.length) * 100).toFixed(0) + "%" : "0%" }));
 
   /* ── Schema ──────────────────────────────────────────────── */
   const schemaOrg = {
@@ -1282,7 +1283,7 @@ export default function Landing() {
                 {avgRating}
               </div>
               <div className="text-yellow-500 text-2xl tracking-widest my-2" aria-hidden="true">★★★★★</div>
-              <p className="text-[#6C685F] text-sm mb-6 font-inter">Based on {reviews.length} customer review{reviews.length !== 1 ? "s" : ""}</p>
+              <p className="text-[#6C685F] text-sm mb-6 font-inter">Based on {hairCareReviews.length} customer review{hairCareReviews.length !== 1 ? "s" : ""}</p>
               <div className="space-y-2.5">
                 {ratingStats.map(row => (
                   <div key={row.stars} className="flex items-center gap-3 text-xs font-inter">
@@ -1388,10 +1389,10 @@ export default function Landing() {
           </div>
 
           {/* ── Auto-Scrolling + Manual Touch/Mouse Reviews Slider ── */}
-          {reviews.length > 0 ? (
+          {hairCareReviews.length > 0 ? (
             <div className="pt-4 border-t border-yellow-500/8">
               <AutoManualScroll speed={1.5}>
-                {reviews.map((review, i) => (
+                {hairCareReviews.map((review, i) => (
                   <ReviewCard key={review._id || i} review={review} badgeText="✨ Hair Care" onImageClick={img => setSelectedZoomImg(img)} />
                 ))}
               </AutoManualScroll>
