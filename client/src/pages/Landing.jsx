@@ -237,10 +237,19 @@ const defaultDandruffReviews = [
   }
 ];
 
+/* ── Helper: detect dandruff review ──────────────────────────── */
+function isDandruffReview(r) {
+  if (!r) return false;
+  const cat = (r.category || "").trim().toLowerCase();
+  if (cat === "dandruff") return true;
+  if (r.comment && /dandruff|anti-dandruff|dry scalp|flak(y|es?)|scalp itch/i.test(r.comment)) return true;
+  return false;
+}
+
 /* ── ReviewCard ──────────────────────────────────────────────── */
 function ReviewCard({ review, badgeText, onImageClick }) {
   const imgSrc = resolveImg(review.image);
-  const isDandruff = review.category === "dandruff" || (badgeText && badgeText.includes("Dandruff"));
+  const isDandruff = isDandruffReview(review) || (badgeText && badgeText.includes("Dandruff"));
   return (
     <div className={`w-[320px] sm:w-[360px] shrink-0 bg-white p-6 rounded-3xl border shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-400 flex flex-col justify-between group ${isDandruff ? "border-emerald-500/25" : "border-yellow-500/12"}`}>
       <div>
@@ -1006,7 +1015,7 @@ export default function Landing() {
     finally { setIsSubmitting(false); }
   };
 
-  const hairCareReviews = reviews.filter(r => r.category !== "dandruff");
+  const hairCareReviews = reviews.filter(r => !isDandruffReview(r));
   const avgRating  = hairCareReviews.length ? (hairCareReviews.reduce((a, r) => a + r.rating, 0) / hairCareReviews.length).toFixed(1) : "5.0";
   const ratingStats = [5,4,3,2,1].map(stars => ({ stars, pct: hairCareReviews.length ? ((hairCareReviews.filter(r => r.rating === stars).length / hairCareReviews.length) * 100).toFixed(0) + "%" : "0%" }));
 
@@ -1424,12 +1433,17 @@ export default function Landing() {
           </div>
 
           {(() => {
-            const matchedDbReviews = reviews.filter(r => r.comment && /dandruff|scalp|flake|itch|neem|vetiver/i.test(r.comment));
-            const displayList = dandruffReviews.length > 0
-              ? dandruffReviews
-              : matchedDbReviews.length > 0
-                ? matchedDbReviews
-                : defaultDandruffReviews;
+            const allDandruffCandidates = [...dandruffReviews, ...reviews].filter(r => isDandruffReview(r));
+            const seen = new Set();
+            const uniqueDandruff = [];
+            for (const r of allDandruffCandidates) {
+              const id = r._id || r.name + r.comment;
+              if (!seen.has(id)) {
+                seen.add(id);
+                uniqueDandruff.push(r);
+              }
+            }
+            const displayList = uniqueDandruff.length > 0 ? uniqueDandruff : defaultDandruffReviews;
 
             return (
               <div className="pt-2">

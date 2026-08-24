@@ -10,71 +10,60 @@ function reviewCacheKey(productId) {
   return `reviews_${productId}`;
 }
 
-// Get all reviews for a product or category (cached)
+// Get all reviews for a product or category
 exports.getProductReviews = async (req, res) => {
   try {
     const { productId } = req.params;
-    const key = reviewCacheKey(productId);
-
-    const cached = cache.get(key);
-    if (cached) {
-      return res.json(cached);
-    }
 
     let query = {};
     if (productId === "dandruff") {
-      query = { category: "dandruff" };
-    } else if (productId === "all") {
-      query = {};
-    } else if (productId === "hair_oil") {
-      query = { category: { $ne: "dandruff" } };
-    } else if (mongoose.Types.ObjectId.isValid(productId)) {
       query = {
-        category: { $ne: "dandruff" },
         $or: [
-          { product: productId },
-          { category: "hair_oil" },
-          { category: { $exists: false } },
-          { category: null },
-          { category: "" }
+          { category: /^dandruff$/i },
+          { comment: /dandruff|anti-dandruff|dry scalp|flak(y|es?)|scalp itch/i }
         ]
       };
+    } else if (productId === "all") {
+      query = {};
     } else {
-      query = { category: { $ne: "dandruff" } };
+      // General Hair Oil / Hair Growth reviews: Strictly exclude any dandruff category or dandruff comment
+      query = {
+        category: { $not: /^dandruff$/i },
+        comment: { $not: /dandruff|anti-dandruff|flak(y|es?)/i }
+      };
     }
 
     const reviews = await Review.find(query).sort({ createdAt: -1 }).lean();
-    cache.set(key, reviews, CACHE_TTL);
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
-// Get reviews by category (cached)
+// Get reviews by category
 exports.getReviewsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const key = reviewCacheKey(category);
-
-    const cached = cache.get(key);
-    if (cached) {
-      return res.json(cached);
-    }
 
     let query = {};
     if (category === "dandruff") {
-      query = { category: "dandruff" };
-    } else if (category === "hair_oil") {
-      query = { category: { $ne: "dandruff" } };
+      query = {
+        $or: [
+          { category: /^dandruff$/i },
+          { comment: /dandruff|anti-dandruff|dry scalp|flak(y|es?)|scalp itch/i }
+        ]
+      };
     } else if (category === "all") {
       query = {};
     } else {
-      query = { category };
+      // Hair Oil category: Exclude dandruff reviews completely
+      query = {
+        category: { $not: /^dandruff$/i },
+        comment: { $not: /dandruff|anti-dandruff|flak(y|es?)/i }
+      };
     }
 
     const reviews = await Review.find(query).sort({ createdAt: -1 }).lean();
-    cache.set(key, reviews, CACHE_TTL);
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
