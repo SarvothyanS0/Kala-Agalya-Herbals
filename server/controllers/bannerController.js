@@ -11,10 +11,10 @@ async function getOrCreateBannerSettings() {
   let settings = await BannerSetting.findOne().lean();
   if (!settings) {
     settings = await BannerSetting.create({
-      badge: "🔥 Limited Time Website Exclusive Deal",
-      title: "Website Launching",
-      highlightText: "Special Offer",
-      subtitle: "Claim our promotional launch discount package before stock runs out!",
+      badge: "",
+      title: "",
+      highlightText: "",
+      subtitle: "",
     });
   }
   return settings;
@@ -107,8 +107,8 @@ exports.addBanner = async (req, res) => {
       return res.status(400).json({ success: false, message: "Please select at least one offer banner image to upload" });
     }
 
-    const defaultTitle = title?.trim() || "Special Launch Offer";
-    const defaultSubtitle = subtitle?.trim() || "Limited Time Website Exclusive Deal";
+    const defaultTitle = title?.trim() || "";
+    const defaultSubtitle = subtitle?.trim() || "";
     const defaultLinkUrl = linkUrl?.trim() || "#product";
 
     const createdBanners = [];

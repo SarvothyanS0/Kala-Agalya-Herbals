@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const bannerSchema = new mongoose.Schema({
   title: {
     type: String,
-    default: "Special Launch Offer"
+    default: ""
   },
   subtitle: {
     type: String,
-    default: "Limited Time Website Exclusive"
+    default: ""
   },
   image: {
     type: String,

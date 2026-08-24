@@ -788,10 +788,10 @@ export default function Landing() {
   const [dandruffReviews,setDandruffReviews]= useState([]);
   const [banners,        setBanners]        = useState([]);
   const [bannerSettings, setBannerSettings] = useState({
-    badge: "🔥 Limited Time Website Exclusive Deal",
-    title: "Website Launching",
-    highlightText: "Special Offer",
-    subtitle: "Claim our promotional launch discount package before stock runs out!",
+    badge: "",
+    title: "",
+    highlightText: "",
+    subtitle: "",
   });
   const [loadingProducts,setLoadingProducts] = useState(true);
   const [reviewForm,     setReviewForm]     = useState({ name: "", rating: 5, comment: "", category: "hair_oil" });
@@ -1161,46 +1161,46 @@ export default function Landing() {
         <section id="launch-offer" className="py-20 bg-gradient-to-b from-white via-[#FDFBF7] to-white relative overflow-hidden border-t border-yellow-500/15" aria-labelledby="offer-heading">
           <div className="absolute top-0 left-1/3 w-[450px] h-[450px] bg-yellow-500/5 rounded-full blur-[120px] pointer-events-none" />
           <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
-            {/* Section Header: Banner Title & Subtitle as Head of the Section with Redesigned Luxury Description */}
-            <div className="text-center max-w-3xl mx-auto mb-10 scroll-animate">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-500/15 text-amber-900 text-xs font-grotesk font-extrabold uppercase tracking-widest mb-4 shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-                {bannerSettings.badge || "🔥 Limited Time Special Offer"}
-              </div>
+            {/* Section Header: Banner Title & Subtitle exclusively from Admin */}
+            {(() => {
+              const badge = (bannerSettings.badge || "").trim();
+              const heading = (bannerSettings.title || banners[0]?.title || "").trim();
+              const highlight = (bannerSettings.highlightText || "").trim();
+              const sub = (bannerSettings.subtitle || banners[0]?.subtitle || "").trim();
 
-              <h2 id="offer-heading" className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria leading-tight mb-4">
-                {(() => {
-                  const heading = (bannerSettings.title && bannerSettings.title !== "Website Launching") 
-                    ? bannerSettings.title 
-                    : (banners[0]?.title || bannerSettings.title || "Month End Offer");
-                  const highlight = bannerSettings.highlightText;
-                  return (
-                    <>
+              const hasHeader = badge || heading || highlight || sub;
+              if (!hasHeader) return null;
+
+              return (
+                <div className="text-center max-w-3xl mx-auto mb-10 scroll-animate">
+                  {badge && (
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-500/30 bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-500/15 text-amber-900 text-xs font-grotesk font-extrabold uppercase tracking-widest mb-4 shadow-xs">
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                      {badge}
+                    </div>
+                  )}
+
+                  {(heading || highlight) && (
+                    <h2 id="offer-heading" className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#1C1A16] font-soria leading-tight mb-4">
                       {heading}{" "}
-                      {highlight ? (
+                      {highlight && (
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 via-amber-600 to-yellow-700">
                           {highlight}
                         </span>
-                      ) : null}
-                    </>
-                  );
-                })()}
-              </h2>
+                      )}
+                    </h2>
+                  )}
 
-              {/* Redesigned Description Card / Pill */}
-              {(() => {
-                const sub = (bannerSettings.subtitle && bannerSettings.subtitle !== "Claim our promotional launch discount package before stock runs out!")
-                  ? bannerSettings.subtitle
-                  : (banners[0]?.subtitle || bannerSettings.subtitle || "Grab Your Favorite Products for Less and Healthy Choices, Happy Savings!");
-                return sub ? (
-                  <div className="relative inline-block max-w-2xl mx-auto">
-                    <p className="text-[#5C5850] text-sm sm:text-base font-inter leading-relaxed px-5 py-2.5 rounded-2xl bg-amber-500/8 border border-amber-500/20 shadow-xs">
-                      {sub}
-                    </p>
-                  </div>
-                ) : null;
-              })()}
-            </div>
+                  {sub && (
+                    <div className="relative inline-block max-w-2xl mx-auto">
+                      <p className="text-[#5C5850] text-sm sm:text-base font-inter leading-relaxed px-5 py-2.5 rounded-2xl bg-amber-500/8 border border-amber-500/20 shadow-xs">
+                        {sub}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Offer Banners Carousel with Smooth Auto-Scroll / Interactive Controls */}
             <OfferBannerCarousel

@@ -10,10 +10,10 @@ export default function AdminBanners() {
 
   // Section Header Settings State
   const [bannerSettings, setBannerSettings] = useState({
-    badge: "🔥 Limited Time Website Exclusive Deal",
-    title: "Website Launching",
-    highlightText: "Special Offer",
-    subtitle: "Claim our promotional launch discount package before stock runs out!",
+    badge: "",
+    title: "",
+    highlightText: "",
+    subtitle: "",
   });
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [isSavingSettings, setIsSavingSettings] = useState(false);
@@ -268,16 +268,28 @@ export default function AdminBanners() {
           {/* Live Section Header Overview */}
           <div className="mb-8 bg-gradient-to-r from-[#FAF7F0] via-white to-[#FAF7F0] p-6 rounded-3xl border border-yellow-500/20 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
-              <span className="px-3 py-1 rounded-full bg-yellow-500/15 text-yellow-900 text-[10px] font-black uppercase font-grotesk tracking-wider inline-block">
-                {bannerSettings.badge || "Badge"}
-              </span>
-              <h3 className="text-xl font-bold font-soria text-[#1C1A16]">
-                {bannerSettings.title}{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">
-                  {bannerSettings.highlightText}
+              {bannerSettings.badge && (
+                <span className="px-3 py-1 rounded-full bg-yellow-500/15 text-yellow-900 text-[10px] font-black uppercase font-grotesk tracking-wider inline-block">
+                  {bannerSettings.badge}
                 </span>
+              )}
+              <h3 className="text-xl font-bold font-soria text-[#1C1A16]">
+                {bannerSettings.title ? (
+                  <>
+                    {bannerSettings.title}{" "}
+                    {bannerSettings.highlightText && (
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">
+                        {bannerSettings.highlightText}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-[#9A9690] text-sm italic font-inter">No custom section title configured (Will use uploaded banner title or remain clean)</span>
+                )}
               </h3>
-              <p className="text-xs text-[#6C685F] font-inter max-w-2xl">{bannerSettings.subtitle}</p>
+              {bannerSettings.subtitle && (
+                <p className="text-xs text-[#6C685F] font-inter max-w-2xl">{bannerSettings.subtitle}</p>
+              )}
             </div>
             <button
               onClick={() => setShowSettingsModal(true)}
@@ -403,35 +415,33 @@ export default function AdminBanners() {
                 <form onSubmit={handleSaveBannerSettings} className="p-6 sm:p-8 space-y-5 font-inter">
                   <div>
                     <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
-                      Badge Pill Text
+                      Badge Pill Text (Optional)
                     </label>
                     <input
                       type="text"
                       value={bannerSettings.badge || ""}
                       onChange={(e) => setBannerSettings({ ...bannerSettings, badge: e.target.value })}
                       className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
-                      placeholder="e.g. 🔥 Limited Time Website Exclusive Deal"
-                      required
+                      placeholder="e.g. 🔥 Limited Time Special Offer"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
-                        Main Title Prefix
+                        Main Title Prefix (Optional)
                       </label>
                       <input
                         type="text"
                         value={bannerSettings.title || ""}
                         onChange={(e) => setBannerSettings({ ...bannerSettings, title: e.target.value })}
                         className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
-                        placeholder="e.g. Website Launching"
-                        required
+                        placeholder="e.g. Month End"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
-                        Highlighted Text (Gradient)
+                        Highlighted Text (Gradient) (Optional)
                       </label>
                       <input
                         type="text"
@@ -439,21 +449,19 @@ export default function AdminBanners() {
                         onChange={(e) => setBannerSettings({ ...bannerSettings, highlightText: e.target.value })}
                         className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all"
                         placeholder="e.g. Special Offer"
-                        required
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 font-grotesk">
-                      Subtitle / Subheading
+                      Subtitle / Description (Optional)
                     </label>
                     <textarea
                       value={bannerSettings.subtitle || ""}
                       onChange={(e) => setBannerSettings({ ...bannerSettings, subtitle: e.target.value })}
                       className="w-full px-4 py-3 bg-[#FDFBF7] border border-yellow-500/20 rounded-xl text-sm font-medium focus:border-yellow-600 focus:bg-white outline-none transition-all resize-none h-20"
-                      placeholder="e.g. Claim our promotional launch discount package before stock runs out!"
-                      required
+                      placeholder="e.g. Grab Your Favorite Products for Less and Healthy Choices, Happy Savings!"
                     />
                   </div>
 
@@ -463,16 +471,26 @@ export default function AdminBanners() {
                       Live Header Preview:
                     </span>
                     <div className="text-center p-3 bg-white rounded-xl border border-yellow-500/10">
-                      <span className="inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-yellow-500/15 text-yellow-900 mb-2">
-                        {bannerSettings.badge || "Badge"}
-                      </span>
-                      <h4 className="text-xl font-bold font-soria text-[#1C1A16]">
-                        {bannerSettings.title}{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">
-                          {bannerSettings.highlightText}
+                      {bannerSettings.badge && (
+                        <span className="inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-yellow-500/15 text-yellow-900 mb-2">
+                          {bannerSettings.badge}
                         </span>
+                      )}
+                      <h4 className="text-xl font-bold font-soria text-[#1C1A16]">
+                        {bannerSettings.title || bannerSettings.highlightText ? (
+                          <>
+                            {bannerSettings.title}{" "}
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-amber-700">
+                              {bannerSettings.highlightText}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-gray-400 text-sm italic font-inter font-normal">Section Title Preview (Empty)</span>
+                        )}
                       </h4>
-                      <p className="text-xs text-[#6C685F] mt-1">{bannerSettings.subtitle}</p>
+                      {bannerSettings.subtitle && (
+                        <p className="text-xs text-[#6C685F] mt-1">{bannerSettings.subtitle}</p>
+                      )}
                     </div>
                   </div>
 

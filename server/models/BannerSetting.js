@@ -3,19 +3,19 @@ const mongoose = require("mongoose");
 const bannerSettingSchema = new mongoose.Schema({
   badge: {
     type: String,
-    default: "🔥 Limited Time Website Exclusive Deal",
+    default: "",
   },
   title: {
     type: String,
-    default: "Website Launching",
+    default: "",
   },
   highlightText: {
     type: String,
-    default: "Special Offer",
+    default: "",
   },
   subtitle: {
     type: String,
-    default: "Claim our promotional launch discount package before stock runs out!",
+    default: "",
   },
   updatedAt: {
     type: Date,
