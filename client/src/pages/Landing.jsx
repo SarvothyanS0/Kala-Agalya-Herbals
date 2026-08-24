@@ -859,9 +859,15 @@ export default function Landing() {
   }, []);
 
   const fetchReviews = useCallback((productId) => {
-    fetch(`${API_URL}/reviews/${productId}`)
+    const endpoint = productId && productId !== "undefined"
+      ? `${API_URL}/reviews/${productId}`
+      : `${API_URL}/reviews/hair_oil`;
+    fetch(endpoint)
       .then(r => r.json())
-      .then(d => { if (Array.isArray(d)) setReviews(d); })
+      .then(d => {
+        if (Array.isArray(d)) setReviews(d);
+        else if (d && Array.isArray(d.reviews)) setReviews(d.reviews);
+      })
       .catch(() => {});
   }, []);
 
@@ -872,7 +878,10 @@ export default function Landing() {
         return res;
       })
       .then(r => r.json())
-      .then(d => { if (Array.isArray(d)) setDandruffReviews(d); })
+      .then(d => {
+        if (Array.isArray(d)) setDandruffReviews(d);
+        else if (d && Array.isArray(d.reviews)) setDandruffReviews(d.reviews);
+      })
       .catch(() => {});
   }, []);
 
@@ -889,9 +898,10 @@ export default function Landing() {
   }, []);
 
   useEffect(() => {
+    fetchReviews();
     fetchDandruffReviews();
     fetchBanners();
-  }, [fetchDandruffReviews, fetchBanners]);
+  }, [fetchReviews, fetchDandruffReviews, fetchBanners]);
 
   useEffect(() => {
     fetch(`${API_URL}/products`)

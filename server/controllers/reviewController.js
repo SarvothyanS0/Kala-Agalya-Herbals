@@ -22,14 +22,25 @@ exports.getProductReviews = async (req, res) => {
     }
 
     let query = {};
-    if (productId === "dandruff" || productId === "hair_oil") {
-      query = { category: productId };
-    } else if (mongoose.Types.ObjectId.isValid(productId)) {
-      query = { product: productId, category: { $ne: "dandruff" } };
+    if (productId === "dandruff") {
+      query = { category: "dandruff" };
+    } else if (productId === "hair_oil") {
+      query = { category: { $ne: "dandruff" } };
     } else if (productId === "all") {
       query = {};
+    } else if (mongoose.Types.ObjectId.isValid(productId)) {
+      query = {
+        $or: [
+          { product: productId },
+          { category: "hair_oil" },
+          { category: { $exists: false } },
+          { category: null },
+          { category: "" },
+          { category: { $ne: "dandruff" } }
+        ]
+      };
     } else {
-      query = { category: productId };
+      query = { category: { $ne: "dandruff" } };
     }
 
     const reviews = await Review.find(query).sort({ createdAt: -1 }).lean();
@@ -51,7 +62,18 @@ exports.getReviewsByCategory = async (req, res) => {
       return res.json(cached);
     }
 
-    const reviews = await Review.find({ category }).sort({ createdAt: -1 }).lean();
+    let query = {};
+    if (category === "dandruff") {
+      query = { category: "dandruff" };
+    } else if (category === "hair_oil") {
+      query = { category: { $ne: "dandruff" } };
+    } else if (category === "all") {
+      query = {};
+    } else {
+      query = { category };
+    }
+
+    const reviews = await Review.find(query).sort({ createdAt: -1 }).lean();
     cache.set(key, reviews, CACHE_TTL);
     res.json(reviews);
   } catch (error) {
