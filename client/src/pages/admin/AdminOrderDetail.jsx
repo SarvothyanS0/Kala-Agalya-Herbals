@@ -10,7 +10,7 @@ export default function AdminOrderDetail() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  const [savingTracking, setSavingTracking] = useState(false);
+  const [savingAction, setSavingAction] = useState(null); // 'save' | 'whatsapp' | null
   const [trackingNumber, setTrackingNumber] = useState("");
   const [trackingUrl, setTrackingUrl] = useState("");
   const navigate = useNavigate();
@@ -94,7 +94,8 @@ export default function AdminOrderDetail() {
       addToast("Please enter a tracking number", "error");
       return;
     }
-    setSavingTracking(true);
+    const actionType = sendWhatsApp ? "whatsapp" : "save";
+    setSavingAction(actionType);
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(`${API_URL}/admin/orders/${id}/tracking`, {
@@ -124,7 +125,7 @@ export default function AdminOrderDetail() {
       console.error("Error saving tracking:", error);
       addToast("Failed to save tracking info", "error");
     } finally {
-      setSavingTracking(false);
+      setSavingAction(null);
     }
   };
 
@@ -352,10 +353,10 @@ export default function AdminOrderDetail() {
                 <button
                   id="save-tracking-btn"
                   onClick={() => saveTracking(false)}
-                  disabled={savingTracking}
+                  disabled={savingAction !== null}
                   className="w-full bg-gradient-to-r from-purple-600 to-indigo-700 text-white py-3 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-purple-500 hover:to-indigo-600 transition-all shadow-md disabled:opacity-50 font-grotesk flex items-center justify-center gap-2"
                 >
-                  {savingTracking ? (
+                  {savingAction === "save" ? (
                     <>
                       <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                       Saving...
@@ -372,13 +373,13 @@ export default function AdminOrderDetail() {
                 <button
                   id="save-and-whatsapp-btn"
                   onClick={() => saveTracking(true)}
-                  disabled={savingTracking}
+                  disabled={savingAction !== null}
                   className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3.5 rounded-xl font-bold uppercase text-xs tracking-wider hover:from-green-400 hover:to-emerald-500 transition-all shadow-md disabled:opacity-50 font-grotesk flex items-center justify-center gap-2"
                 >
-                  {savingTracking ? (
+                  {savingAction === "whatsapp" ? (
                     <>
                       <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                      Saving...
+                      Saving & Opening WhatsApp...
                     </>
                   ) : (
                     <>
