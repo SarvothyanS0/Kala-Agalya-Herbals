@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AdminLayout from "./AdminLayout";
 import { API_URL } from "../../services/api";
@@ -34,6 +34,14 @@ export default function AdminDashboard() {
   const [period, setPeriod] = useState("daily");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const chartScrollRef = useRef(null);
+
+  // Auto-scroll chart container to latest days when data loads or period changes
+  useEffect(() => {
+    if (chartScrollRef.current) {
+      chartScrollRef.current.scrollLeft = chartScrollRef.current.scrollWidth;
+    }
+  }, [salesData, period]);
 
   const fetchAllDashboardData = useCallback(async () => {
     try {
@@ -178,9 +186,9 @@ export default function AdminDashboard() {
           </div>
 
           {/* Charts + Quick Actions */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Sales Chart */}
-            <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-yellow-500/12 shadow-sm">
+            <div className="lg:col-span-2 min-w-0 bg-white rounded-xl p-6 border border-yellow-500/12 shadow-sm flex flex-col justify-between overflow-hidden">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div>
                   <h3 className="text-lg font-bold text-[#1C1A16] font-grotesk flex items-center gap-2">
@@ -203,39 +211,53 @@ export default function AdminDashboard() {
                   })}
                 </div>
               </div>
-              <div className="h-56 flex items-end justify-between gap-2 sm:gap-3 px-2 border-b border-yellow-500/10 pb-2">
-                {salesData.length > 0 ? salesData.map(function(item, index) {
-                  var maxSales = Math.max.apply(null, salesData.map(function(d) { return d.totalSales; }));
-                  var height = (item.totalSales / maxSales) * 100;
-                  return (
-                    <div key={index} className="flex-1 flex flex-col items-center group h-full justify-end">
-                      <div className="w-full relative h-full flex items-end justify-center">
-                        <div
-                          className="w-full max-w-[40px] bg-gradient-to-t from-yellow-600 via-amber-500 to-yellow-400 rounded-t-md transition-all duration-500 group-hover:brightness-110"
-                          style={{ height: Math.max(height, 4) + "%" }}
-                        >
-                          <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-[#1C1A16] text-amber-300 text-[11px] font-bold py-1 px-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg border border-yellow-500/20 pointer-events-none z-20 font-grotesk">
-                            Rs.{item.totalSales}
+
+              {/* Scrollable / Responsive Graph Container */}
+              <div
+                ref={chartScrollRef}
+                className="w-full min-w-0 overflow-x-auto custom-admin-table-scroll pb-2"
+              >
+                <div className="h-64 pt-10 flex items-end justify-between gap-2 sm:gap-3 px-2 border-b border-yellow-500/10 min-w-full w-max">
+                  {salesData.length > 0 ? (
+                    (() => {
+                      const maxSales = Math.max(...salesData.map((d) => d.totalSales || 0), 1);
+                      return salesData.map((item, index) => {
+                        const height = ((item.totalSales || 0) / maxSales) * 100;
+                        return (
+                          <div
+                            key={index}
+                            className="flex-1 min-w-[32px] sm:min-w-[40px] max-w-[50px] flex flex-col items-center group h-full justify-end"
+                          >
+                            <div className="w-full relative h-full flex items-end justify-center">
+                              <div
+                                className="w-full max-w-[36px] bg-gradient-to-t from-yellow-600 via-amber-500 to-yellow-400 rounded-t-md transition-all duration-500 group-hover:brightness-110"
+                                style={{ height: Math.max(height, 5) + "%" }}
+                              >
+                                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1C1A16] text-amber-300 text-[11px] font-bold py-1 px-2.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg border border-yellow-500/20 pointer-events-none z-30 font-grotesk">
+                                  ₹{Number(item.totalSales || 0).toLocaleString("en-IN")}
+                                </div>
+                              </div>
+                            </div>
+                            <p className="text-[10px] uppercase tracking-wider text-[#9A9690] mt-2 font-bold font-grotesk whitespace-nowrap">
+                              {period === "monthly"
+                                ? item._id.month + "/" + String(item._id.year).slice(-2)
+                                : item._id.day + "/" + item._id.month}
+                            </p>
                           </div>
-                        </div>
-                      </div>
-                      <p className="text-[10px] uppercase tracking-wider text-[#9A9690] mt-2 font-bold font-grotesk whitespace-nowrap">
-                        {period === "monthly"
-                          ? item._id.month + "/" + String(item._id.year).slice(-2)
-                          : item._id.day + "/" + item._id.month}
-                      </p>
+                        );
+                      });
+                    })()
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[#9A9690] text-sm font-inter">
+                      No sales data recorded for this period.
                     </div>
-                  );
-                }) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#9A9690] text-sm font-inter">
-                    No sales data recorded for this period.
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl p-6 border border-yellow-500/12 shadow-sm flex flex-col">
+            <div className="min-w-0 bg-white rounded-xl p-6 border border-yellow-500/12 shadow-sm flex flex-col">
               <div className="mb-5">
                 <h3 className="text-lg font-bold text-[#1C1A16] mb-0.5 font-grotesk">Quick Actions</h3>
                 <p className="text-xs text-[#6C685F] font-inter">Common administrative tasks</p>
