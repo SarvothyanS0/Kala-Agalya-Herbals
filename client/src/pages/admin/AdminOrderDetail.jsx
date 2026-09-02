@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useToast } from "../../components/Alert";
 import AdminLayout from "./AdminLayout";
 import Avatar from "../../components/Avatar";
+import { openInvoice } from "../../services/invoiceGenerator";
 
 export default function AdminOrderDetail() {
   const { id } = useParams();
@@ -157,7 +158,7 @@ export default function AdminOrderDetail() {
   return (
     <AdminLayout>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 mb-8">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <Link
             to="/admin/orders"
             className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-yellow-800 bg-white border border-yellow-500/25 hover:bg-yellow-500/10 transition-all font-grotesk uppercase tracking-wider shadow-xs"
@@ -173,19 +174,37 @@ export default function AdminOrderDetail() {
               {order.orderId || order._id.slice(-8).toUpperCase()}
             </p>
           </div>
+          <div>
+            <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk mb-0.5">Invoice Number</p>
+            <p className="font-mono text-sm text-emerald-900 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20 inline-block font-bold">
+              #KAH-{order.orderId || order._id.slice(-8).toUpperCase()}
+            </p>
+          </div>
         </div>
 
-        <div className="text-left sm:text-right">
-          <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk mb-0.5">Order Date</p>
-          <p className="font-bold text-[#1C1A16] text-sm font-inter">
-            {new Date(order.createdAt).toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit"
-            })}
-          </p>
+        <div className="flex items-center gap-4 text-left sm:text-right">
+          <button
+            onClick={() => openInvoice(order)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-yellow-600 hover:bg-yellow-700 active:scale-95 transition-all font-grotesk uppercase tracking-wider shadow-sm"
+            title="Download or Print Tax Invoice"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Download Invoice</span>
+          </button>
+          <div>
+            <p className="text-[10px] text-[#9A9690] uppercase tracking-widest font-grotesk mb-0.5">Order Date</p>
+            <p className="font-bold text-[#1C1A16] text-sm font-inter">
+              {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+              })}
+            </p>
+          </div>
         </div>
       </div>
 

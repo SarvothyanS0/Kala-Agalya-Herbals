@@ -138,6 +138,7 @@ export default function AdminReports() {
     // ── Column headers ───────────────────────────────────────────
     const headers = [
       "S.NO",
+      "Invoice Number",
       "Order ID",
       "Customer Name",
       "Address",
@@ -158,6 +159,8 @@ export default function AdminReports() {
       const districtVal = addr.district || addr.city || "N/A";
       const stateVal = addr.state || "N/A";
       const pincodeVal = addr.pincode || addr.zipCode || "N/A";
+      const rawOrderId = order.orderId || (order._id ? order._id.toString().slice(-8).toUpperCase() : "ORDER");
+      const invoiceNo = `KAH-${rawOrderId}`;
 
       const products = (order.items || [])
         .map(i => `${i.name || "Product"} (${i.size || "N/A"}) x${i.quantity || 1} @ ₹${i.price || 0}`)
@@ -165,6 +168,7 @@ export default function AdminReports() {
 
       return [
         esc(idx + 1),
+        escText(invoiceNo),
         escText(order.orderId || (order._id ? order._id.toString().slice(-8).toUpperCase() : "N/A")),
         esc(cleanStr(order.customer?.name)),
         esc(cleanStr(addressVal)),
@@ -493,10 +497,18 @@ export default function AdminReports() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-yellow-500/10">
-                  {report.orders.map((order) => (
+                  {report.orders.map((order) => {
+                    const rawOrderId = order.orderId || (order._id && order._id.slice(-8).toUpperCase()) || "N/A";
+                    const invNo = `KAH-${order.orderId || (order._id ? order._id.toString().slice(-8).toUpperCase() : "ORDER")}`;
+                    return (
                     <tr key={order._id} className="hover:bg-yellow-500/4 transition-colors group">
-                      <td className="px-6 sm:px-8 py-4 text-xs font-mono font-bold text-yellow-700 whitespace-nowrap">
-                        {order.orderId || (order._id && order._id.slice(-8).toUpperCase()) || "N/A"}
+                      <td className="px-6 sm:px-8 py-4 whitespace-nowrap">
+                        <div className="text-xs font-mono font-bold text-yellow-700">
+                          {rawOrderId}
+                        </div>
+                        <div className="text-[11px] font-mono text-[#6C685F] font-semibold mt-0.5">
+                          #{invNo}
+                        </div>
                       </td>
                       <td className="px-6 sm:px-8 py-4 text-sm text-[#1C1A16] font-bold whitespace-nowrap">{order.customer?.name || "N/A"}</td>
                       <td className="px-6 sm:px-8 py-4 text-sm font-bold text-[#1C1A16] font-soria whitespace-nowrap">
@@ -557,7 +569,8 @@ export default function AdminReports() {
                         <div className="text-[10px] mt-0.5">{new Date(order.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</div>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
