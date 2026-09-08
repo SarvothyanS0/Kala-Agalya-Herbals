@@ -142,7 +142,7 @@ function QuerySection() {
 
         {/* Contact info strip */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-xs text-[#7C786E] font-inter">
-          <span className="flex items-center gap-2">📞 <a href="tel:+916382460820" className="hover:text-yellow-700 transition-colors">+91 6382460820</a></span>
+          <span className="flex items-center gap-2">📞 <a href="tel:+916382460820" className="hover:text-yellow-700 transition-colors">+91 7338758727</a></span>
           <span className="hidden sm:block w-px h-4 bg-yellow-500/20" />
           <span className="flex items-center gap-2">✉️ <a href="mailto:kalaagalyaherbals@gmail.com" className="hover:text-yellow-700 transition-colors">kalaagalyaherbals@gmail.com</a></span>
         </div>
